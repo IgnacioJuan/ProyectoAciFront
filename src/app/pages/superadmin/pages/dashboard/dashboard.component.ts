@@ -10,6 +10,28 @@ import { ActividadService } from 'src/app/services/actividad.service';
 import { Actividades } from 'src/app/models/actividades';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
+//Funciones
+import { CalendarOptions } from '@fullcalendar/core';;
+import dayGridPlugin from '@fullcalendar/daygrid';
+import esLocale from '@fullcalendar/core/locales/es';
+// Color aleatorio
+function cambiarColor(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const color = "#" + ((hash & 0x00FFFFFF) | 0x99000000).toString(16).slice(1);
+  return color;
+}
+//Color calendario
+function colorCalendario(): string {
+  const letras = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letras[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
 
 @Component({
   selector: 'app-dashboard2',
@@ -115,11 +137,11 @@ export class DashboardComponent2 implements OnInit {
 
   getColor(value: number): string {
     if (value >= 0.75) {
-      return '#4caf50'; // Verde para porcentajes mayores o iguales a 0.75
+      return '#4caf50'; // Verde
     } else if (value >= 0.4) {
-      return '#ffc107'; // Amarillo para porcentajes mayores o iguales a 0.4 y menores que 0.75
+      return '#ffc107'; // Amarillo
     } else {
-      return '#f44336'; // Rojo para porcentajes menores que 0.4
+      return '#f44336'; // Rojo
     }
   }
   
