@@ -67,13 +67,13 @@ export class InicioModeloComponent implements OnInit {
 
   }
   irDetalle(object: any) {
-    this.router.navigate(['/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   enviarModelo(modelo: Modelo): void {
     localStorage.setItem("id", modelo.id_modelo.toString());
     this.mode = modelo;
-    this.router.navigate(['/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
  

@@ -104,14 +104,14 @@ recibeSubcriterio() {
     this.sharedDataService.mostaridSubcriterio(element.id_subcriterio);
     
   
-    this.router.navigate(['/detalle-indicador']);
+    this.router.navigate(['/sup/modelo/detalle-indicador']);
   }
 
 
 
  
   verCriterios() {
-    this.router.navigate(['/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
 

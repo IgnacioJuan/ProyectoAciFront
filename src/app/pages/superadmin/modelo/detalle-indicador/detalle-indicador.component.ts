@@ -116,23 +116,23 @@ export class DetalleIndicadorComponent implements OnInit {
   
   verSubcriterios1(indicador: Indicador) {
     localStorage.setItem("id", indicador.id_indicador.toString());
-    this.router.navigate(['/detalle-subcriterio']);
+    this.router.navigate(['/sup/modelo/detalle-subcriterio']);
   }
   
   verSubcriterios() {
     window.onpopstate = () => {
-      if (this.router.url === '/detalle-subcriterio') {
+      if (this.router.url === '/sup/modelo/detalle-subcriterio') {
         this.recibeIndicador();
       }
     };
   }
   
   verCriterios() {
-    this.router.navigate(['/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
    goBack() {
     window.history.back();
-    this.router.navigate(['/detalle-subcriterio']);
+    this.router.navigate(['/sup/modelo/detalle-subcriterio']);
   }
   
   

@@ -102,10 +102,10 @@ const routes: Routes = [{
 },
 
 {
-  path: '',
+  path: 'modelo',
   loadChildren: () => import("./modelo/modelo.module").then(m => m.ModeloModule)
 },
-{
+{ 
   path: 'ponderacion',
   loadChildren: () => import("./ponderacion/ponderacion.module").then(m => m.PonderacionModule)
 },

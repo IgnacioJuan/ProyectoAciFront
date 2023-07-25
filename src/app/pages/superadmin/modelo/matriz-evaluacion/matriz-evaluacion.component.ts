@@ -83,10 +83,10 @@ export class MatrizEvaluacionComponent implements OnInit {
   }
 
   irEvidencias(id: any) {
-    this.route.navigate(['/matriz-evidencias'], { queryParams: { indicador: id } });
+    this.route.navigate(['/sup/modelo/matriz-evidencias'], { queryParams: { indicador: id } });
   }
 
   regresar() {
-    this.route.navigate(['/detallemodelo']);
+    this.route.navigate(['/sup/modelo/detallemodelo']);
   }
 }

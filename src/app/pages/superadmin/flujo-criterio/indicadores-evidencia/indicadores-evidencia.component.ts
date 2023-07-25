@@ -93,12 +93,12 @@ export class IndicadoresEvidenciaComponent{
       });
   }
   verIndicadores() {
-    this.router.navigate(['/flujo-criterio/subcriterios-indicador'], { state: { data: this.indicador.subcriterio } });
+    this.router.navigate(['/sup/flujo-criterio/subcriterios-indicador'], { state: { data: this.indicador.subcriterio } });
   }
   verSubcriterios() {
-    this.router.navigate(['/flujo-criterio/criterios-subcriterio'], { state: { data: this.indicador.subcriterio?.criterio } });
+    this.router.navigate(['/sup/flujo-criterio/criterios-subcriterio'], { state: { data: this.indicador.subcriterio?.criterio } });
   }
   verCriterios() {
-    this.router.navigate(['/flujo-criterio/criterioSuper']);
+    this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
   }
 }

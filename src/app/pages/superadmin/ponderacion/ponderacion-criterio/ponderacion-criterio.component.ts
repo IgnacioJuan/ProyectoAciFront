@@ -148,7 +148,7 @@ export class PonderacionCriterioComponent implements OnInit {
   
 
   verSubcriterios() {
-    this.router.navigate(['/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
 

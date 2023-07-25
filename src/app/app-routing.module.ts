@@ -6,7 +6,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { SuperGuard } from './services/Guards/super.guard';
-import { AutoridadGuardService } from './services/Guards/autoridad.guard';
 import { RoleguardGuard } from './services/Guards/roleguard.guard';
 import { UserProfileComponent } from './pages/user/user-profile/user-profile.component';
 import { FenixComponent } from './pages/fenix/fenix.component';
@@ -49,7 +48,7 @@ const routes: Routes = [
   //PATHS DE SUPERADMIN
 
   {
-    path: '',
+    path: 'sup',
     loadChildren: () => import("./pages/superadmin/superadmin.module").then(m => m.SuperadminModule)
   },
   

@@ -81,14 +81,14 @@ export class ActividadCriterioDetalle implements OnInit {
     localStorage.setItem("id", modelo.id_modelo.toString());
     console.log(modelo.id_modelo)
     this.model = modelo;
-    this.router.navigate(['/ponderacion/ponderacion-modelo']);
+    this.router.navigate(['/sup/ponderacion/ponderacion-modelo']);
 
 
   }
   ponderacionCriterio(event: Event, element: any) {
     event.stopPropagation();
     // código del método del botón
-    this.router.navigate(['/ponderacion/ponderacion-criterio'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
+    this.router.navigate(['/sup/ponderacion/ponderacion-criterio'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
   }
 
   mostrar(element: any) {
@@ -100,7 +100,7 @@ export class ActividadCriterioDetalle implements OnInit {
   evaluacion(event: Event, element: any) {
     event.stopPropagation();
     // código del método del botón
-    this.router.navigate(['/matriz-evaluacion'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
+    this.router.navigate(['/sup/modelo/matriz-evaluacion'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
   }
 
   ponderacion(event: Event, element: any) {

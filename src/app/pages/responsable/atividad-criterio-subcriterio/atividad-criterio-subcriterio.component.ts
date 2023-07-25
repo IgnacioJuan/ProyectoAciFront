@@ -99,7 +99,7 @@ recibeSubcriterio() {
 
  
   verCriterios() {
-    this.router.navigate(['/flujo-criterio/criterioSuper']);
+    this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
   }
 
 

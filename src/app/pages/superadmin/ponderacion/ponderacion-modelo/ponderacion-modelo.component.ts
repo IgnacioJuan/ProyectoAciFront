@@ -224,7 +224,7 @@ export class PonderacionModeloComponent implements OnInit {
                   background: "#63B68B",
                 });
                 
-                this.router.navigate(['/detallemodelo']);
+                this.router.navigate(['/sup/modelo/detallemodelo']);
                 // Recargar la página después de guardar los datos en la API
                 
 
@@ -296,7 +296,7 @@ export class PonderacionModeloComponent implements OnInit {
                   background: "#63B68B",
                 });
                 
-                this.router.navigate(['/ponderacion/ponderacion-final']);
+                this.router.navigate(['/sup/ponderacion/ponderacion-final']);
                 // Recargar la página después de guardar los datos en la API
                 window.location.reload();
 
@@ -325,7 +325,7 @@ export class PonderacionModeloComponent implements OnInit {
   enviarModelo(modelo: Modelo): void {
     localStorage.setItem("id", modelo.id_modelo.toString());
     this.model = modelo;
-    //this.router.navigate(['/detallemodelo']);
+    //this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   //Calculamos el promedio de cada criterio
@@ -509,7 +509,7 @@ export class PonderacionModeloComponent implements OnInit {
 
   //regreso al modelo
   verCriterios() {
-    this.router.navigate(['/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   //lista de ponderacion 
@@ -542,7 +542,7 @@ export class PonderacionModeloComponent implements OnInit {
           console.error('Error al crear el subcriterio:', error);
         }
       );
-    //this.router.navigate(['/ponderacion']);
+    //this.router.navigate(['/sup/ponderacion']);
 
 
   }

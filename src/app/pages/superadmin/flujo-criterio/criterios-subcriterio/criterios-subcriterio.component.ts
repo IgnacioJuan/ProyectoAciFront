@@ -135,10 +135,10 @@ export class CriteriosSubcriterioComponent implements OnInit {
   }
 
   verDetalles(subcriterio: any) {
-    this.router.navigate(['/flujo-criterio/subcriterios-indicador'], { state: { data: subcriterio, criterio: this.criterio } });
+    this.router.navigate(['/sup/flujo-criterio/subcriterios-indicador'], { state: { data: subcriterio, criterio: this.criterio } });
   }
   verCriterios() {
-    this.router.navigate(['/flujo-criterio/criterioSuper']);
+    this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
   }
 
   //Numero de indicadores
