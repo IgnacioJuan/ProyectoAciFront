@@ -66,7 +66,7 @@ export class EvidenciaTareasAsginadasComponent {
   }
 
   verDetalles(evidencia: any) {
-    this.router.navigate(['/ActividadesResponsable'], { state: { data: evidencia } });
+    this.router.navigate(['/res/ActividadesResponsable'], { state: { data: evidencia } });
   }
 
   mode = new Modelo();

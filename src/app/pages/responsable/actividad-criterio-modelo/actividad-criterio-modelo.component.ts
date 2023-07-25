@@ -28,13 +28,13 @@ export class ActividadCriterioModelo implements OnInit {
   }
 
   irDetalle(object: any) {
-    this.router.navigate(['/detalleC']);
+    this.router.navigate(['/res/detalleC']);
   }
 
   enviarModelo(modelo: Modelo): void {
     localStorage.setItem("id", modelo.id_modelo.toString());
     this.mode = modelo;
-    this.router.navigate(['/detalleC']);
+    this.router.navigate(['/res/detalleC']);
   }
 
 }

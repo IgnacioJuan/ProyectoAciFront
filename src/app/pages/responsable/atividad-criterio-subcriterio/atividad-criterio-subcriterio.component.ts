@@ -92,7 +92,7 @@ recibeSubcriterio() {
   verDetalles (element: any) {
     console.log(element);
     this.sharedDataService.mostaridSubcriterio(element.id_subcriterio);
-    this.router.navigate(['/subcriterio-indicador']);
+    this.router.navigate(['/res/subcriterio-indicador']);
   }
 
 

@@ -66,7 +66,7 @@ const routes: Routes = [
   
   //PATHS DE RESPONSABLE
   {
-    path: '',
+    path: 'res',
     loadChildren: () => import("./pages/responsable/responsable.module").then(m => m.ResponsableModule)
   },
   

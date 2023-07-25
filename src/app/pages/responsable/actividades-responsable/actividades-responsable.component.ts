@@ -230,7 +230,7 @@ export class ActividadesResponsableComponent implements OnInit {
   archivo: Archivo = new Archivo();
 
   verDetalles(archivos: any) {
-    this.router.navigate(['/evidenciaResponsable'], { state: { data: archivos } });
+    this.router.navigate(['/res/evidenciaResponsable'], { state: { data: archivos } });
   }
   calcularfecha() {
     this.services.geteviasig(this.user.username).subscribe(data => {

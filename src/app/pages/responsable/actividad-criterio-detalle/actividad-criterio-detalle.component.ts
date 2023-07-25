@@ -94,7 +94,7 @@ export class ActividadCriterioDetalle implements OnInit {
   mostrar(element: any) {
     console.log(element);
     this.sharedDataService.agregarIdCriterio(element.id_criterio);
-    this.router.navigate(['/criterio-subcriterio']);
+    this.router.navigate(['/res/criterio-subcriterio']);
   }
 
   evaluacion(event: Event, element: any) {

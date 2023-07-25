@@ -128,7 +128,7 @@ export class SidebarService {
       icono: 'nav-icon fas fa-file-alt',
       titulo: "Evidencias",
       submenu: [
-        { titulo: 'Evidencias asignadas', url: 'eviTareaAsina', icono: 'fas fa-file-contract' }
+        { titulo: 'Evidencias asignadas', url: 'res/eviTareaAsina', icono: 'fas fa-file-contract' }
 
       ]
     },
@@ -136,7 +136,7 @@ export class SidebarService {
       icono: 'nav-icon fas fa-tasks',
       titulo: "Criterios",
       submenu: [
-        { titulo: 'Reporte Criterios', url: 'actividadCriterio', icono: 'fas fa-file-contract' }
+        { titulo: 'Reporte Criterios', url: 'res/actividadCriterio', icono: 'fas fa-file-contract' }
 
       ]
     }
