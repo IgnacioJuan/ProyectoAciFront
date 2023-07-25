@@ -10,166 +10,16 @@
     </div>
     <!-- /.container-fluid -->
 </section>
-<!-- Main content -->
-
-
-<div class="content">
-
-    <div class="container-fluid">
-
-        <!-- row Grafico de barras y doughnut-->
-
-        <div class="">
-            <div class="col-lg-6">
-
-                <div class="card card-gray shadow">
-
-                    <div class="card-header">
-                        <h3 class="card-title" id="title-header"> PORCENTAJE DE INDICADORES DE LOS CRITERIOS</h3>
-
-                        <h3 class="card-title" id="title-header"></h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <!-- <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button> -->
-
-                        </div> <!-- ./ end card-tools -->
-                    </div> <!-- ./ end card-header -->
-
-
-                    <div class="card-body">
-
-                        <div class="chart">
-
-                            <!--VISTAS DE CRITERIOS-->
-
-                            <div class="container">
-                                <div class="row">
-
-                                    <div class="col" *ngFor="let item of listaCriterios">
-
-                                        <div class="small-box bg-warning" style="width: 15rem;">
-
-                                            <div class="small-box bg-primary">
-
-                                                <div class="inner">
-                                                    <label class="textTitulo" for=""> <strong> {{item.nombre}} </strong>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="card-body">
-
-                                                <div style="display: flex;">
-                                                    <button (click)="editar(item)" type="button" class="btn btn-primary"
-                                                        role="button" style="margin-right: 5%">
-                                                        <i class="fa fa-bar-chart"></i>
-                                                        Gráfica
-                                                    </button>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-
-
-                                    </div>
-                                </div>
-
-                            </div>
-                            <!--FIN DE VISTA DE CRITERIO-->
-
-                            <!-- <canvas id="barChart"
-                                style="min-height: 250px; height: 300px; max-height: 350px; width: 100%;">
-
-                            </canvas> -->
-
-                        </div>
-
-                    </div> <!-- ./ end card-body -->
-
-                </div>
-
-            </div>
-
-
-
-
-
-            <div class="col-lg-6">
-
-                <div class="card card-gray shadow">
-
-                    <div class="card-header">
-
-                        <h3 class="card-title" id="title-header"> DETALLE DE CRITERIOS DEL MODELO</h3>
-
-                        <div class="card-tools">
-
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <!-- <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button> -->
-
-                        </div>
-                        <!-- ./ end card-tools -->
-
-                    </div>
-                    <!-- ./ end card-header -->
-
-
-                    <div class="card-body">
-
-                        <!--PARA MOSTRAR EL PORCENTAJE DE LA ACTIVIDAD-->
-                        <div class="table-responsive">
-                            <table class="table" id="tbl_productos_poco_stock">
-                                <thead>
-                                    <tr class="text-danger text-center">
-                                        <!-- <th>Cod. producto</th> -->
-                                        <th>Nombre</th>
-                                        <th class="text-center">Descripción</th>
-                                        <th class="text-center">Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="text-center text-start" *ngFor="let item of listaCriterios">
-                                        <th>{{item.nombre}}</th>
-                                        <th>{{item.descripcion}}</th>
-                                        <th>
-                                            <button (click)="editar2(item)" type="button" class="btn btn-primary"
-                                                data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                                style="margin-right: 10px">
-                                                Porcentaje
-                                            </button>
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!--FIN PARA MOSTRAR-->
-
-                        <div class="chart">
-
-                            <div id="chartContainer"
-                                style="min-height: 250px; height: 300px; max-height: 350px; width: 100%;"></div>
-
-                        </div>
-
-                    </div>
-                    <!-- ./ end card-body -->
-
-                </div>
-
-            </div>
-
-        </div>
-        <!-- ./row Grafico de barras y doughnut -->
+<!-- grafica  -->
+<div *ngIf="listaCriterios">
+    <div class="card" *ngFor="let item of listaCriterios" [style.backgroundColor]="getColor(item)">
+      <div class="card-content">
+        <div class="card-name" style="color: black;">{{ item.id_criterio }}. {{ item.nombre }}</div>
+        <div class="card-content">{{ suma[item.nombre] || 0 }}</div>
+      </div>
+    </div>
+  </div>
+  
 
         <!-- Productos mas vendidos y con poco stock -->
         <div class="row">
@@ -221,61 +71,14 @@
             
         </div>
 
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card card-gray shadow">
-                    <div class="card-header">
-                        <h3 class="card-title">Datos de Criterios (Obtenido/Obtener)</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <!-- <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button> -->
-                        </div> <!-- ./ end card-tools -->
-                    </div> <!-- ./ end card-header -->
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <div class="container" (click)="  getButtonCriterio2() " style="width: 35rem; height: 500px;">
-                                <div class="card" style="width: 35rem; height: 500px; align-items:flex-start;
-                                display: flex;
-                                justify-content: center;" style="background-color: rgb(233, 227, 227); ">
-                                    <div style="align-content: center; background-color: rgb(236, 235, 235);" class="card-body">
-                            
-                                        <div style="display: block; align-items: center; align-content: center;">
-                                            <!-- <canvas style="width: 70%; height: 400px; align-items: center; align-content: center;" baseChart width="400" height="400" [type]="'line'" [data]="lineChartData"
-                                                [options]="lineChartOptions" [legend]="lineChartLegend">
-                                            </canvas> -->
-                            
-                                            <canvas baseChart [data]="barChartData" [options]="barChartOptions" [plugins]="barChartPlugins"
-                                                [legend]="barChartLegend" [type]="'bar'">
-                                            </canvas>
-                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <!-- ./ end card-body -->
-                </div>
-            </div>
-            
-        </div>
-
-    </div><!-- /.container-fluid -->
-
-
-
-</div>
 <!-- /.content -->
 
 
 
 
 
-<mat-card class="floating-card">
-    <!-- Contenido de la tarjeta -->
+<!-- <mat-card class="floating-card">
+
     <div style="align-content: center;" class="card-body">
         <canvas baseChart [type]="'pie'" [datasets]="pieChartDatasets" [labels]="pieChartLabels"
             [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
@@ -320,12 +123,10 @@
                     [options]="pieChartOptions2" [plugins]="pieChartPlugins2" [legend]="pieChartLegend2">
                 </canvas>
 
-
-                <!-- Modal -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-</div>
+</div> -->

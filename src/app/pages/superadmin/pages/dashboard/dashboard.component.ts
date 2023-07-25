@@ -26,6 +26,7 @@ export class DashboardComponent2 implements OnInit {
   modeloMaximo:any;
   listaIndicadores: AutoIndicador[] = [];
   persona:Persona2 = new Persona2();
+  suma: { [nombre: string]: number } = {};
   //FIN DE VISTA
 
 
@@ -88,6 +89,10 @@ export class DashboardComponent2 implements OnInit {
     this.getButtonCriterio2();
     this.listarActividad();
     this.modeloMax();
+    this.httpCriterios.getCriterios().subscribe(data => {
+      this.listaCriterios = data;
+      this.cargarDatosAutomaticamente();
+    });
   }
 
   modeloMax(){
@@ -108,7 +113,16 @@ export class DashboardComponent2 implements OnInit {
     })
   }
 
-
+  getColor(value: number): string {
+    if (value >= 0.75) {
+      return '#4caf50'; // Verde para porcentajes mayores o iguales a 0.75
+    } else if (value >= 0.4) {
+      return '#ffc107'; // Amarillo para porcentajes mayores o iguales a 0.4 y menores que 0.75
+    } else {
+      return '#f44336'; // Rojo para porcentajes menores que 0.4
+    }
+  }
+  
   //LISTA PARA CRITERIOS
   getButtonCriterio() {
     this.httpCriterios.getObtenerCriterio().subscribe(
@@ -123,24 +137,28 @@ export class DashboardComponent2 implements OnInit {
 
 
   //LISTAR Y MOSTRAR LOS GRAFICOS
-  editar(ItemCrite: Indicador): void {
-    this.criteri = ItemCrite;
-    console.log(this.criteri.id_criterio)
-    this.httpCriterios.getObtenerIndicadores(this.criteri.id_criterio).subscribe(
+  cargarDatosAutomaticamente() {
+    this.listaCriterios.forEach(item => {
+      this.editar(item.id_criterio);
+      console.log("Estoy en el init " + item.id_criterio);
+    });
+  }
+
+  editar(idCriterio: any): void {
+    this.httpCriterios.getObtenerIndicadores(idCriterio).subscribe(
       data => {
         this.listaIndicadores = data;
         this.pieChartLabels = data.map((dato) => dato.nombre);
         this.valores = (data.map((dato) => dato.porc_utilida_obtenida));
-        console.log(this.valores);
-       
+        console.log('valores ' + this.valores);
+
         this.pieChartDatasets = [{
           data: this.valores
         }];
-
+        // Calculamos la suma y la guardamos en el objeto 'suma'
+        this.suma[this.listaCriterios.find(item => item.id_criterio === idCriterio).nombre] = this.valores.reduce((a, b) => a + b, 0);
       }
     )
-
-
   }
 
   //LISTAR Y MOSTRAR LOS GRAFICOS
