@@ -99,6 +99,28 @@ import { NgChartsModule } from 'ng2-charts';
 import { GraficosComponent } from './pages/autoridad/graficos/graficos.component';
 import { DashboardComponent2 } from './pages/superadmin/dashboard/dashboard.component';
 
+<<<<<<< Updated upstream
+=======
+import { MatrizEvidenciasComponent } from './pages/superadmin/modelo/matriz-evaluacion/matriz-evidencias/matriz-evidencias.component';
+import { CriterioReporteComponent } from './pages/superadmin/criterio-reporte/criterio-reporte.component';
+import { PonderacionComponent } from './pages/superadmin/ponderacion/ponderacion/ponderacion.component';
+import { PonderacionIndicadorComponent } from './pages/superadmin/ponderacion/ponderacion-indicador/ponderacion-indicador.component';
+import { PonderacionCriterioComponent } from './pages/superadmin/ponderacion/ponderacion-criterio/ponderacion-criterio.component';
+import { PonderacionModeloComponent } from './pages/superadmin/ponderacion/ponderacion-modelo/ponderacion-modelo.component';
+import { PonderacionfinalComponent } from './pages/superadmin/ponderacion/ponderacionfinal/ponderacionfinal.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ActividadCriterioModelo } from './pages/responsable/actividad-criterio-modelo/actividad-criterio-modelo.component';
+import { ActividadCriterioDetalle } from './pages/responsable/actividad-criterio-detalle/actividad-criterio-detalle.component';
+import { ActividadCriterioSubcriterio } from './pages/responsable/atividad-criterio-subcriterio/atividad-criterio-subcriterio.component';
+import { ActiviadDetalleIndicadorComponent } from './pages/responsable/actividad-detalle-indicador/actividad-detalle-indicador.component';
+import { EvidenciaAtrasadaComponent } from './pages/superadmin/evidencia-atrasada/evidencia-atrasada.component';
+import { AsignarCriterioComponent } from './pages/superadmin/modelo/detalle-modelo/asignar-criterio/asignar-criterio.component';
+import { DialogoCriterioComponent } from './pages/superadmin/modelo/dialogo-criterio/dialogo-criterio.component';
+import { DialogoModeloComponent } from './pages/superadmin/modelo/dialogo-modelo/dialogo-modelo.component';
+
+
+>>>>>>> Stashed changes
 
 
 @NgModule({
@@ -165,6 +187,24 @@ import { DashboardComponent2 } from './pages/superadmin/dashboard/dashboard.comp
     EvidenciaTareasAsginadasComponent,
     AprobarRechazarDetalleAdminComponent,
 
+<<<<<<< Updated upstream
+=======
+    MatrizEvidenciasComponent,
+
+    CriterioReporteComponent,
+    PonderacionComponent,
+    PonderacionIndicadorComponent,
+    PonderacionCriterioComponent,
+    PonderacionModeloComponent,
+    PonderacionfinalComponent,
+    ActividadCriterioModelo,
+    ActividadCriterioDetalle,
+    ActividadCriterioSubcriterio,
+    ActiviadDetalleIndicadorComponent,
+    EvidenciaAtrasadaComponent,
+    AsignarCriterioComponent,
+    CustomDatePipe
+>>>>>>> Stashed changes
 
   ],
   imports: [
@@ -200,8 +240,9 @@ import { DashboardComponent2 } from './pages/superadmin/dashboard/dashboard.comp
     MatProgressSpinnerModule,
     MatRadioModule,
     MatListModule,
-    NgChartsModule
-
+    NgChartsModule,
+    NgxChartsModule,
+    FullCalendarModule
   ],
 
   providers: [authInterceptorProviders, CriteriosService],

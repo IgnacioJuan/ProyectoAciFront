@@ -110,7 +110,7 @@ export class CrearUsuariosComponent implements OnInit {
 
   //consumir servicio de fenix para obtener datos de la persona por segundo_apellido
   public consultarPorSegundoApellido() {
-    if (this.fenix.segundo_apellido == null || this.fenix.segundo_apellido == '') {
+    if (this.fenix.primer_nombre == null || this.fenix.segundo_apellido == '') {
       Swal.fire('Error', 'Debe ingresar un apellido', 'error');
       return;
     }

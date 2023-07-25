@@ -27,6 +27,7 @@
 
 </mat-toolbar>
 <mat-dialog-content>
+<<<<<<< Updated upstream
 
 <!-- Modal de notificaciones -->
 <mat-dialog [ngClass]="{'show': showNotificationsModal}" *ngIf="showNotificationsModal" (closed)="closeNotifications()" aria-label="Notificaciones" style="max-width: 300px; max-height: 400px;width: 100%; position: absolute; top: 60px; right: 75px; background-color: white;overflow-y: auto;">
@@ -44,3 +45,47 @@
     <p *ngIf="!notificaciones || notificaciones.length === 0">No hay notificaciones</p>
   </mat-dialog-content>
 </mat-dialog>
+=======
+  <!-- Modal de notificaciones -->
+  <mat-dialog
+    [ngClass]="{ show: showNotificationsModal }"
+    *ngIf="showNotificationsModal"
+    (closed)="closeNotifications()"
+    aria-label="Notificaciones"
+    style="
+      max-width: 300px;
+      max-height: 400px;
+      width: 100%;
+      position: fixed;
+      top: 60px;
+      right: 75px;
+      border-radius: 4px; /* Valor de redondez deseado */
+      background-color: white;
+      border: 0.5px solid #ccc; /* Añade un borde morado al contenedor */
+      overflow-y: auto;
+      z-index: 9999; /* Establecer un alto valor de z-index para que se superponga a los demás elementos */
+    "
+  >
+    <h2  style="margin-top: 10px;margin-left: 25px;position: sticky;">Notificaciones</h2>
+    <mat-dialog-content style="padding: 10px">
+      <ul *ngIf="notificaciones && notificaciones.length > 0">
+        <li *ngFor="let notificacion of notificaciones">
+          <div>
+            {{ notificacion.mensaje }}
+          </div>
+          <br />
+          <div>
+            <i class="far fa-clock mr-1"></i
+            >{{ notificacion.fecha | date : "dd MMM. 'a las' hh:mm a" }}
+          </div>
+          <hr class="divider" />
+         
+        </li>
+      </ul>
+      <p *ngIf="!notificaciones || notificaciones.length === 0">
+        No hay notificaciones
+      </p>
+    </mat-dialog-content>
+  </mat-dialog></mat-dialog-content
+>
+>>>>>>> Stashed changes

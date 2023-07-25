@@ -16,12 +16,57 @@
     <!-- /.container-fluid -->
 </section>
 <!-- Main content -->
+<h3 class="card-title">Calendario de Actividades</h3>
+<div class="container">
+<div class="calendar-container">
+    <full-calendar [options]="calendarOptions"></full-calendar>
+  </div>
+  <!-- imagen -->
+  <div class="image-container">
+    <img src="./assets/uista.png" alt="Logo">
+</div> 
+<!-- Mostrar grafica prueba -->
+<div class="main">
+    <div class="cards">
+        <div class="card" *ngFor="let item of listaCriterios" [style.backgroundColor]="getColor(item)">
+            <div class="card-content">
+              <div class="card-name" style="color: black;">{{ item.id_criterio }}. {{ item.nombre }}</div>
+            </div>
+            <div class="icon-box">
+                <div class="icon-box">
+                    <i class="fas fa-cog fa-spin fa-3x"></i>
+                    <div class="percentage">{{ suma[item.nombre] }}%</div>
+                  </div>
+              </div>
+              <div class="bar-container">
+                <div class="bar" [style.width]="getPorcentaje(suma[item.nombre])" [style.backgroundColor]="getColorp(suma[item.nombre])"></div>
+              </div>
+          </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+<script src="chart1.js"></script>
+<script src="chart2.js"></script>
+  <!--fin del grafico  -->
+  <!-- Grafica de barras -->
+  <div class="chart-container">
+    <ngx-charts-bar-vertical
+  [view]="[width, height]"
+  [scheme]="colorScheme"
+  [results]="datos"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [gradient]="gradient"
+  (select)="onSelect($event)">
+</ngx-charts-bar-vertical>
 
-
-<div class="content">
+  </div>
+  
+  
+<!-- <div class="content">
 
     <div class="container-fluid">
 
+<<<<<<< Updated upstream
         <!-- row Tarjetas Informativas -->
         <div class="row">
 
@@ -130,6 +175,8 @@
         </div> <!-- ./row Tarjetas Informativas -->
 
         <!-- row Grafico de barras y doughnut-->
+=======
+>>>>>>> Stashed changes
 
         <div class="row">
             <div class="col-12">
@@ -145,19 +192,21 @@
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
+<<<<<<< Updated upstream
                             <button type="button" class="btn btn-tool" data-card-widget="remove">
                                 <i class="fas fa-times"></i>
                             </button>
+=======
+                            
+>>>>>>> Stashed changes
 
-                        </div> <!-- ./ end card-tools -->
-                    </div> <!-- ./ end card-header -->
+                        </div>
+                    </div> 
 
 
                     <div class="card-body">
 
                         <div class="chart">
-
-                            <!--VISTAS DE CRITERIOS-->
 
                             <div class="container">
                                 <div class="row">
@@ -194,16 +243,10 @@
                                 </div>
 
                             </div>
-                            <!--FIN DE VISTA DE CRITERIO-->
-
-                            <!-- <canvas id="barChart"
-                                style="min-height: 250px; height: 300px; max-height: 350px; width: 100%;">
-
-                            </canvas> -->
 
                         </div>
 
-                    </div> <!-- ./ end card-body -->
+                    </div> 
 
                 </div>
 
@@ -226,25 +269,29 @@
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
+<<<<<<< Updated upstream
                             <button type="button" class="btn btn-tool" data-card-widget="remove">
                                 <i class="fas fa-times"></i>
                             </button>
+=======
+
+>>>>>>> Stashed changes
 
                         </div>
-                        <!-- ./ end card-tools -->
+      
 
                     </div>
-                    <!-- ./ end card-header -->
+
 
 
                     <div class="card-body">
 
-                        <!--PARA MOSTRAR EL PORCENTAJE DE LA ACTIVIDAD-->
+
                         <div class="table-responsive">
                             <table class="table" id="tbl_productos_poco_stock">
                                 <thead>
                                     <tr class="text-danger text-center">
-                                        <!-- <th>Cod. producto</th> -->
+               
                                         <th>Nombre</th>
                                         <th class="text-center">Descripción</th>
                                         <th class="text-center">Acción</th>
@@ -265,7 +312,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!--FIN PARA MOSTRAR-->
+
 
                         <div class="chart">
 
@@ -275,16 +322,13 @@
                         </div>
 
                     </div>
-                    <!-- ./ end card-body -->
 
                 </div>
 
             </div>
 
         </div>
-        <!-- ./row Grafico de barras y doughnut -->
 
-        <!-- Productos mas vendidos y con poco stock -->
         <div class="row">
             <div class="col-lg-6">
                 <div class="card card-gray shadow">
@@ -294,11 +338,17 @@
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
+<<<<<<< Updated upstream
                             <button type="button" class="btn btn-tool" data-card-widget="remove">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div> <!-- ./ end card-tools -->
                     </div> <!-- ./ end card-header -->
+=======
+                          
+                        </div> 
+                    </div> 
+>>>>>>> Stashed changes
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table" id="tbl_productos_mas_vendidos">
@@ -319,9 +369,16 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div> <!-- ./ end card-body -->
+                    </div> 
                 </div>
             </div>
+<<<<<<< Updated upstream
+=======
+            
+        </div>
+    -->
+        <div class="row">
+>>>>>>> Stashed changes
             <div class="col-lg-6">
                 <div class="card card-gray shadow">
                     <div class="card-header">
@@ -330,6 +387,7 @@
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
+<<<<<<< Updated upstream
                             <button type="button" class="btn btn-tool" data-card-widget="remove">
                                 <i class="fas fa-times"></i>
                             </button>
@@ -354,19 +412,83 @@
                                     </tr>
                                 </tbody>
                             </table>
+=======
+                            
+                    </div> 
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div class="container" (click)="  getButtonCriterio2() " style="width: 35rem; height: 500px;">
+                                <div class="card" style="width: 35rem; height: 500px; align-items:flex-start;
+                                display: flex;
+                                justify-content: center;" style="background-color: rgb(233, 227, 227); ">
+                                    <div style="align-content: center; background-color: rgb(236, 235, 235);" class="card-body">
+                            
+                                        <div style="display: block; align-items: center; align-content: center;">
+                                           
+                            
+                                            <canvas baseChart [data]="barChartData" [options]="barChartOptions" [plugins]="barChartPlugins"
+                                                [legend]="barChartLegend" [type]="'bar'">
+                                            </canvas>
+                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+>>>>>>> Stashed changes
                         </div>
-                    </div> <!-- ./ end card-body -->
+                    </div> 
                 </div>
             </div>
         </div>
 
-    </div><!-- /.container-fluid -->
+    </div>
 
 
 
-</div>
+</div> 
 <!-- /.content -->
 
+<<<<<<< Updated upstream
+=======
+
+
+
+
+<!-- <mat-card class="floating-card">
+ 
+    <div style="align-content: center;" class="card-body">
+        <canvas baseChart [type]="'pie'" [datasets]="pieChartDatasets" [labels]="pieChartLabels"
+            [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+        </canvas>
+    </div>
+</mat-card> -->
+
+<!-- <mat-card class="floating-card2">
+    <div style="align-content: center;" class="card-body">
+        <h1 style="align-content: center;">DATOS DEL RESPONSABLE</h1>
+        <div class="container">
+            <div style="display: flex;">
+                <p><Strong> Cedula: </Strong> </p>
+                <p style="margin-left: 5px;">{{persona.cedula}}</p>
+            </div>
+            <div style="display: flex;">
+                <p><Strong> Nombres: </Strong> </p>
+                <p style="margin-left: 5px;">{{persona.primer_nombre}} {{persona.primer_apellido}}</p>
+            </div>
+            <div style="display: flex;">
+                <p><Strong>Correo: </Strong> </p>
+                <p style="margin-left: 5px;">{{persona.correo}}</p>
+            </div>
+            <div style="display: flex;">
+                <p><Strong>Numero Celular: </Strong> </p>
+                <p style="margin-left: 5px;">{{persona.celular}}</p>
+            </div>
+        </div>
+    </div>
+</mat-card> -->
+
+
+>>>>>>> Stashed changes
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
