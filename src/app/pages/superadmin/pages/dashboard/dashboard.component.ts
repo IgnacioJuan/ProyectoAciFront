@@ -160,7 +160,6 @@ constructor(private services: ActividadService,
       this.cargarDatosAutomaticamente();
     });
   }
-
   //Mi codigo
 
 calendarOptions: CalendarOptions = {
@@ -227,8 +226,33 @@ getColor(item: any): string {
         }];
         // Calculamos la suma y la guardamos en el objeto 'suma'
         this.suma[this.listaCriterios.find(item => item.id_criterio === idCriterio).nombre] = this.valores.reduce((a, b) => a + b, 0);
+        this.datos = this.listaCriterios.map(item => ({
+          name: item.nombre, // Nombre del evento
+          value: this.suma[item.nombre] || 0 // Porcentaje obtenido (suma, si no existe, se muestra 0)
+        }));
       }
     )
+
+
+  }
+
+  //valor porcentaje
+  getPorcentaje(value: number): string {
+    const porcentaje = Math.min(Math.max(value || 0, 0), 1);
+    return (porcentaje * 100).toFixed(2) + '%';
+  }
+  //color de barra
+  getColorp(value: number): string {
+    if (value >= 0.75) {
+      //verde
+      return '#4caf50';
+    } else if (value >= 0.4) {
+      //amarillo
+      return '#ffc107';
+    } else {
+      //rojo
+      return '#f44336';
+    }
   }
 
   //LISTAR Y MOSTRAR LOS GRAFICOS
