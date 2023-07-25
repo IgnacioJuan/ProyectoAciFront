@@ -56,7 +56,7 @@ export class ActividadesResponsableComponent implements OnInit {
     this.evi = data;
     if (this.evi == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
 
     this.isLoggedIn = this.login.isLoggedIn();

@@ -1,41 +1,13 @@
 
-import { UserDashboardComponent } from './pages/user/user-dashboard/user-dashboard.component';
-import { LoginComponent } from './pages/login/login.component';
-import { SignupComponent } from './pages/signup/signup.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
-import { SuperGuard } from './services/Guards/super.guard';
-import { RoleguardGuard } from './services/Guards/roleguard.guard';
-import { UserProfileComponent } from './pages/user/user-profile/user-profile.component';
-import { FenixComponent } from './pages/fenix/fenix.component';
+import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
 
 
 const routes: Routes = [
 
-  {
-    path: '',
-    component: LoginComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: 'signup',
-    component: SignupComponent,
-    pathMatch: 'full'
-  },
-
-  {
-    path: 'login',
-    component: LoginComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: 'user-dashboard',
-    component: UserDashboardComponent,
-    pathMatch: 'full',
-    canActivate: [RoleguardGuard],
-    data: { allowedRoles: ['RESPONSABLE', 'SUPERADMIN', 'ADMIN', 'AUTORIDAD'] }
-  },
+  
+  
   
 
   //PATHS DE ADMINISTRADOR
@@ -53,15 +25,6 @@ const routes: Routes = [
   },
   
 
-
-  
-  {
-    path: 'buscar',
-    component: FenixComponent,
-    pathMatch: 'full',
-    canActivate: [SuperGuard]
-  },
- 
   
   
   //PATHS DE RESPONSABLE
@@ -81,13 +44,9 @@ const routes: Routes = [
   
   //Otros Paths
   {
-    path: 'userprofile',
-    component: UserProfileComponent,
-    pathMatch: 'full',
-    canActivate: [RoleguardGuard],
-    data: { allowedRoles: ['RESPONSABLE', 'SUPERADMIN', 'ADMIN', 'AUTORIDAD'] }
+    path: 'use',
+    loadChildren: () => import("./pages/user/user.module").then(m => m.UserModule)
   },
-  
   {
     path: 'pagenotfoud',
     component: PageNotFoundComponent
@@ -95,7 +54,8 @@ const routes: Routes = [
   {
     path: '**',
     component: PageNotFoundComponent
-  }
+  },
+  
 ];
 
 @NgModule({

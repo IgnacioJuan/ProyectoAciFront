@@ -73,14 +73,14 @@ export class EvidenciasResponComponent implements OnInit {
     this.activ = data;
     if (this.activ == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
 
     const datos = history.state.data;
     this.archi = data;
     if (this.archi == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();

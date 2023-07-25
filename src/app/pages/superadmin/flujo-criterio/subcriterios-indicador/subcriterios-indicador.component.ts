@@ -35,7 +35,7 @@ export class SubcriteriosIndicadorComponent {
     this.subcriterio = history.state.data;
     if (this.subcriterio == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
     this.listar()
   }

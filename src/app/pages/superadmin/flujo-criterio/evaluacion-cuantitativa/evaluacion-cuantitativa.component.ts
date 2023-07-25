@@ -47,7 +47,7 @@ export class EvaluacionCuantitativaComponent implements OnInit {
     this.indicador = history.state.data;
     if (this.indicador == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
     this.findEncabezado();
 

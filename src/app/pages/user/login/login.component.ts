@@ -1,8 +1,8 @@
 import { Router } from '@angular/router';
-import { LoginService } from './../../services/login.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (this.loginService.isLoggedIn()) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
   }
 
@@ -58,28 +58,28 @@ export class LoginComponent implements OnInit {
               //dashboard admin
               //window.location.href = '/adm/admin';
               this.router.navigate(['user-dashboard']);
-              location.replace('/user-dashboard');
+              location.replace('/use/user-dashboard');
               this.loginService.loginStatusSubjec.next(true);
             }
             else if (this.loginService.getUserRole() == 'RESPONSABLE') {
               //user dashboard
-              //window.location.href = '/user-dashboard';
+              //window.location.href = '/use/user-dashboard';
               this.router.navigate(['user-dashboard']);
-              location.replace('/user-dashboard');
+              location.replace('/use/user-dashboard');
               this.loginService.loginStatusSubjec.next(true);
             }
             else if (this.loginService.getUserRole() == 'SUPERADMIN') {
               //user dashboard
-              //window.location.href = '/user-dashboard';
+              //window.location.href = '/use/user-dashboard';
               this.router.navigate(['dashboard']);
               location.replace('/sup/dashboard');
               this.loginService.loginStatusSubjec.next(true);
             }
             else if (this.loginService.getUserRole() == 'AUTORIDAD') {
               //user dashboard
-              //window.location.href = '/user-dashboard';
+              //window.location.href = '/use/user-dashboard';
               this.router.navigate(['user-dashboard']);
-              location.replace('/user-dashboard');
+              location.replace('/use/user-dashboard');
               this.loginService.loginStatusSubjec.next(true);
               window.location.reload();
             }

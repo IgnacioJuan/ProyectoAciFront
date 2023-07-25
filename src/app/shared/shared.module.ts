@@ -29,8 +29,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { NgChartsModule } from 'ng2-charts';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 @NgModule({
-  declarations: [BuscarPipe,BuscarUsuarioPipe],
+  declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -65,6 +67,8 @@ import { HttpClientModule } from '@angular/common/http';
   exports: [
     BuscarPipe,
     BuscarUsuarioPipe,
+    PageNotFoundComponent,
+
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,

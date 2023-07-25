@@ -42,7 +42,7 @@ export class SiderbarComponent implements OnInit {
 
   public logout() {
     this.login.logout();
-    location.replace('/login');
+    location.replace('/use/login');
   }
 
   cargar() {

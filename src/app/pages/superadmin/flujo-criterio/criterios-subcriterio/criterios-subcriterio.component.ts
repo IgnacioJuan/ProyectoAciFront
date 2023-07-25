@@ -32,7 +32,7 @@ export class CriteriosSubcriterioComponent implements OnInit {
     this.criterio = data;
     if (this.criterio == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
     this.listar()
   }
