@@ -82,7 +82,7 @@ export class DetalleModeloComponent implements OnInit {
 
   pond(fecha: Date) {
 
-    this.router.navigate(['/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
+    this.router.navigate(['/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
   }
 
   constructor(
@@ -148,14 +148,14 @@ export class DetalleModeloComponent implements OnInit {
     localStorage.setItem("id", modelo.id_modelo.toString());
     console.log(modelo.id_modelo)
     this.model = modelo;
-    this.router.navigate(['/ponderacion-modelo']);
+    this.router.navigate(['/ponderacion/ponderacion-modelo']);
 
 
   }
   ponderacionCriterio(event: Event, element: any) {
     event.stopPropagation();
     // código del método del botón
-    this.router.navigate(['/ponderacion-criterio'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
+    this.router.navigate(['/ponderacion/ponderacion-criterio'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
   }
 
   mostrar(element: any) {

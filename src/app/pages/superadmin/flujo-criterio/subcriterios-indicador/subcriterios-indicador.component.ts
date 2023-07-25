@@ -136,16 +136,16 @@ export class SubcriteriosIndicadorComponent {
       });
   }
   verEvaluacion(indicador: any) {
-      this.router.navigate(['/evaluacion-cuantitativa'], { state: { data: indicador } });
+      this.router.navigate(['/flujo-criterio/evaluacion-cuantitativa'], { state: { data: indicador } });
   }
   verEvidencias(indicador: any) {
-    this.router.navigate(['/indicador-evidencia'], { state: { data: indicador } });
+    this.router.navigate(['/flujo-criterio/indicador-evidencia'], { state: { data: indicador } });
   }
   verSubcriterios() {
-    this.router.navigate(['/criterios-subcriterio'], { state: { data: this.subcriterio.criterio } });
+    this.router.navigate(['/flujo-criterio/criterios-subcriterio'], { state: { data: this.subcriterio.criterio } });
   }
   verCriterios() {
-    this.router.navigate(['/criterioSuper']);
+    this.router.navigate(['/flujo-criterio/criterioSuper']);
   }
 
 

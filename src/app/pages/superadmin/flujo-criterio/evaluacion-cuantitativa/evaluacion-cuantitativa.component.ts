@@ -438,13 +438,13 @@ export class EvaluacionCuantitativaComponent implements OnInit {
     })
   }
   verIndicadores() {
-    this.router.navigate(['/subcriterios-indicador'], { state: { data: this.indicador.subcriterio } });
+    this.router.navigate(['/flujo-criterio/subcriterios-indicador'], { state: { data: this.indicador.subcriterio } });
   }
   verSubcriterios() {
-    this.router.navigate(['/criterios-subcriterio'], { state: { data: this.indicador.subcriterio?.criterio } });
+    this.router.navigate(['/flujo-criterio/criterios-subcriterio'], { state: { data: this.indicador.subcriterio?.criterio } });
   }
   verCriterios() {
-    this.router.navigate(['/criterioSuper']);
+    this.router.navigate(['/flujo-criterio/criterioSuper']);
   }
   irCuantitativas() {
     this.router.navigate(['/cuantitativa']);

@@ -124,7 +124,7 @@ export class CriteriosComponent implements OnInit {
   }
 
   verDetalles(criterio: any) {
-    this.router.navigate(['/criterios-subcriterio'], { state: { data: criterio } });
+    this.router.navigate(['/flujo-criterio/criterios-subcriterio'], { state: { data: criterio } });
   }
 
   lista_subcriterios: any[] = [];

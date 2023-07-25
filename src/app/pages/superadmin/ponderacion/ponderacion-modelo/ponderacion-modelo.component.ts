@@ -296,7 +296,7 @@ export class PonderacionModeloComponent implements OnInit {
                   background: "#63B68B",
                 });
                 
-                this.router.navigate(['/ponderacion-final']);
+                this.router.navigate(['/ponderacion/ponderacion-final']);
                 // Recargar la página después de guardar los datos en la API
                 window.location.reload();
 
