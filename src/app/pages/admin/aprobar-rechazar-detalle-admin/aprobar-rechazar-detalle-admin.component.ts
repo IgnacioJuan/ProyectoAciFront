@@ -425,7 +425,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/apruebaAdmin']);
+    this.router.navigate(['/adm/apruebaAdmin']);
   }
 
   Aprobado() {

@@ -40,7 +40,7 @@ const routes: Routes = [
 
   //PATHS DE ADMINISTRADOR
   {
-    path: '',
+    path: 'adm',
     loadChildren: () => import("./pages/admin/admin.module").then(m => m.AdminModule)
   },
   

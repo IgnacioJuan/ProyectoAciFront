@@ -78,7 +78,7 @@ export class NavbarComponent implements OnInit {
   }
 
   perfil() {
-    location.replace('/admin');
+    location.replace('/adm/admin');
   }
 
 

@@ -11,24 +11,24 @@ export class SidebarService {
       icono: 'nav-icon fas fa-users',
       titulo: "Asignación",
       submenu: [
-        { titulo: 'Asignar Evidencia', url: 'asignaEvidencia', icono: 'fas fa-check-square' }
+        { titulo: 'Asignar Evidencia', url: 'adm/asignaEvidencia', icono: 'fas fa-check-square' }
       ]
     },
     {
       icono: 'nav-icon fas fa-eye',
       titulo: "Observación",
       submenu: [
-        { titulo: ' Agregar observación ', url: 'observaciones', icono: 'fas fa-cubes' }
+        { titulo: ' Agregar observación ', url: 'sup/observaciones', icono: 'fas fa-cubes' }
       ]
     },
     {
       icono: 'nav-icon fas fa-solid fa-list',
       titulo: "Criterio",
       submenu: [
-        { titulo: 'Lista de Criterios', url: 'criterios', icono: 'fas fa-cubes' },
-        { titulo: 'Lista de Subcriterios', url: 'subcriterios', icono: 'fas fa-cubes' },
-        { titulo: 'Lista de Indicadores', url: 'indicadores', icono: 'fas fa-cubes' },
-        { titulo: 'Reporte de Criterios', url: 'criterio_reporte', icono: 'fas fa-cubes' }
+        { titulo: 'Lista de Criterios', url: 'adm/criterios', icono: 'fas fa-cubes' },
+        { titulo: 'Lista de Subcriterios', url: 'adm/subcriterios', icono: 'fas fa-cubes' },
+        { titulo: 'Lista de Indicadores', url: 'adm/indicadores', icono: 'fas fa-cubes' },
+        { titulo: 'Reporte de Criterios', url: 'sup/criterio_reporte', icono: 'fas fa-cubes' }
       ]
     },
 
@@ -36,8 +36,8 @@ export class SidebarService {
       icono: 'nav-icon fas fa-exclamation-circle',
       titulo: "Revisión  ",
       submenu: [
-        { titulo: 'Aprobar o rechazar evidencias', url: 'apruebaAdmin', icono: 'fas fa-times-circle' },
-        { titulo: 'Actividades Rechazadas', url: 'actividad-rechazada', icono: 'fas fa-cubes' }
+        { titulo: 'Aprobar o rechazar evidencias', url: 'adm/apruebaAdmin', icono: 'fas fa-times-circle' },
+        { titulo: 'Actividades Rechazadas', url: 'sup/actividad-rechazada', icono: 'fas fa-cubes' }
 
       ]
     },
