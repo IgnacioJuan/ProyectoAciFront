@@ -11,15 +11,45 @@
     <!-- /.container-fluid -->
 </section>
 <!-- grafica  -->
-<div *ngIf="listaCriterios">
-    <div class="card" *ngFor="let item of listaCriterios" [style.backgroundColor]="getColor(item)">
-      <div class="card-content">
-        <div class="card-name" style="color: black;">{{ item.id_criterio }}. {{ item.nombre }}</div>
-        <div class="card-content">{{ suma[item.nombre] || 0 }}</div>
-      </div>
-    </div>
+<h3 class="card-title">Calendario de Actividades</h3>
+<div class="container">
+<div class="calendar-container">
+    <full-calendar [options]="calendarOptions"></full-calendar>
   </div>
-  
+  <!-- imagen -->
+  <div class="image-container">
+    <img src="./assets/uista.png" alt="Logo">
+</div> 
+<!-- Mostrar grafica prueba -->
+<div class="main">
+    <div class="cards">
+        <div class="card" *ngFor="let item of listaCriterios" [style.backgroundColor]="getColor(item)">
+            <div class="card-content">
+              <div class="card-name" style="color: black;">{{ item.id_criterio }}. {{ item.nombre }}</div>
+            </div>
+            <div class="icon-box">
+                <div class="icon-box">
+                    <i class="fas fa-cog fa-spin fa-3x"></i>
+                    <div class="percentage">{{ suma[item.nombre] }}%</div>
+                  </div>
+              </div>
+              <div class="bar-container">
+                <div class="bar" [style.width]="getPorcentaje(suma[item.nombre])" [style.backgroundColor]="getColorp(suma[item.nombre])"></div>
+              </div>
+          </div>
+</div>
+<div class="chart-container">
+    <ngx-charts-bar-vertical
+  [view]="[width, height]"
+  [scheme]="colorScheme"
+  [results]="datos"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [gradient]="gradient"
+  (select)="onSelect($event)">
+</ngx-charts-bar-vertical>
+
+  </div>
 
         <!-- Productos mas vendidos y con poco stock -->
         <div class="row">
