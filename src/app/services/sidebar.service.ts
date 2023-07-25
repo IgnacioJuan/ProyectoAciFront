@@ -149,14 +149,14 @@ export class SidebarService {
       icono: 'nav-icon fas fa-solid fa-running',
       titulo: "Actividades",
       submenu: [
-        { titulo: 'Actividades Completadas', url: 'consulta', icono: 'fas fa-cubes' }
+        { titulo: 'Actividades Completadas', url: 'aut/consulta', icono: 'fas fa-cubes' }
       ]
     },
     {
       icono: 'nav-icon fas fa-solid fa-list',
       titulo: "Responsable",
       submenu: [
-        { titulo: 'Lista de Responsable', url: 'actividad_auto', icono: 'fas fa-cubes' }
+        { titulo: 'Lista de Responsable', url: 'aut/actividad_auto', icono: 'fas fa-cubes' }
 
       ]
     }
@@ -166,8 +166,8 @@ export class SidebarService {
       icono: 'nav-icon fas fa-file-pdf',
       titulo: "Reportes",
       submenu: [
-        { titulo: 'Lista de Modelos', url: 'graficosAutor', icono: 'fas fa-cubes' },
-        { titulo: 'Reporte de Criterios', url: 'criterio_reporte', icono: 'fas fa-cubes' }
+        { titulo: 'Lista de Modelos', url: 'aut/graficosAutor', icono: 'fas fa-cubes' },
+        { titulo: 'Reporte de Criterios', url: 'sup/criterio_reporte', icono: 'fas fa-cubes' }
       ]
     }
   ]
