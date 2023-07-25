@@ -1,0 +1,326 @@
+<body>
+  <div class="container bg-light border border-start-0 rounded-4">
+    <blockquote class="blockquote text-dark" style="margin-top: 5%">
+      <h1 style="text-transform: uppercase">
+        <strong
+          ><a style="cursor: pointer;" (click)="verCriterios()">LISTADO CRITERIOS </a>
+          >
+          <a style="cursor: pointer;" (click)="verSubcriterios()">{{ subcriterio.criterio?.nombre }} </a>
+          >
+          <a>{{ subcriterio.nombre }}</a></strong
+        >
+      </h1>
+    </blockquote>
+    <div class="card">
+      <div class="card-body">
+        <div role="search" id="buscar">
+          <div class="input-group">
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Buscar"
+              aria-label="Search"
+              [(ngModel)]="searchText"
+            />
+          </div>
+
+          <br />
+        </div>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#materiaModal"
+        >
+          CREAR NUEVO INDICADOR
+        </button>
+
+        <br />
+        <br />
+        <div
+          class="mat-elevation-z8 table-responsive"
+          style="margin-bottom: 5%"
+        >
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NOMBRE</th>
+              <th>DESCRIPCION</th>
+              <th>PESO</th>
+              <th>ESTANDAR</th>
+              <th>TIPO</th>
+              <th>EVALUACION</th>
+              <th>EVIDENCIAS</th>
+              <th>ACCION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let indicador of indicadors | buscar : searchText">
+              <td>{{ indicador.id_indicador }}</td>
+              <td>{{ indicador.nombre }}</td>
+              <td>{{ indicador.descripcion }}</td>
+              <td>{{ indicador.peso }}</td>
+              <td>{{ indicador.estandar }}</td>
+
+              <td>{{ indicador.tipo }}</td>
+              <td>
+                <button
+                  class="btn btn-primary"
+                  role="button"
+                  (click)="verEvaluacion(indicador)"
+                  *ngIf="indicador.tipo !== 'cualitativa'"
+                >
+                  <div class="d-flex">
+                    <i class="fa fa-cog"></i>
+                  </div>
+                </button>
+              </td>
+              <td>
+                <button
+                  class="btn btn-primary"
+                  role="button"
+                  (click)="verEvidencias(indicador)"
+                >
+                  <span class="badge">{{
+                    getEvidenciaPorIndicador(indicador)
+                  }}</span>
+                  <i class="fa fa-folder-open"></i>
+                </button>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    style="margin-right: 5%"
+                    data-bs-toggle="modal"
+                    data-bs-target="#materiaModal"
+                    (click)="editDatos(indicador)"
+                  >
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger"
+                    style="background-color: red"
+                    role="button"
+                    (click)="eliminar(indicador)"
+                  >
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div
+          class="modal fade"
+          id="materiaModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+          (hidden.bs.modal)="limpiarFormulario()"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-blue">
+                <h3 class="modal-title">
+                  <i class="fas fa-clipboard"></i> Indicador
+                </h3>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <form
+                  [formGroup]="frmIndicador"
+                  (ngSubmit)="guardar()"
+                  id="formulario"
+                >
+                  <div>
+                    <label for="nombre">Nombre:</label>
+                    <input
+                      class="form-control"
+                      formControlName="nombre"
+                      type="text"
+                      id="nombre"
+                      name="nombre"
+                      style="margin-bottom: 10px"
+                    />
+                    <div
+                      class="alert alert-danger"
+                      *ngIf="
+                        frmIndicador.controls['nombre'].invalid &&
+                        frmIndicador.controls['nombre'].touched
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          frmIndicador.controls['nombre'].hasError('required')
+                        "
+                      >
+                        Debe ingresar un nombre
+                      </div>
+                    </div>
+                    <label for="descripcion">Descripción:</label>
+                    <textarea
+                      class="form-control"
+                      formControlName="descripcion"
+                      id="descripcion"
+                      name="descripcion"
+                      style="margin-bottom: 10px"
+                    ></textarea>
+                    <div
+                      class="alert alert-danger"
+                      *ngIf="
+                        frmIndicador.controls['descripcion'].invalid &&
+                        frmIndicador.controls['descripcion'].touched
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          frmIndicador.controls['descripcion'].hasError(
+                            'required'
+                          )
+                        "
+                      >
+                        La descripcion no puede estar vacia
+                      </div>
+                      <div
+                        *ngIf="
+                          frmIndicador.controls['descripcion'].hasError(
+                            'maxlength'
+                          )
+                        "
+                      >
+                        Excedio el numero de caracteres permitido
+                      </div>
+                    </div>
+
+                    <label for="peso">Peso:</label>
+                    <input
+                      class="form-control"
+                      formControlName="peso"
+                      type="number"
+                      id="peso"
+                      name="peso"
+                      style="margin-bottom: 10px"
+                    />
+                    <div
+                      class="alert alert-danger"
+                      *ngIf="
+                        frmIndicador.controls['peso'].invalid &&
+                        frmIndicador.controls['peso'].touched
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          frmIndicador.controls['peso'].hasError('required')
+                        "
+                      >
+                        Debe ingresar un peso
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="tipo">Tipo:</label>
+                      <select
+                        class="form-control"
+                        formControlName="tipo"
+                        id="tipo"
+                        name="tipo"
+                        [(ngModel)]="selectedTipo"
+                      >
+                        <option value="cualitativa">Cualitativa</option>
+                        <option value="cuantitativa">Cuantitativa</option>
+                      </select>
+                      <div
+                        class="alert alert-danger"
+                        *ngIf="
+                          frmIndicador.controls['tipo'].invalid &&
+                          frmIndicador.controls['tipo'].touched
+                        "
+                      >
+                        <div
+                          *ngIf="
+                            frmIndicador.controls['tipo'].hasError('required')
+                          "
+                        >
+                          Debe ingresar un tipo
+                        </div>
+                      </div>
+                    </div>
+
+                    <label for="peso" *ngIf="selectedTipo === 'cuantitativa'"
+                      >Estandar:</label
+                    >
+                    <input
+                      class="form-control"
+                      formControlName="estandar"
+                      type="number"
+                      id="estandar"
+                      name="estandar"
+                      style="margin-bottom: 10px"
+                      *ngIf="selectedTipo === 'cuantitativa'"
+                    />
+                    <div
+                      class="alert alert-danger"
+                      *ngIf="
+                        frmIndicador.controls['estandar'].invalid &&
+                        frmIndicador.controls['estandar'].touched &&
+                        selectedTipo === 'cuantitativa'
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          frmIndicador.controls['estandar'].hasError('required')
+                        "
+                      >
+                        Debe ingresar un estandar
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    form="formulario"
+                    class="btn btn-warning"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    form="formulario"
+                    *ngIf="!indic.id_indicador"
+                    data-dismiss="modal"
+                    data-bs-dismiss="modal"
+                    [disabled]="!frmIndicador.valid || (selectedTipo === 'cuantitativa' && !frmIndicador.controls['estandar'].value)"
+                    >
+                    Agregar
+                  </button>
+                  <button
+                    class="btn btn-primary"
+                    *ngIf="indic.id_indicador"
+                    data-dismiss="modal"
+                    data-bs-dismiss="modal"
+                    (click)="actualizar()"
+                    [disabled]="!frmIndicador.valid"
+                  >
+                    Actualizar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

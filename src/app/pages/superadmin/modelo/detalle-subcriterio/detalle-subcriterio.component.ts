@@ -33,43 +33,48 @@ asignacion: any;
     public modeloService:ModeloService
     
   ) {
-    this.frmSubcriterio = fb.group({
-      nombre: ['', Validators.required],
-      descripcion: ['', [Validators.required, Validators.maxLength(250)]]
-    })
+    
   }
   criterio: Criterio = new Criterio();
   model:Modelo=new Modelo();
   modelo: Modelo = new Modelo();
-  subcriterios: Subcriterio[] = [];
   
+  subcrite= new Subcriterio();
   ngOnInit() {
     const data = history.state.data;
     console.log(data); // aquí tendrías el objeto `subcriterio` de la fila seleccionada.
     this.criterio = data;
-    
+  
     let id = localStorage.getItem("id");
+  
    
-    this.modeloService.getModeloById(Number(id)).subscribe(modelo => {
-      this.modelo = modelo;
-     
+     // Recuperar el estado almacenado al recargar la página
+     const savedState = sessionStorage.getItem('savedState');
+     if (savedState) {
+       this.dataSource = JSON.parse(savedState);
+    
+     } else {
       this.recibeSubcriterio();
-    });
+     }
+     this.recibeSubcriterio();
+    
   }
 
   buscar = '';
   @ViewChild('datosModalRef') datosModalRef: any;
   miModal!: ElementRef;
-  public subcrite = new Subcriterio();
   
-  frmSubcriterio: FormGroup;
+  
+ 
  
 recibeSubcriterio() {
     
-    let id = localStorage.getItem("id");
-    this.modeloService.getModeloById(Number(id)).subscribe(data => {
-      this.model = data;
-      this.sharedDataService.obtenerIdCriterio();
+  let id = localStorage.getItem("id");
+  this.modeloService.getModeloById(Number(id)).subscribe(data => {
+    this.model = data;
+    
+      
+      
       this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(id)).subscribe(info => {
         this.subcriterioservice.getSubcriterios().subscribe(result => {
           this.dataSource = [];
@@ -81,25 +86,32 @@ recibeSubcriterio() {
             });
           });
           console.log(this.dataSource);
+          localStorage.setItem("subcriterios", JSON.stringify(this.dataSource));
         });
       });
+   
     });
   }
 
   
 
  
-  verDetalles (element: any) {
+  verIndicadores (element:any) {
+   
+
+    
     console.log(element);
     this.sharedDataService.mostaridSubcriterio(element.id_subcriterio);
-    this.router.navigate(['/detalle-indicador']);
+    
+  
+    this.router.navigate(['/sup/modelo/detalle-indicador']);
   }
 
 
 
  
   verCriterios() {
-    this.router.navigate(['/criterioSuper']);
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
 

@@ -1,6 +1,6 @@
 import { Evidencia } from 'src/app/models/Evidencia';
 import { Archivo } from './../../../models/Archivo';
-import { Actividades } from './../../../services/actividades';
+import { Actividades } from './../../../models/actividades';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActividadService } from 'src/app/services/actividad.service';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
@@ -9,6 +9,8 @@ import Swal from 'sweetalert2';
 import { LoginService } from 'src/app/services/login.service';
 import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
+import { ModeloService } from 'src/app/services/modelo.service';
+import { Modelo } from 'src/app/models/Modelo';
 
 @Component({
   selector: 'app-actividades-responsable',
@@ -23,20 +25,22 @@ export class ActividadesResponsableComponent implements OnInit {
   Actividades: any[] = [];
   guardadoExitoso: boolean = false;
   frmActividades: FormGroup;
-  noti=new Notificacion();
-  user:any = null;
-  idusuario:any=null;
-  nombre:any=null;
-  nombreact:any=null;
+  noti = new Notificacion();
+  user: any = null;
+  idusuario: any = null;
+  nombre: any = null;
+  nombreact: any = null;
   isLoggedIn = false;
 
   constructor(
     private services: ActividadService,
     private fb: FormBuilder,
     private router: Router,
-    public login:LoginService,
-    private notificationService:NotificacionService
-    ) {
+    public login: LoginService,
+    private modeloService: ModeloService,
+    private notificationService: NotificacionService
+  ) {
+    this.fechaminima();
     this.frmActividades = fb.group({
       nombre: ['', Validators.required],
       descripcion: ['', [Validators.required, Validators.maxLength(250)]],
@@ -45,7 +49,7 @@ export class ActividadesResponsableComponent implements OnInit {
 
     });
   }
- evi:Evidencia =new Evidencia();
+  evi: Evidencia = new Evidencia();
   ngOnInit(): void {
 
     const data = history.state.data;
@@ -64,15 +68,17 @@ export class ActividadesResponsableComponent implements OnInit {
 
       }
     )
+    this.fechaminima();
+    this.calcularfecha();
     this.listar();
   }
 
   notificar() {
     this.noti.fecha = new Date();
     this.noti.rol = "SUPERADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha creado la actividad " + this.frmActividades.value.nombre;
+    this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.frmActividades.value.nombre;
     this.noti.visto = false;
-    this.noti.usuario =  0;
+    this.noti.usuario = 0;
 
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
@@ -85,14 +91,12 @@ export class ActividadesResponsableComponent implements OnInit {
     );
   }
 
- 
-  
   notificaradmin() {
     this.noti.fecha = new Date();
     this.noti.rol = "ADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha creado la actividad " + this.frmActividades.value.nombre;
+    this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.frmActividades.value.nombre;
     this.noti.visto = false;
-    this.noti.usuario =  0;
+    this.noti.usuario = 0;
 
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
@@ -104,11 +108,28 @@ export class ActividadesResponsableComponent implements OnInit {
       }
     );
   }
+  validarFechas(): void {
+    const fechaInicio = this.frmActividades.get('fecha_inicio')?.value as string;
+    const fechaFin = this.frmActividades.get('fecha_fin')?.value as string;
+
+    if (fechaInicio && fechaFin) {
+      const dateInicio = new Date(fechaInicio);
+      const dateFin = new Date(fechaFin);
+
+      if (dateFin < dateInicio) {
+        this.frmActividades.setErrors({ fechasInvalidas: true });
+      } else {
+        this.frmActividades.setErrors(null);
+      }
+    }
+  }
+
 
   guardar() {
     this.actividad = this.frmActividades.value;
-    this.actividad.evidencia=this.evi;
-    this.actividad.usuario=this.user.id;
+    this.actividad.evidencia = this.evi;
+    this.actividad.usuario = this.user.id;
+    this.actividad.estado = "pendiente"
     this.services.crear(this.actividad)
       .subscribe(
         (response) => {
@@ -140,7 +161,7 @@ export class ActividadesResponsableComponent implements OnInit {
     this.frmActividades = new FormGroup({
       nombre: new FormControl(acti.nombre),
       descripcion: new FormControl(acti.descripcion),
-      fecha_inicio:new FormControl(acti.fecha_inicio),
+      fecha_inicio: new FormControl(acti.fecha_inicio),
       fecha_fin: new FormControl(acti.fecha_fin)
     });
   }
@@ -148,10 +169,10 @@ export class ActividadesResponsableComponent implements OnInit {
   listar(): void {
     const fechaActual = new Date();
     this.services.geteviasig(this.user.username).subscribe(data => {
-      this.Actividades = data;
+      this.Actividades = data.filter(actividad => actividad.evidencia?.id_evidencia === this.evi.id_evidencia);
     });
   }
-  
+
 
   eliminar(act: any) {
     Swal.fire({
@@ -197,6 +218,8 @@ export class ActividadesResponsableComponent implements OnInit {
     this.actividad.descripcion = this.frmActividades.value.descripcion;
     this.actividad.fecha_inicio = this.frmActividades.value.fecha_inicio;
     this.actividad.fecha_fin = this.frmActividades.value.fecha_fin;
+    this.actividad.usuario = null;
+    console.log(this.actividad)
     this.services.update(this.actividad.id_actividad, this.actividad)
       .subscribe(response => {
         this.actividad = new Actividades();
@@ -204,10 +227,68 @@ export class ActividadesResponsableComponent implements OnInit {
         Swal.fire('Operacion exitosa!', 'El registro se actualizo con exito', 'success')
       });
   }
- archivo: Archivo=new Archivo();
+  archivo: Archivo = new Archivo();
 
   verDetalles(archivos: any) {
-    this.router.navigate(['/evidenciaResponsable'], { state: { data: archivos} });
+    this.router.navigate(['/evidenciaResponsable'], { state: { data: archivos } });
+  }
+  calcularfecha() {
+    this.services.geteviasig(this.user.username).subscribe(data => {
+      this.Actividades = data;
+
+      // Obtener la fecha actual
+      const fechaActual = new Date();
+
+      // Iterar sobre las actividades y verificar la fecha
+      this.Actividades.forEach(actividad => {
+        const fechaFinActividad = new Date(actividad.fecha_fin);
+
+        // Verificar si la fecha de finalización de la actividad es mayor o igual a la fecha actual
+        if (fechaFinActividad >= fechaActual) {
+          // Calcular la diferencia en días entre la fecha actual y la fecha de finalización de la actividad
+          const tiempoRestante = fechaFinActividad.getTime() - fechaActual.getTime();
+          const diasRestantes = Math.ceil(tiempoRestante / (1000 * 3600 * 24));
+
+          // Verificar si quedan 3 días o menos para la fecha de finalización de la actividad
+          if (diasRestantes <= 3) {
+            // Mostrar la notificación individual con SweetAlert
+            Swal.fire({
+              title: `Actividad "${actividad.nombre}"`,
+              text: `Faltan ${diasRestantes} días para que se cumpla la fecha de finalización.`,
+              icon: 'warning',
+              position: 'top-end',
+              toast: true,
+              timer: 3000,
+              timerProgressBar: true,
+              showConfirmButton: false,
+              customClass: {
+                title: 'custom-title',
+                popup: 'custom-popup',
+                icon: 'custom-icon',
+                confirmButton: 'custom-button'
+              }
+            });
+          }
+        }
+      });
+    });
   }
 
+
+  fechaMinima: string = "";
+  fechaMax: string = "";
+
+  datasource: Modelo[] = [];
+  fechaminima() {
+    this.modeloService.getModeMaximo().subscribe(data => {
+
+      const fechaInicio = new Date(data.fecha_inicio);
+      this.fechaMinima = fechaInicio.toISOString().split('T')[0];
+
+      const fechaactividad = new Date(data.fecha_final_act);
+      this.fechaMax = fechaactividad.toISOString().split('T')[0];
+
+
+    });
+  }
 }

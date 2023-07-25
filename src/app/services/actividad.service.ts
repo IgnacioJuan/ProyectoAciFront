@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Actividades } from './actividades';
 import baserUrl from './helper';
+ import { Observacion2 } from '../models/Observaciones2';
+import { Actividades } from '../models/actividades';
 
 @Injectable({
   providedIn: 'root'
@@ -33,6 +34,7 @@ private actividalista:string='http://localhost:5000/api/actividad'
   }*/
 
   update(id: number, actividades: Actividades): Observable<any> {
+    console.log(actividades)
     return this.http.put(`${baserUrl}/api/actividad/actualizar/${id}`, actividades);
   }
 
@@ -44,8 +46,29 @@ private actividalista:string='http://localhost:5000/api/actividad'
   return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscarusuario/${user}`);
 }
 
+//Observacion
+  //Metodo para crear
+  createObservacion(r: Observacion2): Observable<Observacion2> {
+    return this.http.post<Observacion2>(`${baserUrl}/api/observacion/crear`, r)
+  }
+  //listar observaciones por actividad
+  public getObservacionByActi(id:number): Observable<Observacion2[]> {
+    return this.http.get<Observacion2[]>(`${baserUrl}/api/observacion/buscarObserByActiv/`+id);
 
+  }
+  //eliminadologico
+  eliminarObser(detalle: number): Observable<any> {
+    console.log(detalle)
+    return this.http.put(`${baserUrl}/api/observacion/eliminarlogic/${detalle}`, detalle);
+  }
 public getEviAsig(idEvi: number): Observable<Actividades[]> {
   return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscarporEvide/${idEvi}`);
+  
 }
+
+public getActByUsua(idUsua: number): Observable<Actividades[]> {
+  return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscarByUsuario/${idUsua}`);
+}
+
+
 }

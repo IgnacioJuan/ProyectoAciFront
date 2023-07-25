@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { usuario } from './Usuario';
 import baserUrl from './helper';
 import { Evidencia } from '../models/Evidencia';
 import { Asigna_Evi } from '../models/Asignacion-Evidencia';
+import { usuario } from '../models/Usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +50,15 @@ export class AsignaEvidenciaService {
   //BUSCAR POR ID
   public getAsignacionId(id: number): Observable<Asigna_Evi> {
     return this.httpClient.get<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/buscar/` + id);
+  }
+
+
+   //Metodo para eliminar
+
+   eliminarAsignaLogic(detalle: number): Observable<any> {
+    console.log(detalle)
+    return this.httpClient.put(`${baserUrl}/api/asignacionevidencia/eliminarlogic/${detalle}`, detalle);
+
   }
 
 /*

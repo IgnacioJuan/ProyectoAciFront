@@ -1,10 +1,3 @@
-<<<<<<< Updated upstream
-import { Component, OnInit } from '@angular/core';
-import { ChartOptions } from 'chart.js';
-import { AutoIndicador } from 'src/app/models/AutoridadIndicador';
-import { Criterio } from 'src/app/models/Criterio';
-import { Indicador } from 'src/app/models/Indicador';
-=======
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { forkJoin } from 'rxjs';
@@ -12,7 +5,6 @@ import { Actividad } from 'src/app/models/Actividad';
 import { AutoIndicador } from 'src/app/models/AutoridadIndicador';
 import { Criterio } from 'src/app/models/Criterio';
 import { Persona2 } from 'src/app/services/Persona2';
->>>>>>> Stashed changes
 import { ActividadService } from 'src/app/services/actividad.service';
 import { Actividades } from 'src/app/services/actividades';
 import { CriteriosService } from 'src/app/services/criterios.service';
@@ -48,8 +40,6 @@ function colorCalendario(): string {
 })
 export class DashboardComponent2 implements OnInit {
 
-<<<<<<< Updated upstream
-=======
 //prueba
 colorScheme: any;
   datos: any[]=[];
@@ -116,7 +106,6 @@ calendarOptions: CalendarOptions = {
   Actividades: Actividad[] = [];
   Evidencias: any[] = [];
 
->>>>>>> Stashed changes
   title = 'ng2-charts-demo';
   //VISTA PARA PIE
 //PIE
@@ -146,24 +135,8 @@ public pieChartLegend2 = true;
 public pieChartPlugins2 = [];
 //
 
-labesCriterios: any[] = [];
-datosPOrceCriter: number[] = [];
-criteri: any;
-valores: number[] = [];
-listaCriterios: any[] = [];
-listaIndicadores: AutoIndicador[] = [];
   //FIN DE VISTA
 
-<<<<<<< Updated upstream
-  
-  public actividad = new Actividades();
-  Actividades: any[] = [];
-  Evidencias: any[] = [];
-  constructor(private services: ActividadService, 
-    private eviden:EvidenciaService,
-    private httpCriterios: CriteriosService ) { }
-
-=======
   public barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [],
     datasets: [
@@ -183,7 +156,6 @@ listaIndicadores: AutoIndicador[] = [];
         domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
       };
      }
->>>>>>> Stashed changes
 
      onSelect(event: any) {
       console.log(event);
@@ -191,8 +163,6 @@ listaIndicadores: AutoIndicador[] = [];
   ngOnInit(): void {
     this.getButtonCriterio();
     this.listarActividad();
-<<<<<<< Updated upstream
-=======
     this.modeloMax();
     //calendario
     this.services.get().subscribe((data: Actividades[]) => {
@@ -232,7 +202,6 @@ listaIndicadores: AutoIndicador[] = [];
     this.httpCriterios.getModeMaximo().subscribe(data =>{
       this.modeloMaximo = data;
     })
->>>>>>> Stashed changes
   }
 
   listarActividad() {
@@ -305,25 +274,6 @@ listaIndicadores: AutoIndicador[] = [];
         this.listaIndicadores = data;
         this.pieChartLabels = data.map((dato) => dato.nombre);
         this.valores = (data.map((dato) => dato.porc_utilida_obtenida));
-<<<<<<< Updated upstream
-        this.pieChartDatasets = [{
-          data: this.valores
-        }];
-
-        //para el porcentaje de criterios
-        this.valor1 = data.reduce((suma, dato) => suma + dato.peso, 0);
-        this.valor2 = data.reduce((suma, dato) => suma + dato.valor_obtenido, 0);
-
-        this.pieChartDatasets2 = [{
-          data: [this.valor2, this.valor1]
-        }];
-
-        this.porcenta = Number(((this.valor2 * 100) / this.valor1).toFixed(2));
-        this.pieChartLabels2 = ['Porcentaje ' + this.porcenta + '%'];
-        console.log(this.listaIndicadores);
-        console.log(this.valores);
-        console.log(this.valor1);
-=======
         console.log('valores ' + this.valores);
        
         this.pieChartDatasets = [{
@@ -335,7 +285,6 @@ listaIndicadores: AutoIndicador[] = [];
           name: item.nombre, // Nombre del evento
           value: this.suma[item.nombre] || 0 // Porcentaje obtenido (suma, si no existe, se muestra 0)
         }));
->>>>>>> Stashed changes
       }
     )
   }
@@ -391,8 +340,6 @@ listaIndicadores: AutoIndicador[] = [];
 
   }
 
-<<<<<<< Updated upstream
-=======
   valorObtenido: number[] = [];
   valorObtenter: number[] = [];
 
@@ -445,6 +392,5 @@ getPersonaActividad(objeto:Actividad){
   )
 }
 
->>>>>>> Stashed changes
 
 }
