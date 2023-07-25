@@ -49,6 +49,27 @@ export class DashboardComponent2 implements OnInit {
   listaIndicadores: AutoIndicador[] = [];
   persona:Persona2 = new Persona2();
   suma: { [nombre: string]: number } = {};
+  //prueba
+colorScheme: any;
+datos: any[]=[];
+width = 600;
+height = 400;
+showXAxis = true;
+showYAxis = true;
+gradient = false;
+
+//
+listaIconos = ['fa-cog fa-spin fa-3x fa-fw',
+'fas fa-chart-line fa-2x',
+'fas fa-globe fa-spin fa-1x',
+'fas fa-globe fa-pulse',
+'fa fa-handshake fa-pulse',
+'fas fa-chart-bar',
+'fas fa-chart-area'];
+
+Utilidad!: number;
+items: any[] = [];
+eventos: any[] = [];
   //FIN DE VISTA
 
 
@@ -101,9 +122,21 @@ export class DashboardComponent2 implements OnInit {
     responsive: true,
   };
 
-  constructor(private services: ActividadService,
-    private eviden: EvidenciaService,
-    private httpCriterios: CriteriosService) { }
+
+
+//
+constructor(private services: ActividadService,
+  private eviden: EvidenciaService,
+  private httpCriterios: CriteriosService) {
+    this.colorScheme = {
+      domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+    };
+   }
+
+
+   onSelect(event: any) {
+    console.log(event);
+  }
 
 
   ngOnInit(): void {
@@ -111,34 +144,25 @@ export class DashboardComponent2 implements OnInit {
     this.getButtonCriterio2();
     this.listarActividad();
     this.modeloMax();
-    this.httpCriterios.getCriterios().subscribe(data => {
+    this.services.get().subscribe((data: Actividades[]) => {
+      // Envio los datos
+      this.eventos = data.map(evento => ({
+        title: evento.nombre.replace(/\d+/g, ''),
+        start: new Date(evento.fecha_inicio),
+        end: new Date(evento.fecha_fin),
+        color: colorCalendario()
+      }));
+      this.calendarOptions.events = this.eventos;
+      console.table("Eventos tabla"+this.eventos);
+    });
+  this.httpCriterios.getCriterios().subscribe(data => {
       this.listaCriterios = data;
       this.cargarDatosAutomaticamente();
     });
   }
 
   //Mi codigo
-//prueba
-colorScheme: any;
-  datos: any[]=[];
-  width = 600;
-  height = 400;
-  showXAxis = true;
-  showYAxis = true;
-  gradient = false;
 
-//
-listaIconos = ['fa-cog fa-spin fa-3x fa-fw',
-'fas fa-chart-line fa-2x',
-'fas fa-globe fa-spin fa-1x',
-'fas fa-globe fa-pulse',
-'fa fa-handshake fa-pulse',
-'fas fa-chart-bar',
-'fas fa-chart-area'];
-
-  Utilidad!: number;
-  items: any[] = [];
- eventos: any[] = [];
 calendarOptions: CalendarOptions = {
   initialView: 'dayGridMonth',
     plugins: [dayGridPlugin],
