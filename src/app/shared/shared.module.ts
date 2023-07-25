@@ -30,6 +30,8 @@ import { NgChartsModule } from 'ng2-charts';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 @NgModule({
   declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
   ],
@@ -62,7 +64,9 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatRadioModule,
-    NgChartsModule
+    NgChartsModule,
+    FullCalendarModule,
+    NgxChartsModule
   ],
   exports: [
     BuscarPipe,
