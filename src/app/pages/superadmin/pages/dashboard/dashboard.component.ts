@@ -117,6 +117,38 @@ export class DashboardComponent2 implements OnInit {
     });
   }
 
+  //Mi codigo
+//prueba
+colorScheme: any;
+  datos: any[]=[];
+  width = 600;
+  height = 400;
+  showXAxis = true;
+  showYAxis = true;
+  gradient = false;
+
+//
+listaIconos = ['fa-cog fa-spin fa-3x fa-fw',
+'fas fa-chart-line fa-2x',
+'fas fa-globe fa-spin fa-1x',
+'fas fa-globe fa-pulse',
+'fa fa-handshake fa-pulse',
+'fas fa-chart-bar',
+'fas fa-chart-area'];
+
+  Utilidad!: number;
+  items: any[] = [];
+ eventos: any[] = [];
+calendarOptions: CalendarOptions = {
+  initialView: 'dayGridMonth',
+    plugins: [dayGridPlugin],
+    events: this.eventos,
+    locale: esLocale
+};
+getColor(item: any): string {
+    return cambiarColor(item.nombre);
+  }
+  //
   modeloMax(){
     this.httpCriterios.getModeMaximo().subscribe(data =>{
       this.modeloMaximo = data;
@@ -135,15 +167,7 @@ export class DashboardComponent2 implements OnInit {
     })
   }
 
-  getColor(value: number): string {
-    if (value >= 0.75) {
-      return '#4caf50'; // Verde
-    } else if (value >= 0.4) {
-      return '#ffc107'; // Amarillo
-    } else {
-      return '#f44336'; // Rojo
-    }
-  }
+
   
   //LISTA PARA CRITERIOS
   getButtonCriterio() {
