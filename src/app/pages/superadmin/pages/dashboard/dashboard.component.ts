@@ -13,7 +13,10 @@ import { EvidenciaService } from 'src/app/services/evidencia.service';
 //Funciones
 import { CalendarOptions } from '@fullcalendar/core';;
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import esLocale from '@fullcalendar/core/locales/es';
+import { formatDate } from 'fullcalendar';
+import { L } from '@fullcalendar/core/internal-common';
 // Color aleatorio
 function cambiarColor(str: string): string {
   let hash = 0;
@@ -30,8 +33,18 @@ function colorCalendario(): string {
   for (let i = 0; i < 6; i++) {
     color += letras[Math.floor(Math.random() * 16)];
   }
+  // Convertimos el color a un valor hexadecimal numérico
+  const colorNumerico = parseInt(color.substring(1), 16);
+  // Establecemos un valor máximo para el color (por ejemplo, 80% del valor máximo de 16777215 para blanco)
+  const maxColorNumerico = 13421772; // 80% de 16777215
+  // Si el color es demasiado claro, generamos un nuevo color más oscuro
+  if (colorNumerico > maxColorNumerico) {
+    color = colorCalendario(); // Generamos un nuevo color recursivamente
+  }
+
   return color;
 }
+
 
 @Component({
   selector: 'app-dashboard2',
@@ -121,6 +134,7 @@ eventos: any[] = [];
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: true,
   };
+  handleDateClick: any;
 
 
 
@@ -147,7 +161,7 @@ constructor(private services: ActividadService,
     this.services.get().subscribe((data: Actividades[]) => {
       // Envio los datos
       this.eventos = data.map(evento => ({
-        title: evento.nombre.replace(/\d+/g, ''),
+        title: evento.nombre,
         start: new Date(evento.fecha_inicio),
         end: new Date(evento.fecha_fin),
         color: colorCalendario()
@@ -160,14 +174,37 @@ constructor(private services: ActividadService,
       this.cargarDatosAutomaticamente();
     });
   }
-  //Mi codigo
+  //Mi codigo calendario
+ 
 
 calendarOptions: CalendarOptions = {
-  initialView: 'dayGridMonth',
-    plugins: [dayGridPlugin],
+
+    plugins: [dayGridPlugin, timeGridPlugin],
+    initialView: 'dayGridMonth',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
     events: this.eventos,
+    eventContent: this.personalizarEvent.bind(this),
     locale: esLocale
 };
+
+personalizarEvent(info:  any) {
+  const fechafin = new Date(info.event.end).toLocaleDateString('es', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  const fechai = new Date(info.event.start).toLocaleDateString('es', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  return { html: `<b>${info.event.title}</b><br>Inicio: ${fechai} - Fin: ${fechafin}` };
+}
+
 getColor(item: any): string {
     return cambiarColor(item.nombre);
   }
@@ -339,3 +376,7 @@ getPersonaActividad(objeto:Actividad){
 
 
 }
+function registerLocale(arg0: string, esLocale: L) {
+  throw new Error('Function not implemented.');
+}
+

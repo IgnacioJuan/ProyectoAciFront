@@ -10,16 +10,9 @@
     </div>
     <!-- /.container-fluid -->
 </section>
-<!-- grafica  -->
-<h3 class="card-title">Calendario de Actividades</h3>
-<div class="container">
-<div class="calendar-container">
-    <full-calendar [options]="calendarOptions"></full-calendar>
-  </div>
+
   <!-- imagen -->
-  <div class="image-container">
-    <img src="./assets/uista.png" alt="Logo">
-</div> 
+ 
 <!-- Mostrar grafica prueba -->
 <div class="main">
     <div class="cards">
@@ -38,6 +31,39 @@
               </div>
           </div>
 </div>
+</div>
+<!-- calendario  -->
+<h3 class="card-title">Calendario de Actividades</h3>
+
+<!-- <div class="calendar-container">
+    <full-calendar [options]="calendarOptions"></full-calendar>
+  </div> -->
+  <div class="calendar-container">
+  <full-calendar [options]="calendarOptions">
+    <ng-template #fcToolbar>
+      <div class="fc-toolbar">
+        <div class="fc-left">
+          <button class="fc-prev-button fc-button fc-button-primary">
+            <span class="fc-icon fc-icon-chevron-left"></span>
+          </button>
+          <button class="fc-next-button fc-button fc-button-primary">
+            <span class="fc-icon fc-icon-chevron-right"></span>
+          </button>
+          <button class="fc-today-button fc-button fc-button-primary">Hoy</button>
+        </div>
+        <div class="fc-center">
+          <span class="fc-title h4"></span>
+        </div>
+        <div class="fc-right">
+          <button class="fc-dayGridMonth-button fc-button fc-button-primary">Mes</button>
+          <button class="fc-timeGridWeek-button fc-button fc-button-primary">Semana</button>
+          <button class="fc-timeGridDay-button fc-button fc-button-primary">Día</button>
+        </div>
+      </div>
+    </ng-template>
+  </full-calendar>
+</div>
+
 <div class="chart-container">
     <ngx-charts-bar-vertical
   [view]="[width, height]"

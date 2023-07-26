@@ -100,7 +100,9 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatRadioModule,
-    NgChartsModule
+    NgChartsModule,
+    FullCalendarModule,
+    NgxChartsModule
   ],
 })
 export class SharedModule { }
