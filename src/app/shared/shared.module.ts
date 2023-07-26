@@ -32,6 +32,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { MatTabsModule } from '@angular/material/tabs';
 @NgModule({
   declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
   ],
@@ -102,7 +103,8 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     MatRadioModule,
     NgChartsModule,
     FullCalendarModule,
-    NgxChartsModule
+    NgxChartsModule,
+    MatTabsModule
   ],
 })
 export class SharedModule { }

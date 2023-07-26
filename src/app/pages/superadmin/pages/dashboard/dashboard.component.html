@@ -11,9 +11,6 @@
     <!-- /.container-fluid -->
 </section>
 
-  <!-- imagen -->
- 
-<!-- Mostrar grafica prueba -->
 <div class="main">
     <div class="cards">
         <div class="card" *ngFor="let item of listaCriterios" [style.backgroundColor]="getColor(item)">
@@ -35,9 +32,6 @@
 <!-- calendario  -->
 <h3 class="card-title">Calendario de Actividades</h3>
 
-<!-- <div class="calendar-container">
-    <full-calendar [options]="calendarOptions"></full-calendar>
-  </div> -->
   <div class="calendar-container">
   <full-calendar [options]="calendarOptions">
     <ng-template #fcToolbar>
@@ -66,18 +60,108 @@
 
 <div class="chart-container">
     <ngx-charts-bar-vertical
-  [view]="[width, height]"
-  [scheme]="colorScheme"
-  [results]="datos"
-  [xAxis]="showXAxis"
-  [yAxis]="showYAxis"
-  [gradient]="gradient"
-  (select)="onSelect($event)">
-</ngx-charts-bar-vertical>
+   [view]="[width, height]"
+   [scheme]="colorScheme"
+   [results]="datos"
+   [xAxis]="showXAxis"
+   [yAxis]="showYAxis"
+   [gradient]="gradient"
+   (select)="onSelect($event)">
+   </ngx-charts-bar-vertical>
 
   </div>
 
-        <!-- Productos mas vendidos y con poco stock -->
+  <div style="display: flex; justify-content: center;">
+    <ngx-charts-pie-grid
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="datos"
+      [designatedTotal]="1"
+      (select)="onSelect($event)"
+    >
+      <ng-template #tooltipTemplate let-model="model">
+        <div class="custom-tooltip">
+          <span>{{ model.name }}</span>
+          <br>
+          <span>{{ model.value | percent }}</span>
+        </div>
+      </ng-template>
+    </ngx-charts-pie-grid>
+  </div>
+  
+  
+  <mat-tab-group>
+    <!-- Tab para Actividades Aprobadas -->
+   <!-- Tab para Actividades Aprobadas -->
+<mat-tab label="Actividades Aprobadas">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource">
+        <!-- Columnas de la tabla para Actividades Aprobadas -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>Position</th>
+          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+        </ng-container>
+  
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+        </ng-container>
+  
+        <ng-container matColumnDef="weight">
+          <th mat-header-cell *matHeaderCellDef>Weight</th>
+          <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
+        </ng-container>
+  
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell *matHeaderCellDef>Symbol</th>
+          <td mat-cell *matCellDef="let element">{{ element.symbol }}</td>
+        </ng-container>
+  
+        <!-- Definición de las filas de la tabla -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+  
+      <!-- Paginador para las Actividades Aprobadas -->
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Seleccione la pagina">
+      </mat-paginator>
+    </div>
+  </mat-tab>
+  
+  
+    <!-- Tab para Actividades Rechazadas -->
+    <mat-tab label="Actividades Rechazadas">
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource1">
+          <!-- Columnas de la tabla para Actividades Rechazadas -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+            <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+          </ng-container>
+  
+          <ng-container matColumnDef="fechai">
+            <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+            <td mat-cell *matCellDef="let element">{{ element.fecha_inicio }}</td>
+          </ng-container>
+  
+          <ng-container matColumnDef="fechafin">
+            <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
+            <td mat-cell *matCellDef="let element">{{ element.fecha_fin }}</td>
+          </ng-container>
+  
+          <!-- Definición de las filas de la tabla -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
+        </table>
+  
+        <!-- Paginador para las Actividades Rechazadas -->
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+        </mat-paginator>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+  
+  
         <div class="row">
             <div class="col-lg-6">
                 <div class="card card-gray shadow">
@@ -87,9 +171,6 @@
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
-                            <!-- <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button> -->
                         </div> <!-- ./ end card-tools -->
                     </div> <!-- ./ end card-header -->
                     <div class="card-body">
@@ -126,63 +207,3 @@
             </div>
             
         </div>
-
-<!-- /.content -->
-
-
-
-
-
-<!-- <mat-card class="floating-card">
-
-    <div style="align-content: center;" class="card-body">
-        <canvas baseChart [type]="'pie'" [datasets]="pieChartDatasets" [labels]="pieChartLabels"
-            [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
-        </canvas>
-    </div>
-</mat-card>
-
-<mat-card class="floating-card2">
-    <div style="align-content: center;" class="card-body">
-        <h1 style="align-content: center;">DATOS DEL RESPONSABLE</h1>
-        <div class="container">
-            <div style="display: flex;">
-                <p><Strong> Cedula: </Strong> </p>
-                <p style="margin-left: 5px;">{{persona.cedula}}</p>
-            </div>
-            <div style="display: flex;">
-                <p><Strong> Nombres: </Strong> </p>
-                <p style="margin-left: 5px;">{{persona.primer_nombre}} {{persona.primer_apellido}}</p>
-            </div>
-            <div style="display: flex;">
-                <p><Strong>Correo: </Strong> </p>
-                <p style="margin-left: 5px;">{{persona.correo}}</p>
-            </div>
-            <div style="display: flex;">
-                <p><Strong>Numero Celular: </Strong> </p>
-                <p style="margin-left: 5px;">{{persona.celular}}</p>
-            </div>
-        </div>
-    </div>
-</mat-card>
-
-
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">INDICADORES</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <canvas baseChart [type]="'pie'" [datasets]="pieChartDatasets2" [labels]="pieChartLabels2"
-                    [options]="pieChartOptions2" [plugins]="pieChartPlugins2" [legend]="pieChartLegend2">
-                </canvas>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div> -->

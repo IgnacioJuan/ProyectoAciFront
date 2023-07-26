@@ -10,7 +10,6 @@ import { Actividades } from '../models/actividades';
 })
 export class ActividadService {
 
-private actividalista:string='http://localhost:5000/api/actividad'
   constructor( private http: HttpClient ) { }
 
 
@@ -29,9 +28,9 @@ private actividalista:string='http://localhost:5000/api/actividad'
     return this.http.post<Actividades>(`${baserUrl}/api/actividad/crear`, actividad);
   }
 
- /* getOne(id: number): Observable<Actividades> {
-    return this.http.get<Actividades>(this.url + id);
-  }*/
+ getActividadrechazada(): Observable<Actividades[]> {
+    return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/actividadatrasa`);
+  }
 
   update(id: number, actividades: Actividades): Observable<any> {
     console.log(actividades)
