@@ -1,18 +1,43 @@
+<body>
+  <div class="container bg-light border border-start-0 rounded-4">
+    <blockquote class="blockquote text-dark" style="margin-top: 5%">
+      <h1 style="text-transform: uppercase">
+        <strong>Modelos </strong>
+      </h1>
+    </blockquote>
+    <div class="horizontal-list">
+      <div class="col-auto mb-3">
+        <button  type="button" class="btn btn-primary" style="height: 100%; width: 100%;" (click)="openDialog()" id="my-button">
+          Nuevo Modelo
+        </button>
+      </div>
 
-
-<button mat-button (click)="openDialog()" id="my-button">Nuevo Modelo</button>
-<ng-container *ngFor="let item of datasource">
-    <mat-card class="mi-card">
-        <mat-card-content (click)="enviarModelo(item)">
-            <div class="item">
-                <h3><b>{{ item.nombre }}</b></h3>
-                <br>
+      <ng-container *ngFor="let item of datasource; let i = index">
+        <mat-card [ngClass]="'mi-card card-' + i">
+          <mat-card-content (click)="enviarModelo(item)">
+            <div class="item" style="cursor: pointer">
+              <h3>
+                <span *ngIf="i === 0" class="recent-icon">
+                  <mat-icon>new_releases</mat-icon>
+                  <!-- Icono de Material Design -->
+                  <!-- <i class="fa fa-clock"></i> -->
+                  <!-- Icono de FontAwesome -->
+                </span>
+                <b
+                  ><strong>{{ item.nombre }}</strong></b
+                >
+                <!-- Agregar el icono para el primer registro -->
+              </h3>
+              <div class="container bg-light border border-start-0 rounded-4">
+                <br />
                 <b> Fecha Inicio: {{ item.fecha_inicio | customDate }}</b>
-                <br>
-                <b> Fecha Fin: {{ item.fecha_fin | customDate}}</b>
+                <br />
+                <b> Fecha Fin: {{ item.fecha_fin | customDate }}</b>
+              </div>
             </div>
-
-        </mat-card-content>
-    </mat-card>
-    <br>
-</ng-container>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+    </div>
+  </div>
+</body>

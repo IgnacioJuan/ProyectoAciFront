@@ -677,6 +677,11 @@ export class PonderacionModeloComponent implements OnInit {
 
 
 
+  irinicio() {
 
+    // código del método del botón
+    this.router.navigate(['/sup/modelo/modelo']);
+
+  }
 
 }

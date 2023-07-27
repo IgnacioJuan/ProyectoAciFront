@@ -26,29 +26,39 @@ export class CustomDatePipe implements PipeTransform {
 })
 export class InicioModeloComponent implements OnInit {
   mode = new Modelo();
-   asignacion:any;
+  asignacion: any;
   datasource: any[] = [];
   constructor(public dialog: MatDialog,
-     private router: Router, 
-     private modeloService: ModeloService,
-     private asignacionIndicadorService:AsignacionIndicadorService,
-     private indicadorservice:IndicadoresService
-     ) { }
+    private router: Router,
+    private modeloService: ModeloService,
+    private asignacionIndicadorService: AsignacionIndicadorService,
+    private indicadorservice: IndicadoresService,
+
+  ) {
+    this.addRandomColors(); // Llama a esta función para asignar colores aleatorios
+
+  }
+  addRandomColors() {
+    this.datasource.forEach((item, index) => {
+      const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+      item.color = randomColor;
+    });
+  }
   ngOnInit(): void {
     this.listar();
-  
+
     this.calculatePromedioPorModelo1();
-   
-   
+
+
   }
 
   listar() {
     this.modeloService.listarModelo().subscribe(data => {
       this.datasource = data;
     });
-   
-    
-   
+
+
+
   }
 
   openDialog() {
@@ -76,41 +86,41 @@ export class InicioModeloComponent implements OnInit {
     this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
- 
-  
+
+
 
   recibeIndicador() {
     let idModelo = localStorage.getItem("id");
-   
-       // Capturar el ID del indicador del modelo
-      
-      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(idModelo)).subscribe(info => {
-        this.indicadorservice.getIndicadors().subscribe(result => {
-          this.datasource = [];
-          this.asignacion = info;
-          
 
-          this.datasource = result.filter((indicador: any) => {
-            return info.some((asignacion: any) => {
-              return indicador.id_indicador === asignacion.indicador.id_indicador;
-            });
+    // Capturar el ID del indicador del modelo
+
+    this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(idModelo)).subscribe(info => {
+      this.indicadorservice.getIndicadors().subscribe(result => {
+        this.datasource = [];
+        this.asignacion = info;
+
+
+        this.datasource = result.filter((indicador: any) => {
+          return info.some((asignacion: any) => {
+            return indicador.id_indicador === asignacion.indicador.id_indicador;
           });
-          console.log(this.datasource+'capturar');
-
-          
-
-          
-  
-         
         });
+        console.log(this.datasource + 'capturar');
+
+
+
+
+
+
       });
-    
+    });
+
   }
 
   calculatePromedioPorModelo1() {
     const promediosPorModelo: { [modelo: string]: number } = {};
     const conteoIndicadoresPorModelo: { [modelo: string]: number } = {};
-  
+
     this.datasource.forEach((modelo: any) => {
       const modeloNombre = modelo.nombre;
       modelo.forEach((asignacion: any) => {
@@ -126,18 +136,18 @@ export class InicioModeloComponent implements OnInit {
         }
       });
     });
-  
+
     Object.keys(promediosPorModelo).forEach((modelo: string) => {
       const indicadoresCount = conteoIndicadoresPorModelo[modelo];
       const promedioModelo = promediosPorModelo[modelo] / indicadoresCount;
       promediosPorModelo[modelo] = promedioModelo;
     });
-  
+
     console.log(promediosPorModelo);
     console.log(conteoIndicadoresPorModelo);
   }
-  
 
-  
 
-  }
+
+
+}
