@@ -1,7 +1,27 @@
-table {
-  width: 100%;
+.barra{
+  display: flex;
+  justify-content: center;
+  width: 15%;
+  height: 15%;
+  border-color: #299b63;
 }
 
+.titu{
+margin-top: 2%;
+margin-left: 2%;
+font-weight: bold;
+}
+
+table {
+  width: 80%;
+}
+
+.calenda{
+  flex-grow: 1;
+  margin-block-end: auto;
+  border-block-start: thick double #32a1ce;
+  writing-mode: horizontal-tb;
+}
 
 .container {
   display: flex;
@@ -17,8 +37,8 @@ table {
 }
 
 .calendar-container {
-  width: 60%; 
-  height: 70%;
+  width: 50%; 
+  height: 60%;
 }
 
 .fc .fc-daygrid-day {

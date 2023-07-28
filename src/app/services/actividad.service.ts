@@ -32,6 +32,11 @@ export class ActividadService {
     return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/actividadatrasa`);
   }
 
+  getActividadaprobada(): Observable<Actividades[]> {
+    return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/actividadaprobada`);
+  }
+
+
   update(id: number, actividades: Actividades): Observable<any> {
     console.log(actividades)
     return this.http.put(`${baserUrl}/api/actividad/actualizar/${id}`, actividades);
