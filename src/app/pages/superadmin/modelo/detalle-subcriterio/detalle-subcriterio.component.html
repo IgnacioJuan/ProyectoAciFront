@@ -13,34 +13,36 @@
         >
       </h1>
     </blockquote>
-    <div class="container">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>NOMBRE</th>
-            <th>DESCRIPCIÓN</th>
-            <th>DETALLE INDICADORES</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let subcriterio of dataSource | buscar : searchText">
-            <td>{{ subcriterio.id_subcriterio }}</td>
-            <td>{{ subcriterio.nombre }}</td>
-            <td>{{ subcriterio.descripcion }}</td>
+    <div class="mat-elevation-z8 table-responsive" style="margin-bottom: 5%">
+      <div class="container">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NOMBRE</th>
+              <th>DESCRIPCIÓN</th>
+              <th>DETALLE INDICADORES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let subcriterio of dataSource | buscar : searchText">
+              <td>{{ subcriterio.id_subcriterio }}</td>
+              <td>{{ subcriterio.nombre }}</td>
+              <td>{{ subcriterio.descripcion }}</td>
 
-            <td>
-              <button
-                type="button"
-                class="btn btn-outline-primary"
-                (click)="verIndicadores(subcriterio)"
-              >
-                <mat-icon class="iconoB">info</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  (click)="verIndicadores(subcriterio)"
+                >
+                  <mat-icon class="iconoB">info</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </body>
