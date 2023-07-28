@@ -7,6 +7,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CalificacionComponent } from './calificacion/calificacion.component';
 import Swal from 'sweetalert2';
+import { Criterio } from 'src/app/models/Criterio';
+import { Modelo } from 'src/app/models/Modelo';
 
 type Columnname = {
   [key: string]: string;
@@ -39,26 +41,19 @@ export class MatrizEvaluacionComponent implements OnInit {
   };
 
   dataSource: any;
-  idcriterio: any;
-  idmodelo: any
 
   columnsToDisplay = ['nombre', 'descripcion', 'tipo', 'valor_obtenido'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'evaluar'];
   expandedElement: any;
-
+  idcriterio: Criterio = new Criterio();
+  idmodelo: Modelo = new Modelo();
   indicador: Indicador = new Indicador();
 
   llenar_datasource() {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.idcriterio = params['criterio'];
-      this.idmodelo = params['modelo'];
-    });
-    // this.indicadorService.obtenerIndicadoresPorCriterio(this.idcriterio).subscribe(
-    //   (data) => {
-    //     this.dataSource = data;
-    //   }
-    // );
-    this.indicadorService.listarIndicadorPorCriterioModelo(this.idcriterio, this.idmodelo).subscribe(data => {
+    this.idcriterio=history.state.criterio;
+    this.idmodelo=history.state.modelo;
+
+    this.indicadorService.listarIndicadorPorCriterioModelo(this.idcriterio.id_criterio, this.idmodelo.id_modelo).subscribe(data => {
       this.dataSource = data;
     });
   }
@@ -82,11 +77,13 @@ export class MatrizEvaluacionComponent implements OnInit {
     });
   }
 
-  irEvidencias(id: any) {
-    this.route.navigate(['/sup/modelo/matriz-evidencias'], { queryParams: { indicador: id } });
-  }
-
   regresar() {
     this.route.navigate(['/sup/modelo/detallemodelo']);
+  }
+  irinicio() {
+
+    // código del método del botón
+    this.route.navigate(['/sup/modelo/modelo']);
+
   }
 }

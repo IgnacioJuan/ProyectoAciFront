@@ -18,8 +18,7 @@ export class CriteriosSubcriterioComponent implements OnInit {
   constructor(
     private indicadorservice: IndicadoresService,
     private subcriterioservice: SubcriteriosService,
-    private router: Router, private fb: FormBuilder,
-    private route: ActivatedRoute
+    private router: Router, private fb: FormBuilder
   ) {
     this.frmSubcriterio = fb.group({
       nombre: ['', Validators.required],
@@ -95,7 +94,7 @@ export class CriteriosSubcriterioComponent implements OnInit {
     })
 
   }
-
+  //optimizar
   listar(): void {
     this.subcriterioservice.getSubcriterios().subscribe(
       (data: Subcriterio[]) => {
@@ -140,7 +139,7 @@ export class CriteriosSubcriterioComponent implements OnInit {
   verCriterios() {
     this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
   }
-
+  //optimizar
   //Numero de indicadores
   lista_indicadores: any[] = [];
   getIndicadoresPorSubriterio(subcriterio: Subcriterio): number {
