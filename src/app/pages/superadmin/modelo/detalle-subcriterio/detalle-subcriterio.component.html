@@ -1,42 +1,46 @@
-<div class="container">
-    <h1 style="text-align: center;">DETALLE DE SUBCRITERIOS</h1>
-   
-<table class="table table-hover">
-  
-    <thead>
-      <tr>
-        <th>ID</th>
-          <th>NOMBRE</th>
-          <th>DESCRIPCIÓN</th>
-          <th> VER DETALLE INDICADORES</th>
-          <th>
-            <button
-            type="button" class="btn btn-outline-primary"
-           (click)="verCriterios()">
-        
-         Regresar
-         </button>
-          </th>
-          
-         
-       
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let subcriterio of dataSource| buscar : searchText">
-        <td>{{ subcriterio.id_subcriterio }}</td>
-        <td>{{ subcriterio.nombre }}</td>
-        <td>{{ subcriterio.descripcion }}</td>
-        
-        <td>
-            <button
-           type="button" class="btn btn-outline-primary"
-          (click)="verIndicadores(subcriterio)">
-       
-        Ver Indicadores
-        </button></td>
-     
-      </tr>
-    </tbody>
-  </table>
-</div>
+<body>
+  <div class="container bg-light border border-start-0 rounded-4">
+    <blockquote class="blockquote text-dark" style="margin-top: 5%">
+      <h1 style="text-transform: uppercase">
+        <strong
+          ><a style="cursor: pointer" (click)="irinicio()">Modelos </a>
+          >
+          <a style="cursor: pointer" (click)="verCriterios()"
+            >{{ model.nombre }}
+          </a>
+          >
+          <a>SUBCRITERIOS </a></strong
+        >
+      </h1>
+    </blockquote>
+    <div class="container">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>NOMBRE</th>
+            <th>DESCRIPCIÓN</th>
+            <th>DETALLE INDICADORES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subcriterio of dataSource | buscar : searchText">
+            <td>{{ subcriterio.id_subcriterio }}</td>
+            <td>{{ subcriterio.nombre }}</td>
+            <td>{{ subcriterio.descripcion }}</td>
+
+            <td>
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="verIndicadores(subcriterio)"
+              >
+                <mat-icon class="iconoB">info</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
