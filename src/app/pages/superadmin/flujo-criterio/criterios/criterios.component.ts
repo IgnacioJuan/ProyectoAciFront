@@ -1,12 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Criterio } from 'src/app/models/Criterio';
-import { NgForm } from '@angular/forms';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { CriteriosService } from 'src/app/services/criterios.service';
-import { Subcriterio } from 'src/app/models/Subcriterio';
-import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 import Swal from 'sweetalert2';
+import { CriterioSubcriteriosProjection } from 'src/app/interface/CriterioSubcriteriosProjection';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-criterios',
@@ -14,15 +14,22 @@ import Swal from 'sweetalert2';
   styleUrls: ['./criterios.component.css']
 })
 export class CriteriosComponent implements OnInit {
-  searchText = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
-  miModal!: ElementRef;
-  public crite = new Criterio();
-  criterios: any[] = [];
   frmCriterio: FormGroup;
   guardadoExitoso: boolean = false;
+  miModal!: ElementRef;
+  
+  public crite = new Criterio();
+  criterios: CriterioSubcriteriosProjection[] = [];
+  
+
+  filterPost = '';
+  dataSource = new MatTableDataSource<CriterioSubcriteriosProjection>();
+  columnasUsuario: string[] = ['id_criterio', 'nombre', 'descripcion', 'cantidadSubcriterios', 'actions'];
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   constructor(
-    private subcriterioservice: SubcriteriosService,
     private criterioservice: CriteriosService,
     private router: Router, private fb: FormBuilder
   ) {
@@ -31,9 +38,15 @@ export class CriteriosComponent implements OnInit {
       descripcion: ['', [Validators.required]]
     })
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
+  }
   ngOnInit(): void {
     this.listar();
   }
+  
+ 
   guardar() {
     this.crite = this.frmCriterio.value;
     this.criterioservice.crear(this.crite)
@@ -68,37 +81,32 @@ export class CriteriosComponent implements OnInit {
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */
       if (!result.isConfirmed) {
-        if (this.getSubcriteriosPorCriterio(criterio) == 0) {
-          this.criterioservice.eliminar(criterio).subscribe(
-            (response) => {
-              this.listar()
-              Swal.fire('Eliminado!', '', 'success')
-            }
-          );
-        } else {
-          Swal.fire('Error!', 'Este criterio no se puede eliminar, tiene subcriterios', 'warning')
-        }
+        this.criterioservice.eliminar(criterio).subscribe(
+          (response) => {
+            this.listar()
+            Swal.fire('Eliminado!', '', 'success')
+
+          }
+        );
       }
     })
 
   }
 
   listar(): void {
-    this.criterioservice.getCriterios().subscribe(
+    this.criterioservice.obtenerDatosCriterios().subscribe(
       (data: any[]) => {
         this.criterios = data;
+        this.dataSource.data = this.criterios;
+        console.log(data)
       },
       (error: any) => {
         console.error('Error al listar los criterios:', error);
       }
     );
-    this.listarSub();
   }
 
   editDatos(criterio: Criterio) {
-    // this.crite.id_criterio = criterio.id_criterio
-    // this.crite.nombre = criterio.nombre
-    // this.crite.descripcion = criterio.descripcion
     this.crite = criterio;
     this.frmCriterio = new FormGroup({
       nombre: new FormControl(criterio.nombre),
@@ -127,25 +135,17 @@ export class CriteriosComponent implements OnInit {
     this.router.navigate(['/sup/flujo-criterio/criterios-subcriterio'], { state: { data: criterio } });
   }
 
-  lista_subcriterios: any[] = [];
-
-  getSubcriteriosPorCriterio(criterio: Criterio): number {
-    let contador = 0;
-    for (let subcriterio of this.lista_subcriterios) {
-      if (subcriterio.criterio.id_criterio === criterio.id_criterio) {
-        contador++;
-      }
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+      this.dataSource.data = this.criterios;;
     }
-    return contador;
   }
-  listarSub(): void {
-    this.subcriterioservice.getSubcriterios().subscribe(
-      (data: Subcriterio[]) => {
-        this.lista_subcriterios = data;
-      },
-      (error: any) => {
-        console.error('Error al listar los subcriterios:', error);
-      }
-    );
-  }
+
+
+  
 }

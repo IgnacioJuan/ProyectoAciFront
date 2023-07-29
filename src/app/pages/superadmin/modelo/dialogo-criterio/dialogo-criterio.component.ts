@@ -95,7 +95,7 @@ export class DialogoCriterioComponent implements OnInit {
 
   //consumir servicio de listar criterios
   listarCriterios() {
-    this.criterioService.listarCriterio()
+    this.criterioService.getCriterios()
       .subscribe(data => {
         this.dataSource = data;
       })
