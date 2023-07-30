@@ -15,16 +15,15 @@
     </blockquote>
     <div class="card">
       <div class="card-body">
-        <div role="search" id="buscar">
-          <div class="input-group">
-            <input
-              class="form-control"
-              type="text"
-              placeholder="Buscar"
-              aria-label="Search"
-              [(ngModel)]="searchText"
-            />
-          </div>
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            name="filterPost3"
+            placeholder="Buscar..."
+            [(ngModel)]="filterPost"
+            (input)="aplicarFiltro()"
+          />
         </div>
         <br />
         <button
@@ -37,49 +36,61 @@
         </button>
         <br />
         <br />
-        <br />
         <div
           class="mat-elevation-z8 table-responsive"
           style="margin-bottom: 5%"
         >
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>DESCRIPCIÓN</th>
-              <th>ACCIÓN</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let evidencia of evidencias | buscar : searchText">
-              <td>{{ evidencia.id_evidencia }}</td>
-              <td>{{ evidencia.descripcion }}</td>
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="id_evidencia">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.id_evidencia }}
+            </td>
+          </ng-container>
+          
+          <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef>DESCRIPCIÓN</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.descripcion }}
+            </td>
+          </ng-container>
 
-              <td>
-                <div class="btn-group" role="group">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    style="margin-right: 5%"
-                    data-bs-toggle="modal"
-                    data-bs-target="#materiaModal"
-                    (click)="editDatos(evidencia)"
-                  >
-                    <i class="fa fa-edit"></i>
-                  </button>
-                  <button
-                    class="btn btn-danger"
-                    style="background-color: red; margin-right: 5%"
-                    role="button"
-                    (click)="eliminar(evidencia)"
-                  >
-                    <i class="fa fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                class="btn btn-danger"
+                style="background-color: red"
+                (click)="eliminar(element)"
+                style="margin-right: 5%"
+              >
+                <i class="fas fa-user-times"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#materiaModal"
+                style="margin-right: 5%"
+                (click)="editDatos(element)"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnasUsuario"></tr>
+          <tr mat-row *matRowDef="let fila; columns: columnasUsuario"></tr>
         </table>
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+          aria-label="Select page of periodic elements"
+          itemsPerPageLabel="Items por página:"
+          nextPageLabel="Siguiente"
+          previousPageLabel="Anterior"
+        >
+        </mat-paginator>
         </div>
         <div
           class="modal fade"

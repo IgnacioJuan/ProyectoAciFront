@@ -98,7 +98,6 @@ export class CriteriosComponent implements OnInit {
       (data: any[]) => {
         this.criterios = data;
         this.dataSource.data = this.criterios;
-        console.log(data)
       },
       (error: any) => {
         console.error('Error al listar los criterios:', error);
