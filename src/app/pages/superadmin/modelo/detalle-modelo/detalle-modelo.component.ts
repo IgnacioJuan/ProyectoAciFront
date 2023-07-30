@@ -127,9 +127,10 @@ export class DetalleModeloComponent implements OnInit {
       }
       this.model = data;
       this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.id)).subscribe(info => {
-        this.criterioService.getCriterios().subscribe(result => {
+        this.criterioService.listarCriterio().subscribe(result => {
           this.dataSource = [];
           this.asignacion = info;
+          console.log(this.asignacion);
           this.dataSource = result.filter((criterio: any) => {
             return info.some((asignacion: any) => {
               return criterio.id_criterio === asignacion.indicador.subcriterio.criterio.id_criterio;
