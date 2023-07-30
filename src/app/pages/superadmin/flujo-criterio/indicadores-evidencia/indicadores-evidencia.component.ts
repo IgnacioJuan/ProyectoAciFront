@@ -4,6 +4,8 @@ import { Evidencia } from 'src/app/models/Evidencia';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { Indicador } from 'src/app/models/Indicador';
+import { Subcriterio } from 'src/app/models/Subcriterio';
+import { Criterio } from 'src/app/models/Criterio';
 @Component({
   selector: 'app-indicadores-evidencia',
   templateUrl: './indicadores-evidencia.component.html',
@@ -12,6 +14,20 @@ import { Indicador } from 'src/app/models/Indicador';
 export class IndicadoresEvidenciaComponent{
   searchText = '';
   estado = 'pendiente';
+
+
+  subcriterio: Subcriterio = new Subcriterio();
+  criterio: Criterio = new Criterio();
+  indicador: Indicador = new Indicador();
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  miModal!: ElementRef;
+  public evid = new Evidencia();
+  evidencias: any[] = [];
+  frmEvidencia: FormGroup;
+  guardadoExitoso: boolean = false;
+
+
   constructor(private evidenciaservice: EvidenciaService,
     private router: Router, private fb: FormBuilder,
     private route: ActivatedRoute
@@ -20,20 +36,14 @@ export class IndicadoresEvidenciaComponent{
       descripcion: ['', [Validators.required]],
     })
   }
-  indicador: Indicador = new Indicador();
   ngOnInit() {
-    const data = history.state.data;
-    console.log(data); // aquí tendrías el objeto `evidencia` de la fila seleccionada.
+    this.subcriterio = history.state.subcriterio;
+    this.criterio= history.state.criterio;
     this.indicador = history.state.data;
     this.listar()
   }
   
-  @ViewChild('datosModalRef') datosModalRef: any;
-  miModal!: ElementRef;
-  public evid = new Evidencia();
-  evidencias: any[] = [];
-  frmEvidencia: FormGroup;
-  guardadoExitoso: boolean = false;
+  
 
   guardar() {
     this.evid = this.frmEvidencia.value;
@@ -93,10 +103,10 @@ export class IndicadoresEvidenciaComponent{
       });
   }
   verIndicadores() {
-    this.router.navigate(['/sup/flujo-criterio/subcriterios-indicador'], { state: { data: this.indicador.subcriterio } });
+    this.router.navigate(['/sup/flujo-criterio/subcriterios-indicador'], { state: { data: this.subcriterio } });
   }
   verSubcriterios() {
-    this.router.navigate(['/sup/flujo-criterio/criterios-subcriterio'], { state: { data: this.indicador.subcriterio?.criterio } });
+    this.router.navigate(['/sup/flujo-criterio/criterios-subcriterio'], { state: { data: this.criterio } });
   }
   verCriterios() {
     this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
