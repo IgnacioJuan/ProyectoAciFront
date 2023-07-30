@@ -19,7 +19,11 @@ export class CriteriosService {
 
     return this.http.get<Criterio>(`${baserUrl}/api/criterio/buscar/${id}`);
   }
-
+  public listarCriterio(): Observable<Criterio[]> {
+    return this.http
+      .get(`${baserUrl}/api/criterio/listar`)
+      .pipe(map((response) => response as Criterio[]));
+  }
   getCriterios(): Observable<Criterio[]> {
     return this.http.get<Criterio[]>(`${baserUrl}/api/criterio/listar`);
   }
