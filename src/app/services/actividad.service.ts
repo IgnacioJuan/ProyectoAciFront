@@ -23,7 +23,10 @@ export class ActividadService {
     const url = `${baserUrl}/api/actividad/listarv`;
     return this.http.get<Actividades[]>(url);
   }
-
+  getAc(): Observable<Actividades[]> {
+    const url = `${baserUrl}/api/actividad/listaractiv`;
+    return this.http.get<Actividades[]>(url);
+  }
   crear(actividad: Actividades): Observable<Actividades> {
     return this.http.post<Actividades>(`${baserUrl}/api/actividad/crear`, actividad);
   }
@@ -74,5 +77,8 @@ public getActByUsua(idUsua: number): Observable<Actividades[]> {
   return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscarByUsuario/${idUsua}`);
 }
 
-
+public getActUsu(idEvi: number): Observable<Actividades[]> {
+  return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscaractiv/${idEvi}`);
+  
+}
 }

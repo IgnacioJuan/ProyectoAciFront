@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { forkJoin } from 'rxjs';
 import { Actividad } from 'src/app/models/Actividad';
 import { AutoIndicador } from 'src/app/models/AutoridadIndicador';
 import { Criterio } from 'src/app/models/Criterio';
-import { Indicador } from 'src/app/models/Indicador';
 import { Persona2 } from 'src/app/models/Persona2';
 import { ActividadService } from 'src/app/services/actividad.service';
 import { Actividades } from 'src/app/models/actividades';
@@ -15,12 +14,13 @@ import { CalendarOptions } from '@fullcalendar/core';;
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import esLocale from '@fullcalendar/core/locales/es';
-import {MatTabsModule} from '@angular/material/tabs';
-import { L } from '@fullcalendar/core/internal-common';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
-import { number, string } from 'mathjs';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { ThemePalette } from '@angular/material/core';
+import { Notificacion } from 'src/app/models/Notificacion';
+import { LoginService } from 'src/app/services/login.service';
+import { NotificacionService } from 'src/app/services/notificacion.service';
+import { PersonaService } from 'src/app/services/persona.service';
 // Color aleatorio
 function cambiarColor(str: string): string {
   let hash = 0;
@@ -57,10 +57,18 @@ function colorCalendario(): string {
 export class DashboardComponent2 implements OnInit {
   displayedColumns: string[] = ['nombre', 'fechai', 'fechafin'];
   dataSource : Actividades[] = [];
-  itemsPerPageLabel = 'Elementos por página';
+  isLoggedIn = false;
+  user: any = null;
+  rol: any = null;
+  noti = new Notificacion();
+  notificaciones: Notificacion[] = [];
+  numNotificacionesSinLeer: number = 0;
+  selectedColor: string="";
+  itemsPerPageLabel = 'Actividades por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
   titulo= 'Avance de los Criterios';
+  @Input() color: ThemePalette= "primary";
 //tabla actividades rechazadas
 displayedColumns1: string[] = ['nombre', 'fechai', 'fechafin']; // Columnas de la tabla
 dataSource1: Actividades[] = [];
@@ -109,7 +117,14 @@ crite: any[] = [];
 
   public actividad = new Actividades();
   Actividades: Actividad[] = [];
+  listact: Actividades[] = [];
+  numac: Actividades[] = [];
   Evidencias: any[] = [];
+  totalAct: number = 0;
+  actApro: number = 0;
+  porc:number=0;
+  datosUsuarios: any[] = [];
+    @ViewChild('chart') chart: any;
 
   title = 'ng2-charts-demo';
   //VISTA PARA PIE
@@ -161,7 +176,8 @@ crite: any[] = [];
 
 //
 constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
-  private eviden: EvidenciaService,private router: Router,
+  private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
+  public login: LoginService, private notificationService: NotificacionService,
   private httpCriterios: CriteriosService) {
     this.colorScheme = {
       domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
@@ -173,6 +189,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.services.getActividadaprobada().subscribe((data: Actividades[]) => {
       this.dataSource = data;
     });
+    this.rol = this.login.getUserRole();
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
@@ -204,7 +221,189 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
       this.listaCriterios = data;
       this.cargarDatosAutomaticamente();
     });
+    //Notificaciones
+    this.isLoggedIn = this.login.isLoggedIn();
+    this.user = this.login.getUser();
+    this.login.loginStatusSubjec.asObservable().subscribe(
+      data => {
+        this.isLoggedIn = this.login.isLoggedIn();
+        this.user = this.login.getUser();
+      }
+    );
     
+    this.listarnot(this.user.id);
+    //cambiar color
+    const storedColor = localStorage.getItem('selectedColor');
+    if (storedColor) {
+      this.selectedColor = storedColor;
+      this.aplicarColorFondo(storedColor);
+    }
+  }
+ //listar act
+obtenerActividades() {
+  this.services.getAc().subscribe(
+    (actividades: Actividades[]) => {
+      this.listact = actividades;
+
+      // Recorrer las actividades y obtener el ID de usuario de cada una
+      for (const actividad of actividades) {
+        const usuarioId = actividad?.usuario?.id;
+        if (usuarioId) {
+          this.numActividades(usuarioId);
+        } else {
+          console.error('No se encontró el ID de usuario en una actividad.');
+        }
+      }
+    },
+    (error) => {
+      console.error('Error al obtener las actividades:', error);
+    }
+  );
+}
+
+
+numActividades(id:any) {
+  this.services.getActUsu(id).subscribe(
+    (actividades: Actividades[]) => {
+      const totalAct = actividades.length;
+      const actApro = actividades.filter((actividad) => actividad.estado === 'Aprobado').length;
+
+      // Calcular el porcentaje de actividades aprobadas
+      const porc = (actApro / totalAct) * 100;
+
+      // Obtener el nombre del usuario
+      const nombreUsuario = actividades[0]?.usuario?.persona.primer_apellido+" "+actividades[0]?.usuario?.persona.primer_nombre; // Ajusta esta propiedad según la estructura de tu objeto de usuario
+
+      // Agregar la información a la matriz de datos de usuarios
+      this.datosUsuarios.push({ id: id, nombre: nombreUsuario, porcentaje: porc });
+
+      // Actualizar la gráfica con los nuevos datos
+      this.actualizarGrafica();
+    },
+    (error) => {
+      console.error('Error al obtener las actividades del usuario:', error);
+    }
+  );
+}
+
+actualizarGrafica() {
+  if (this.datosUsuarios.length > 0) {
+    const resultados = this.datosUsuarios.map((usuario) => {
+      return { name: usuario.nombre, value: usuario.porcentaje };
+    });
+    this.chart.data = resultados;
+    this.chart.update();
+  }
+}
+ //
+  cambiar() {
+    localStorage.setItem('selectedColor', this.selectedColor);
+    this.aplicarColorFondo(this.selectedColor);
+    /**/
+   
+  }
+
+  aplicarColorFondo(color: string) {
+    // Aplicar el color seleccionado al fondo
+    const body = document.getElementById("body");
+    const enc = document.getElementById("enc");
+    const let1 = document.getElementById("letra");
+    const let2 = document.getElementById("letra2");
+    const cal = document.getElementById("cal");
+    const fig = document.getElementById("fig");
+    const fig2 = document.getElementById("tooltip");
+    const menu = document.getElementById("menu");
+    const notif = document.getElementById("notif");
+    const txt = document.getElementById("txt");
+
+    if (body) {
+      body.style.backgroundColor = color;
+    }
+    //color
+    if(color==="white"){
+    if (enc) {
+      enc.style.backgroundColor = "#eeeee4";
+    }
+    if (let1) {
+      let1.style.color = "black";
+    }
+    if (let2) {
+      let2.style.color = "black";
+    }
+    if (notif) {
+      notif.style.backgroundColor = "white";
+      notif.style.color = "black";
+    }
+    if(txt){
+      txt.style.backgroundColor = "white";
+      txt.style.color = "black";
+    }
+    if(menu){
+      menu.style.backgroundColor = "#b0bec5";
+    }
+  } else if (color === "#151a30") {
+    if (enc) {
+      enc.style.backgroundColor = "#222b45";
+    }
+    if (let1) {
+      let1.style.color = "white";
+    }
+    if (let2) {
+      let2.style.color = "white";
+    }
+    if (notif) {
+      notif.style.backgroundColor = "#151a30";
+      notif.style.color = "white";
+    }
+    if(txt){
+      txt.style.backgroundColor = "#0d47a1";
+      txt.style.color = "white";
+    }
+    if(menu){
+      menu.style.backgroundColor = "#BEC8DC80";
+    }
+    if(fig){
+      fig.style.backgroundColor = "#BEC8DC80";
+    }
+    if(cal){
+      cal.style.color = "white";
+    }
+  }
+  }
+
+  listarnot(id: any) {
+    if (this.rol == "ADMIN" || this.rol == "SUPERADMIN") {
+      // Cargar notificaciones del rol ADMIN
+      this.notificationService.allnotificacion(this.rol).subscribe(
+        (data: Notificacion[]) => {
+          this.notificaciones = data;
+          this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
+          // Cargar notificaciones propias por id
+          this.notificationService.getNotificaciones(id).subscribe(
+            (dataPropias: Notificacion[]) => {
+              this.notificaciones = this.notificaciones.concat(dataPropias);
+              this.numNotificacionesSinLeer += dataPropias.filter(n => !n.visto).length;
+            },
+            (errorPropias: any) => {
+              console.error('No se pudieron listar las notificaciones propias');
+            }
+          );
+        },
+        (error: any) => {
+          console.error('No se pudieron listar las notificaciones');
+        }
+      );
+    } else {
+      this.notificationService.getNotificaciones(id).subscribe(
+        (data: Notificacion[]) => {
+          this.notificaciones = data;
+          this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
+        },
+        (error: any) => {
+          console.error('No se pudieron listar las notificaciones');
+        }
+      );
+    }
   }
   //Mi codigo calendario
  
