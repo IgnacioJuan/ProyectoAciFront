@@ -10,21 +10,25 @@ import { SidebarService } from 'src/app/services/sidebar.service';
 })
 export class SiderbarComponent implements OnInit {
   menuItems?: any[];
-
   isLoggedIn = false;
   user: any = null;
   rol: any = null;
   ruta: any = null;
+  activeSubmenuIndex: number = -1; // Indice del submenú activo, -1 si ninguno está activo
+
+  /*menuItems?: any[];
+  opcionActiva: any = null;
+  isLoggedIn = false;
+  user: any = null;
+  rol: any = null;
+  ruta: any = null;*/
 
   constructor(private sidebarService: SidebarService, private router: Router, public login: LoginService) {
     //this.cargar();
-
-
   }
 
 
   ngOnInit(): void {
-
     this.cargar();
 
     this.isLoggedIn = this.login.isLoggedIn();
@@ -38,12 +42,11 @@ export class SiderbarComponent implements OnInit {
     this.rol = this.login.getUserRole();
   }
 
-
-
   public logout() {
     this.login.logout();
     location.replace('/use/login');
   }
+
 
   cargar() {
     if (this.isLoggedIn == false) {
@@ -79,11 +82,18 @@ export class SiderbarComponent implements OnInit {
       }
 
     }
-
-
-
     console.log('login: ' + this.isLoggedIn);
     console.log('aqui rol: ' + this.rol);
     console.log(this.user);
+  }
+
+  toggleSubmenu(index: number) {
+    if (this.activeSubmenuIndex === index) {
+      // Si la opción está activa y se hace clic nuevamente, se cierra la opción.
+      this.activeSubmenuIndex = -1;
+    } else {
+      // Si se abre una nueva opción, se cierra la opción anterior activa (si hay alguna).
+      this.activeSubmenuIndex = index; // Se marca el nuevo submenú como activo.
+    }
   }
 }
