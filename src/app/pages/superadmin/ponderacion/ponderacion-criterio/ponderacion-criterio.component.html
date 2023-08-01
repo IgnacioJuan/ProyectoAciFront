@@ -26,6 +26,7 @@
               <th>% Valor Obtenido</th>
               <th>% Utilidad Obtenido</th>
               <th>Valor obtenido</th>
+              <th>Archivo</th>
             </tr>
           </thead>
           <tbody>
@@ -45,6 +46,10 @@
 
               <td>{{ column.porc_utilida_obtenida }} %</td>
               <td>{{ column.valor_obtenido }}</td>
+              <td>
+                <a *ngIf="column.enlace" (click)="recoverPdf(column.id_indicador)" target="_blank">Ver PDF</a>
+                <span *ngIf="!column.enlace">Sin enlace</span>
+              </td>
             </tr>
           </tbody>
         </table>

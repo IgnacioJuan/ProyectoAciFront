@@ -54,11 +54,18 @@ export class PonderacionCriterioComponent implements OnInit {
   llenar_datasource() {
     this.criterio=history.state.criterio;
     this.modelo=history.state.modelo;
+    const id_criterio = 1; // Reemplaza con el ID de criterio correcto
+    const id_modelo = 2; // Reemplaza con el ID de modelo correcto
     this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
       (data) => {
-        this.dataSource = data;
+        this.dataSource = data.map((indicador: any) => {
+          return {
+            ...indicador,
+            enlace: `http://localhost:5000/archivo/${indicador.id_indicador}.pdf` // Reemplaza 'URL_DEL_BACKEND' con la URL correcta de tu backend
+          };
+        });
+  
         console.log(this.dataSource + 'criteriooooooo');
-
 
      this.coloresTabla();
      this.GraficaPastel();
@@ -133,6 +140,15 @@ export class PonderacionCriterioComponent implements OnInit {
     // código del método del botón
     this.router.navigate(['/sup/modelo/modelo']);
 
+  }
+
+  recoverPdf(id:number){
+    alert('clicl')
+    this.indicadorservice.recoverPdfLink(id).subscribe(
+      (data) => {
+        alert()
+      }
+    );
   }
 
 
