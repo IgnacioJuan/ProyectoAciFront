@@ -29,25 +29,21 @@ export class PonderacionCriterioComponent implements OnInit {
   critrioClase = new Criterio();
   dataSource: any;
   asignacion: any;
-  id: any;
+  criterio: Criterio = new Criterio();
+  modelo: Modelo = new Modelo();
   color: any
   chart: any;
-  idModelo: any;
 
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router, private fb: FormBuilder,
-
     public modeloService: ModeloService,
     public asignacionIndicadorService: AsignacionIndicadorService,
-    private sharedDataService: SharedDataService,
-    private criterioService: CriteriosService,
     private activatedRoute: ActivatedRoute
   ) {
 
   }
   ngOnInit(): void {
-    //this.recibeCriterio();
 
 
     this.llenar_datasource();
@@ -55,29 +51,10 @@ export class PonderacionCriterioComponent implements OnInit {
 
   }
 
-  recibeCriterio() {
-    let id = localStorage.getItem("id");
-    this.modeloService.getModeloById(Number(id)).subscribe(data => {
-      this.model = data;
-
-      this.indicadorservice.obtenerIndicadoresPorCriterio(Number(id)).subscribe(result => {
-        this.dataSource = result;
-
-        console.log(this.dataSource);
-      });
-
-    });
-  }
-
-
-
   llenar_datasource() {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.id = params['criterio'];
-      this.idModelo = params['modelo'];
-
-    });
-    this.indicadorservice.listarIndicadorPorCriterioModelo(this.id, this.idModelo).subscribe(
+    this.criterio=history.state.criterio;
+    this.modelo=history.state.modelo;
+    this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
       (data) => {
         this.dataSource = data;
         console.log(this.dataSource + 'criteriooooooo');
@@ -147,11 +124,16 @@ export class PonderacionCriterioComponent implements OnInit {
   }
   
 
-  verSubcriterios() {
+  regresar() {
     this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
+  irinicio() {
 
+    // código del método del botón
+    this.router.navigate(['/sup/modelo/modelo']);
+
+  }
 
 
 }

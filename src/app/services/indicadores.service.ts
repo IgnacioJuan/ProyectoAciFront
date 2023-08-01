@@ -4,19 +4,18 @@ import { Indicador } from '../models/Indicador';
 import { HttpClient } from '@angular/common/http';
 import baserUrl from './helper';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { IndicadorEvidenciasProjection } from '../interface/IndicadorEvidenciasProjection';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IndicadoresService {
 
-  private indicadorLista: string = 'http://localhost:5000/api/indicadores/listar';
-  private url: string = 'http://localhost:5000/api/indicadores';
   constructor(private http: HttpClient) { }
 
   public listarIndicador(): Observable<Indicador[]> {
     return this.http
-      .get(this.indicadorLista)
+      .get(`${baserUrl}/api/indicadores/listar`)
       .pipe(map((response) => response as Indicador[]));
   }
   getIndicadors(): Observable<Indicador[]> {
@@ -78,12 +77,16 @@ export class IndicadoresService {
 
   getIndicadorById(id_indicador: number): Observable<Indicador> {
 
-    return this.http.get<Indicador>(this.url + '/buscar/' + id_indicador);
+    return this.http.get<Indicador>(`${baserUrl}/api/indicadores/buscar/id_indicador/${id_indicador}`);
+    
   }
 
   public obtenerIndicadoresPorCriterio(id: any): Observable<Indicador[]> {
     return this.http
       .get(`${baserUrl}/api/indicadores/obtenerIndicadoresPorCriterio/${id}`)
       .pipe(map((response) => response as Indicador[]));
+  }
+  obtenerDatosIndicadores(id_subcriterio: any): Observable<IndicadorEvidenciasProjection[]> {
+    return this.http.get<IndicadorEvidenciasProjection[]>(`${baserUrl}/api/indicadores/datosIndicadores/${id_subcriterio}`);
   }
 }

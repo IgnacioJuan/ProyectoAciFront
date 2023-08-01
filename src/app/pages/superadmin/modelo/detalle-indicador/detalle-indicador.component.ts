@@ -86,7 +86,7 @@ export class DetalleIndicadorComponent implements OnInit {
       }
     });
   }
-  
+  //optimizar
   recibeIndicador() {
     let id = localStorage.getItem('id');
     this.modeloService.getModeloById(Number(id)).subscribe((data) => {
@@ -135,5 +135,10 @@ export class DetalleIndicadorComponent implements OnInit {
     this.router.navigate(['/sup/modelo/detalle-subcriterio']);
   }
   
-  
+  irinicio() {
+
+    // código del método del botón
+    this.router.navigate(['/sup/modelo/modelo']);
+
+  }
 }
