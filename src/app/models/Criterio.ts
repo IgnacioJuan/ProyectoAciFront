@@ -1,4 +1,3 @@
-import { Subcriterio } from "./Subcriterio";
 
 export class Criterio {
     id_criterio: number = 0;

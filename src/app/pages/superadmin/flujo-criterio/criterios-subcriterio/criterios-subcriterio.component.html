@@ -13,16 +13,15 @@
     </blockquote>
     <div class="card">
       <div class="card-body">
-        <div role="search" id="buscar">
-          <div class="input-group">
-            <input
-              class="form-control"
-              type="text"
-              placeholder="Buscar"
-              aria-label="Search"
-              [(ngModel)]="searchText"
-            />
-          </div>
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            name="filterPost3"
+            placeholder="Buscar..."
+            [(ngModel)]="filterPost"
+            (input)="aplicarFiltro()"
+          />
         </div>
         <br />
         <button
@@ -40,62 +39,81 @@
           class="mat-elevation-z8 table-responsive"
           style="margin-bottom: 5%"
         >
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>NOMBRE</th>
-                <th>DESCRIPCIÓN</th>
-                <th>INDICADORES</th>
-                <th>ACCIÓN</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                *ngFor="let subcriterio of subcriterios | buscar : searchText"
-              >
-                <td>{{ subcriterio.id_subcriterio }}</td>
-                <td>{{ subcriterio.nombre }}</td>
-                <td>{{ subcriterio.descripcion }}</td>
-                <td>
-                  <button
-                    class="btn btn-primary"
-                    role="button"
-                    (click)="verDetalles(subcriterio)"
-                  >
-                    <div class="d-flex">
-                      <span class="badge">{{
-                        getIndicadoresPorSubriterio(subcriterio)
-                      }}</span>
-                      <i class="fa fa-folder-open"></i>
-                    </div>
-                  </button>
-                </td>
-                <td>
-                  <div class="btn-group" role="group">
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      style="margin-right: 5%"
-                      data-bs-toggle="modal"
-                      data-bs-target="#materiaModal"
-                      (click)="editDatos(subcriterio)"
-                    >
-                      <i class="fa fa-edit"></i>
-                    </button>
-                    <button
-                      class="btn btn-danger"
-                      style="background-color: red; margin-right: 5%"
-                      role="button"
-                      (click)="eliminar(subcriterio)"
-                    >
-                      <i class="fa fa-trash"></i>
-                    </button>
+          
+
+          <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="id_subcriterio">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.id_subcriterio }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef>NOMBRE</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.nombre }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="descripcion">
+              <th mat-header-cell *matHeaderCellDef>DESCRIPCIÓN</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.descripcion }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="cantidadIndicadores">
+              <th mat-header-cell *matHeaderCellDef>INDICADORES</th>
+              <td mat-cell *matCellDef="let elemento">
+                <button
+                  class="btn btn-primary"
+                  role="button"
+                  (click)="verDetalles(elemento)"
+                >
+                  <div class="d-flex">
+                    <span class="badge">{{
+                      elemento.cantidadIndicadores
+                    }}</span>
+                    <i class="fa fa-folder-open"></i>
                   </div>
-                </td>
-              </tr>
-            </tbody>
+                </button>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
+              <td mat-cell *matCellDef="let element">
+                <button
+                  class="btn btn-danger"
+                  style="background-color: red"
+                  (click)="eliminar(element)"
+                  style="margin-right: 5%"
+                >
+                  <i class="fas fa-user-times"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#materiaModal"
+                  style="margin-right: 5%"
+                  (click)="editDatos(element)"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnasUsuario"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnasUsuario"></tr>
           </table>
+          <mat-paginator
+            [pageSizeOptions]="[5, 10, 20]"
+            showFirstLastButtons
+            aria-label="Select page of periodic elements"
+            itemsPerPageLabel="Items por página:"
+            nextPageLabel="Siguiente"
+            previousPageLabel="Anterior"
+          >
+          </mat-paginator>
         </div>
         <div
           class="modal fade"
