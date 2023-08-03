@@ -21,6 +21,9 @@ import { Notificacion } from 'src/app/models/Notificacion';
 import { LoginService } from 'src/app/services/login.service';
 import { NotificacionService } from 'src/app/services/notificacion.service';
 import { PersonaService } from 'src/app/services/persona.service';
+import { ActividadesProjection } from 'src/app/interface/ActividadesProjection';
+import { IndicadorProjection } from 'src/app/interface/IndicadorProjection';
+import { ActivAprobadaProjection } from 'src/app/interface/ActivAprobadaProjection';
 // Color aleatorio
 function cambiarColor(str: string): string {
   let hash = 0;
@@ -55,8 +58,8 @@ function colorCalendario(): string {
   
 })
 export class DashboardComponent2 implements OnInit {
-  displayedColumns: string[] = ['nombre', 'fechai', 'fechafin'];
-  dataSource : Actividades[] = [];
+  displayedColumns: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
+  dataSource : ActivAprobadaProjection[] = [];
   isLoggedIn = false;
   user: any = null;
   rol: any = null;
@@ -64,29 +67,27 @@ export class DashboardComponent2 implements OnInit {
   notificaciones: Notificacion[] = [];
   numNotificacionesSinLeer: number = 0;
   selectedColor: string="";
+  
   itemsPerPageLabel = 'Actividades por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
   titulo= 'Avance de los Criterios';
+  titulo2= 'Avance de las Actividades';
+  titulo3= 'Responsables';
   @Input() color: ThemePalette= "primary";
-//tabla actividades rechazadas
-displayedColumns1: string[] = ['nombre', 'fechai', 'fechafin']; // Columnas de la tabla
-dataSource1: Actividades[] = [];
-//fin actividades rechazadas
- /* @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }*/
-//
+displayedColumns1: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
+spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
+spans: any[] = [];
+spans2: any[] = [];
+dataSource1: ActivAprobadaProjection[] = [];
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
   valores: number[] = [10,0];
   listaCriterios: any[] = [];
   modeloMaximo:any;
-  listaIndicadores: AutoIndicador[] = [];
+  listaIndicadores: IndicadorProjection[] = [];
   persona:Persona2 = new Persona2();
   suma: { [nombre: string]: number } = {};
   //prueba
@@ -99,25 +100,16 @@ showYAxis = true;
 gradient = false;
 //prueba
 view: [number, number] = [700, 400]; // Tamaño del gráfico (ancho x alto)
-//
-listaIconos = ['fa-cog fa-spin fa-3x fa-fw',
-'fas fa-chart-line fa-2x',
-'fas fa-globe fa-spin fa-1x',
-'fas fa-globe fa-pulse',
-'fa fa-handshake fa-pulse',
-'fas fa-chart-bar',
-'fas fa-chart-area'];
-
 Utilidad!: number;
 items: any[] = [];
 eventos: any[] = [];
 crite: any[] = [];
+avances: any[] = [];
   //FIN DE VISTA
-
-
   public actividad = new Actividades();
   Actividades: Actividad[] = [];
-  listact: Actividades[] = [];
+  listact: ActividadesProjection[] = [];
+  listind:IndicadorProjection[] = [];
   numac: Actividades[] = [];
   Evidencias: any[] = [];
   totalAct: number = 0;
@@ -125,55 +117,6 @@ crite: any[] = [];
   porc:number=0;
   datosUsuarios: any[] = [];
     @ViewChild('chart') chart: any;
-
-  title = 'ng2-charts-demo';
-  //VISTA PARA PIE
-  //PIE
-  public pieChartOptions: ChartOptions<'pie'> = {
-    responsive: true,
-  };
-  public pieChartLabels = [''];
-  public pieChartDatasets = [{
-    data: this.valores
-  }];
-  public pieChartLegend = true;
-  public pieChartPlugins = [];
-
-
-  //PIE 2
-  valor1: number = 50;
-  valor2: number = 50;
-  porcenta: number = 0;
-  public pieChartOptions2: ChartOptions<'pie'> = {
-    responsive: true,
-  };
-  public pieChartLabels2 = ['Porcentaje ' + this.valor1 + '%', 'Porcentaje ' + this.valor2 + '%'];
-  public pieChartDatasets2 = [{
-    data: [this.valor1, this.valor2]
-  }];
-  public pieChartLegend2 = true;
-  public pieChartPlugins2 = [];
-  //
-
-  //barras
-  public barChartLegend = true;
-  public barChartPlugins = [];
-
-  public barChartData: ChartConfiguration<'bar'>['data'] = {
-    labels: [],
-    datasets: [
-      { data: this.valores, label: 'Series A' },
-      { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' }
-    ]
-  };
-
-  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    responsive: true,
-  };
-  handleDateClick: any;
-
-
-
 //
 constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
@@ -182,17 +125,29 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.colorScheme = {
       domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
     };
-    this.services.getActividadrechazada().subscribe((data: Actividades[]) => {
+    this.services.getActividadrechazada().subscribe((data: ActivAprobadaProjection[]) => {
       this.dataSource1 = data;
+      console.log("rechazadai", JSON.stringify(this.dataSource1))
+      this.cacheSpan('actividades', (d) => d.actividades);
+      this.cacheSpan('inicio', (d) => d.actividades + d.inicio);
+      this.cacheSpan('fin', (d) => d.actividades + d.inicio + d.fin);
+      this.cacheSpan('encargado', (d) => d.actividades + d.inicio + d.fin + d.encargado);
     });
 
-    this.services.getActividadaprobada().subscribe((data: Actividades[]) => {
+    this.services.getActividadaprobada().subscribe((data: ActivAprobadaProjection[]) => {
       this.dataSource = data;
+      this.cacheSpan2('actividad', (y) => y.actividades);
+      this.cacheSpan2('inicio', (y) => y.actividades + y.inicio);
+      this.cacheSpan2('fin', (y) => y.actividades + y.inicio + y.fin);
+      this.cacheSpan2('encargado', (y) => y.actividades + y.inicio + y.fin + y.encargado);
     });
     this.rol = this.login.getUserRole();
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    //filas
+    //'actividad', 'inicio', 'fin','encargado'
+    
    }
 
 
@@ -202,8 +157,6 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
 
 
   ngOnInit(): void {
-    this.getButtonCriterio();
-    this.getButtonCriterio2();
     this.listarActividad();
     this.modeloMax();
     this.services.get().subscribe((data: Actividades[]) => {
@@ -215,11 +168,10 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
         color: colorCalendario()
       }));
       this.calendarOptions.events = this.eventos;
-      console.table("Eventos tabla"+this.eventos);
     });
   this.httpCriterios.getCriterios().subscribe(data => {
       this.listaCriterios = data;
-      this.cargarDatosAutomaticamente();
+      this.cargarDatos();
     });
     //Notificaciones
     this.isLoggedIn = this.login.isLoggedIn();
@@ -238,22 +190,94 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
       this.selectedColor = storedColor;
       this.aplicarColorFondo(storedColor);
     }
+    this.obtenerActividades();
   }
+  //
+  cacheSpan(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.dataSource1.length;) {
+      let currentValue = accessor(this.dataSource1[i]);
+      let count = 1;
+
+      for (let j = i + 1; j < this.dataSource1.length; j++) {
+        console.log('Comparing:', currentValue, accessor(this.dataSource1[j]));
+  
+        if (currentValue !== accessor(this.dataSource1[j])) {
+          break;
+        }
+        count++;
+      }
+  
+      if (!this.spans[i]) {
+        this.spans[i] = {};
+      }
+  
+      this.spans[i][key] = count;
+      i += count;
+    }
+  }
+  
+  
+  getRowSpan(col: any, index: any) {
+    return this.spans[index] && this.spans[index][col];
+  }
+
+  cacheSpan2(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.dataSource.length;) {
+      let currentValue = accessor(this.dataSource[i]);
+      let count = 1;
+
+      for (let j = i + 1; j < this.dataSource.length; j++) {
+        console.log('Comparing:', currentValue, accessor(this.dataSource[j]));
+  
+        if (currentValue !== accessor(this.dataSource[j])) {
+          break;
+        }
+        count++;
+      }
+  
+      if (!this.spans2[i]) {
+        this.spans2[i] = {};
+      }
+  
+      this.spans2[i][key] = count;
+      i += count;
+    }
+  }
+  
+  
+  getRowSpan2(col: any, index: any) {
+    return this.spans2[index] && this.spans2[index][col];
+  }
+  
  //listar act
+ obtenerNombreArchivo(url: string): string {
+  if (url) {
+    const nombreArchivo = url.substring(url.lastIndexOf('/') + 1);
+  return nombreArchivo;
+  } else {
+    return '';
+  }
+}
+
+obtenerNombreArchivo2(url: string): string {
+  if (url) {
+    const nombreArchivo = url.substring(url.lastIndexOf('/') + 1);
+  return nombreArchivo;
+  } else {
+    return '';
+  }
+}
 obtenerActividades() {
   this.services.getAc().subscribe(
-    (actividades: Actividades[]) => {
+    (actividades: ActividadesProjection[]) => {
       this.listact = actividades;
+      console.log("Avances de base:", JSON.stringify(this.listact, null, 2));
+      this.avances = this.listact.map(item => ({
+        name: item.nombres,
+        value: item.avance
+      }));
 
-      // Recorrer las actividades y obtener el ID de usuario de cada una
-      for (const actividad of actividades) {
-        const usuarioId = actividad?.usuario?.id;
-        if (usuarioId) {
-          this.numActividades(usuarioId);
-        } else {
-          console.error('No se encontró el ID de usuario en una actividad.');
-        }
-      }
+      console.log("Avances:", JSON.stringify(this.avances, null, 2));
     },
     (error) => {
       console.error('Error al obtener las actividades:', error);
@@ -261,46 +285,10 @@ obtenerActividades() {
   );
 }
 
-
-numActividades(id:any) {
-  this.services.getActUsu(id).subscribe(
-    (actividades: Actividades[]) => {
-      const totalAct = actividades.length;
-      const actApro = actividades.filter((actividad) => actividad.estado === 'Aprobado').length;
-
-      // Calcular el porcentaje de actividades aprobadas
-      const porc = (actApro / totalAct) * 100;
-
-      // Obtener el nombre del usuario
-      const nombreUsuario = actividades[0]?.usuario?.persona.primer_apellido+" "+actividades[0]?.usuario?.persona.primer_nombre; // Ajusta esta propiedad según la estructura de tu objeto de usuario
-
-      // Agregar la información a la matriz de datos de usuarios
-      this.datosUsuarios.push({ id: id, nombre: nombreUsuario, porcentaje: porc });
-
-      // Actualizar la gráfica con los nuevos datos
-      this.actualizarGrafica();
-    },
-    (error) => {
-      console.error('Error al obtener las actividades del usuario:', error);
-    }
-  );
-}
-
-actualizarGrafica() {
-  if (this.datosUsuarios.length > 0) {
-    const resultados = this.datosUsuarios.map((usuario) => {
-      return { name: usuario.nombre, value: usuario.porcentaje };
-    });
-    this.chart.data = resultados;
-    this.chart.update();
-  }
-}
  //
   cambiar() {
     localStorage.setItem('selectedColor', this.selectedColor);
     this.aplicarColorFondo(this.selectedColor);
-    /**/
-   
   }
 
   aplicarColorFondo(color: string) {
@@ -311,7 +299,7 @@ actualizarGrafica() {
     const let2 = document.getElementById("letra2");
     const cal = document.getElementById("cal");
     const fig = document.getElementById("fig");
-    const fig2 = document.getElementById("tooltip");
+    const fig5 = document.getElementById("fig5");
     const menu = document.getElementById("menu");
     const notif = document.getElementById("notif");
     const txt = document.getElementById("txt");
@@ -364,6 +352,9 @@ actualizarGrafica() {
     }
     if(fig){
       fig.style.backgroundColor = "#BEC8DC80";
+    }
+    if(fig5){
+      fig5.style.backgroundColor = "#BEC8DC80";
     }
     if(cal){
       cal.style.color = "white";
@@ -466,57 +457,30 @@ getColor(item: any): string {
   }
 
 
-  
-  //LISTA PARA CRITERIOS
-  getButtonCriterio() {
-    this.httpCriterios.getObtenerCriterio().subscribe(
-      data => {
-        this.listaCriterios = data;
-        console.log(this.listaCriterios)
-
-        console.log(this.labesCriterios)
-      }
-    )
-  }
-
-
   //LISTAR Y MOSTRAR LOS GRAFICOS
-  cargarDatosAutomaticamente() {
-    this.listaCriterios.forEach(item => {
-      this.editar(item.id_criterio);
-      console.log("Estoy en el init " + item.id_criterio);
-    });
-  }
-
-  editar(idCriterio: any): void {
-    this.httpCriterios.getObtenerIndicadores(idCriterio).subscribe(
-      data => {
-        this.listaIndicadores = data;
-        this.pieChartLabels = data.map((dato) => dato.nombre);
-        this.valores = (data.map((dato) => dato.porc_utilida_obtenida));
-        this.pieChartDatasets = [{
-          data: this.valores
-        }];
-        // Calculamos la suma y la guardamos en el objeto 'suma'
-        this.suma[this.listaCriterios.find(item => item.id_criterio === idCriterio).nombre] = this.valores.reduce((a, b) => a + b, 0);
-        this.datos = this.listaCriterios.map(item => ({
+  cargarDatos(): void {
+    this.httpCriterios.getIndicador().subscribe(
+        (data: IndicadorProjection[]) => {
+          this.listaIndicadores = data;
+          this.datos = this.listaIndicadores.map(item => ({
+            name: item.nombre,
+            value: item.total
+          }));
+//ordenar valores
+          this.listaIndicadores.sort((a, b) => b.total - a.total);
+          this.crite = this.listaIndicadores.map(item => ({
           name: item.nombre,
-          value: (this.suma[item.nombre] || 0) // Porcentaje obtenido
+        value: item.total
         }));
-
-        this.crite = this.listaCriterios.map(item => ({
-          name: item.nombre,
-          value: this.suma[item.nombre] || 0 // Porcentaje obtenido
-        })).sort((a, b) => b.value - a.value);
-      }
-    )
+        },
+        (error) => {
+          console.error('Error al obtener los datos:', error);
+        }
+      );
   }
 
   //valor porcentaje
-  getPorcentaje(value: number): string {
-    const porcentaje = Math.min(Math.max(value || 0, 0), 1);
-    return (porcentaje * 100).toFixed(2) + '%';
-  }
+  
   //color de barra
   getColorp(value: number): string {
     if (value >= 0.75) {
@@ -531,82 +495,12 @@ getColor(item: any): string {
     }
   }
 
-  //LISTAR Y MOSTRAR LOS GRAFICOS
-  editar2(ItemCrite: Criterio): void {
-    this.criteri = ItemCrite;
-    console.log(this.criteri.id_criterio)
-    this.httpCriterios.getObtenerIndicadores(ItemCrite.id_criterio).subscribe(
-      data => {
-        this.listaIndicadores = data;
-       
-
-        //para el porcentaje de criterios
-        this.valor1 = data.reduce((suma, dato) => suma + dato.peso, 0);
-        this.valor2 = data.reduce((suma, dato) => suma + dato.valor_obtenido, 0);
-
-        this.pieChartDatasets2 = [{
-          data: [this.valor2, this.valor1-this.valor2]
-        }];
-
-        this.porcenta = Number(((this.valor2 * 100) / this.valor1).toFixed(2));
-        this.pieChartLabels2 = ['Porcentaje ' + this.porcenta + '%'];
-        
-      }
-    )
-
-
-  }
-
-  valorObtenido: number[] = [];
-  valorObtenter: number[] = [];
-
-  //para la barras
-  getButtonCriterio2() {
-    this.httpCriterios.getObtenerCriterio().subscribe(
-      data => {
-        this.listaCriterios = data;
-        this.labesCriterios = data.map((dato) => dato.nombre);
-
-
-        //this.labesCriterios = data.map((dato) => dato.nombre);
-
-        const requests = this.listaCriterios.map((element) => {
-          return this.httpCriterios.getObtenerIndicadores(element.id_criterio);
-        });
-
-        forkJoin(requests).subscribe((response: any[]) => {
-          for (let i = 0; i < response.length; i++) {
-            const data = response[i];
-
-            console.log(i)
-            //this.valor1 = data.reduce((suma, dato) => suma + dato.peso, 0);
-            this.valorObtenter = data.reduce((suma: any, dato: { porc_utilida_obtenida: any; }) => suma.concat(dato.porc_utilida_obtenida), []);
-            this.valorObtenido = data.reduce((suma: any, dato: { valor_obtenido: any; }) => suma.concat(dato.valor_obtenido), []);
-
-            this.barChartData = {
-              labels: this.labesCriterios,
-              datasets: [
-                { data: this.valorObtenter, label: 'Valor Obtenido' },
-                { data: this.valorObtenido, label: 'Valor Obtener' }
-              ]
-            };
-
-            console.log(this.barChartData,"aqui");
-
-            break;
-            
-          }
-        });
-      }
-    );
-  }
-
+ 
   //para traer los datos del responsable
 getPersonaActividad(objeto:Actividad){
   console.log(objeto.usuario.id)
   this.httpCriterios.getObtenerPersonaId(objeto.usuario.id).subscribe(
     data => {
-      
       this.persona=data;
       console.log(this.persona);
     }

@@ -122,21 +122,39 @@
 <mat-tab label="Actividades Aprobadas">
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="dataSource">
-        <ng-container matColumnDef="nombre">
+        <ng-container matColumnDef="actividad">
           <th mat-header-cell *matHeaderCellDef>Nombre</th>
-          <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('actividad', i)"
+          [style.display]="getRowSpan2('actividad', i) ? '' : 'none'">{{ element.actividades }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="fechai">
+        <ng-container matColumnDef="inicio">
           <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
-          <td mat-cell *matCellDef="let element">{{ element.fecha_inicio }}</td>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('inicio', i)"
+          [style.display]="getRowSpan2('inicio', i) ? '' : 'none'">{{ element.inicio }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="fechafin">
+        <ng-container matColumnDef="fin">
           <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
-          <td mat-cell *matCellDef="let element">{{ element.fecha_fin }}</td>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('fin', i)"
+          [style.display]="getRowSpan2('fin', i) ? '' : 'none'">{{ element.fin }}</td>
         </ng-container>
-  
+        <ng-container matColumnDef="encargado">
+          <th mat-header-cell *matHeaderCellDef>Encargado</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('encargado', i)"
+          [style.display]="getRowSpan2('encargado', i) ? '' : 'none'">{{ element.encargado }}</td>
+        </ng-container>
+        <ng-container matColumnDef="enlace">
+          <th mat-header-cell *matHeaderCellDef>Enlace</th>
+          <td mat-cell *matCellDef="let element;">
+            <a
+            [href]="element.enlace"
+            [download]="obtenerNombreArchivo2(element.enlace)"
+          >
+            {{ element.enlace }}
+          </a>
+          </td>
+        </ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="tab-apr"></tr>
       </table>
@@ -151,21 +169,50 @@
     <mat-tab label="Actividades Rechazadas">
       <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource1">
-          <ng-container matColumnDef="nombre">
+          <ng-container matColumnDef="actividad">
             <th mat-header-cell *matHeaderCellDef>Nombre</th>
-            <td mat-cell *matCellDef="let element">{{ element.nombre }}</td>
+            <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan('actividad', i)"
+            [style.display]="getRowSpan('actividad', i) ? '' : 'none'">
+              {{ element.actividades }}
+            </td>
           </ng-container>
-  
-          <ng-container matColumnDef="fechai">
+        
+          <ng-container matColumnDef="inicio">
             <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
-            <td mat-cell *matCellDef="let element">{{ element.fecha_inicio }}</td>
+            <td mat-cell *matCellDef="let element ; let i = index" [attr.rowspan]="getRowSpan('inicio', i)"
+            [style.display]="getRowSpan('inicio', i) ? '' : 'none'">
+              {{ element.inicio }}
+            </td>
           </ng-container>
-  
-          <ng-container matColumnDef="fechafin">
+        
+          <ng-container matColumnDef="fin">
             <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
-            <td mat-cell *matCellDef="let element">{{ element.fecha_fin }}</td>
+            <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan('fin', i)"
+            [style.display]="getRowSpan('fin', i) ? '' : 'none'">
+              {{ element.fin }}
+            </td>
           </ng-container>
-  
+        
+          <ng-container matColumnDef="encargado">
+            <th mat-header-cell *matHeaderCellDef>Encargado</th>
+            <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan('encargado', i)"
+            [style.display]="getRowSpan('encargado', i) ? '' : 'none'">
+              {{ element.encargado }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="enlace">
+            <th mat-header-cell *matHeaderCellDef>Enlace</th>
+            <td mat-cell *matCellDef="let element;">
+              <a
+              [href]="element.enlace"
+              [download]="obtenerNombreArchivo(element.enlace)"
+            >
+              {{ element.enlace }}
+            </a>
+            </td>
+          </ng-container>
+          
+          
           <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns1;" class="tab-rech"></tr>
         </table>
@@ -175,20 +222,36 @@
       </div>
     </mat-tab>
   </mat-tab-group>
-  
+  <div>
+    <div style="display: flex;" id="fig4">
+      <div style="flex-basis: 70%; border-right: thick double #32a1ce;" id="fig5">
   <ngx-charts-bar-horizontal
-  *ngIf="datosUsuarios.length > 0"
-  [results]="datosUsuarios"
+  [view]="[300, 200]"
+  [scheme]="colorScheme"
+  [results]="avances"
   [xAxis]="true"
   [yAxis]="true"
   [showXAxisLabel]="true"
-  [showYAxisLabel]="true"
-  [xAxisLabel]="'Nombre del Usuario'"
-  [yAxisLabel]="'Porcentaje de Actividades Aprobadas'"
+  [showYAxisLabel]="false"
+  [xAxisLabel]="titulo2"
+  [yAxisLabel]="titulo3"
+  [showDataLabel]="true"
+  [barPadding]="4"
+  [roundEdges]="true"
+  (select)="onSelect($event)"
 >
+  <ng-template #tooltipTemplate let-model="model">
+    <div class="custom-tooltip">
+      <span>{{ model.name }}</span>
+      <br>
+      <span>{{ model.value / 100 | percent }}</span>
+    </div>
+  </ng-template>
 </ngx-charts-bar-horizontal>
+</div>
+</div>
+</div>
 
-  
 <div class="row" style="margin-top: 2%;">
   <div class="col-lg-6">
     <div class="card card-gray shadow">
