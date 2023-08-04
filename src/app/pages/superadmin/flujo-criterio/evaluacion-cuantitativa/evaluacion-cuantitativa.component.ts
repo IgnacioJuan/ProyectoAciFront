@@ -475,4 +475,6 @@ export class EvaluacionCuantitativaComponent implements OnInit {
       this.dataSourcemodal.data = this.listaCuantitativa;;
     }
   }
+
+
 }

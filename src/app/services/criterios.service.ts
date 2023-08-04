@@ -9,7 +9,6 @@ import { Persona2 } from '../models/Persona2';
 import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriteriosProjection';
 import { IndicadorProjection } from '../interface/IndicadorProjection';
 
-
 @Injectable({
   providedIn: 'root'
 })
