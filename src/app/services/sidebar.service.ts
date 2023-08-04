@@ -103,9 +103,9 @@ export class SidebarService {
       icono: 'nav-icon fas fa-superscript',
       titulo: "Fórmula",
       submenu: [
-        { titulo: 'Lista de Fórmula', url: 'sup/formula', icono: 'fas fa-cubes' },
-        { titulo: 'Lista Cuantitativas', url: 'sup/cuantitativa', icono: 'fas fa-cubes' },
-        { titulo: 'Lista Cualitativas', url: 'sup/cualitativa', icono: 'fas fa-cubes' },
+        { titulo: 'Lista de Fórmula', url: 'sup/formula/formula', icono: 'fas fa-cubes' },
+        { titulo: 'Lista Cuantitativas', url: 'sup/formula/cuantitativa', icono: 'fas fa-cubes' },
+        { titulo: 'Lista Cualitativas', url: 'sup/formula/cualitativa', icono: 'fas fa-cubes' },
 
       ]
     },

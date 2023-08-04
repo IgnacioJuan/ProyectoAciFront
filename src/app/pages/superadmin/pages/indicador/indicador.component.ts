@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { Evidencia } from 'src/app/models/Evidencia';
+import { IndicadorEvidenciasProjectionFull } from 'src/app/interface/IndicadorEvidenciasProjectionFull';
 import { Indicador } from 'src/app/models/Indicador';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 @Component({
@@ -11,22 +11,24 @@ import { IndicadoresService } from 'src/app/services/indicadores.service';
 })
 export class IndicadorComponent {
 
-
-
   miModal!: ElementRef;
   public indic = new Indicador();
   indicadors: any[] = [];
 
   filterPost = ''; 
-  dataSource = new MatTableDataSource<Evidencia>();
+  dataSource = new MatTableDataSource<IndicadorEvidenciasProjectionFull>();
 
-  columnasUsuario: string[] = ['id_indicador', 'nombre', 'descripcion','peso', 'estandar', 'tipo', 'cantidadEvidencia'];
+  columnasUsuario: string[] = ['nombreSubcriterio', 'id_indicador', 'nombre', 'descripcion','peso', 'estandar', 'tipo', 'cantidadEvidencia'];
 
   @ViewChild('datosModalRef') datosModalRef: any;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(private indicadorservice: IndicadoresService,
   ) {
+  }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
   }
   ngOnInit() {
     this.listar()
@@ -35,9 +37,10 @@ export class IndicadorComponent {
 
 
   listar(): void {
-    this.indicadorservice.getIndicadors().subscribe(
-      (data: Indicador[]) => {
+    this.indicadorservice.obtenerDatosIndicadoresFull().subscribe(
+      (data: any[]) => {
         this.indicadors = data;
+        this.dataSource.data=this.indicadors;
       },
       (error: any) => {
         console.error('Error al listar los indicadors:', error);
