@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Cuantitativa } from 'src/app/models/Cuantitativa';
 import { FormulaService } from 'src/app/services/formula.service';
@@ -12,13 +14,19 @@ import { FormulaService } from 'src/app/services/formula.service';
 export class CuantitativaComponent {
 
 
-  searchText2 = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
+
   miModal!: ElementRef;
   public cuanti = new Cuantitativa();
   listaCuantitativa: Cuantitativa[] = [];
   frmCuantitativa: FormGroup;
   guardadoExitoso: boolean = false;
+
+  filterPost = '';
+  dataSource = new MatTableDataSource<Cuantitativa>();
+  columnasUsuario: string[] = ['id_cuantitativa', 'descripcion','abreviatura', 'actions'];
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
     private service: FormulaService, 
@@ -31,7 +39,10 @@ export class CuantitativaComponent {
       abreviatura: ['', [Validators.required, Validators.maxLength(250)]]
     })
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
 
+  }
   ngOnInit(): void {
     this.listarCaunti();
   }
@@ -70,6 +81,7 @@ export class CuantitativaComponent {
       subscribe(
         (data:any) => {
           this.listaCuantitativa = data;
+          this.dataSource.data=this.listaCuantitativa
         },
         (error: any) => {
         console.error('Error al listar las formulas cuantitativas',error);
@@ -99,5 +111,14 @@ export class CuantitativaComponent {
         this.listarCaunti();
       });
   }
-
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+      this.dataSource.data = this.listaCuantitativa;;
+    }
+  }
 }

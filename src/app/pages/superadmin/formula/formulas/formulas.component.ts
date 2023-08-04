@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Cuantitativa } from 'src/app/models/Cuantitativa';
 import { Formulas } from 'src/app/models/Formulas';
@@ -12,13 +14,20 @@ import { FormulaService } from 'src/app/services/formula.service';
 })
 export class FormulasComponent implements OnInit {
 
-  searchText = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
+
+  
   miModal!: ElementRef;
   public formu = new Formulas();
   listaFromulas: Formulas[] = [];
   frmFormula: FormGroup;
   guardadoExitoso: boolean = false;
+
+  filterPost = '';
+  dataSource = new MatTableDataSource<Formulas>();
+  columnasUsuario: string[] = ['id_formula', 'descripcion','formula', 'actions'];
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
     private service: FormulaService,
@@ -30,7 +39,10 @@ export class FormulasComponent implements OnInit {
       formula: ['', [Validators.required, Validators.maxLength(250)]]
     })
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
 
+  }
   ngOnInit(): void {
     this.listar();
   }
@@ -69,6 +81,7 @@ export class FormulasComponent implements OnInit {
       subscribe(
         (data: any) => {
           this.listaFromulas = data;
+          this.dataSource.data=this.listaFromulas;
         },
         (error: any) => {
           console.error('Error al listar las formula', error);
@@ -101,7 +114,16 @@ export class FormulasComponent implements OnInit {
 
   //TS PARA CUANTITATIVA
 
-
+aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+      this.dataSource.data = this.listaFromulas;;
+    }
+  }
 }
 
 
