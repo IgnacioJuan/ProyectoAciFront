@@ -34,8 +34,9 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CdkTableModule } from '@angular/cdk/table';
+import { ResponsablePipe } from '../pages/admin/asignacion-evidencia/responsable.pipe';
 @NgModule({
-  declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
+  declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,ResponsablePipe
   ],
   imports: [
     CommonModule,
@@ -73,6 +74,7 @@ import { CdkTableModule } from '@angular/cdk/table';
   ],
   exports: [
     BuscarPipe,
+    ResponsablePipe,
     BuscarUsuarioPipe,
     PageNotFoundComponent,
     CdkTableModule,

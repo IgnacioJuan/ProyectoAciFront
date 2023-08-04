@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError, tap, throwError } from 'rxjs';
+import { ResponsableProjection } from 'src/app/interface/ResponsableProjection';
 import { Asigna_Evi } from 'src/app/models/Asignacion-Evidencia';
 import { Evidencia } from 'src/app/models/Evidencia';
 import { Fenix } from 'src/app/models/Fenix';
@@ -26,18 +27,35 @@ let ELEMENT_DATA: Fenix[] = [];
   styleUrls: ['./asignacion-evidencia.component.css']
 })
 export class AsignacionEvidenciaComponent implements OnInit {
-  columnas: string[] = ['id', 'nombre', 'usuario', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
   columnasEvidencia: string[] = ['idevi', 'descripcion', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['idasigna', 'usuario', 'descripcion', 'actions'];
-
+//Cambiar texto tabla
+  itemsPerPageLabel = 'Datos por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+  //
   usuarioGuardar = new Usuario2();
-  dataSource2 = new MatTableDataSource<Usuario2>();
+  dataSource2 = new MatTableDataSource<ResponsableProjection>();
   dataSource3 = new MatTableDataSource<Evidencia>();
   dataSource4 = new MatTableDataSource<Asigna_Evi>();
   fenix: Fenix = new Fenix();
   listaPersonas: Persona2[] = [];
-  listaUsuarios: Usuario2[] = [];
-  listaUsuariosResponsables: Usuario2[] = [];
+  listaUsuarios: ResponsableProjection[] = [];
+  listaUsuariosResponsables: ResponsableProjection[] = [];
   listaEvidencias: Evidencia[] = [];
 
   listaAsignaEvidencias: Asigna_Evi[] = [];
@@ -87,12 +105,19 @@ export class AsignacionEvidenciaComponent implements OnInit {
     private asignarEvidenciaService: AsignaEvidenciaService,
     private formBuilder: FormBuilder,
     public login: LoginService,
+    //importacion para tabla
+    private paginatorIntl: MatPaginatorIntl,
     private notificationService:NotificacionService
   ) {
     this.formulario = this.formBuilder.group({
       username: { value: '', disabled: true },
       password: ['', Validators.required]
     });
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
+    this.dataSource2.data = this.listaUsuarios;
   }
 
   ngOnInit(): void {
@@ -113,7 +138,6 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.listar();
 
     this.Listado();
-
 
   }
 
@@ -259,20 +283,6 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
 
 
-  aplicarFiltro() {
-    if (this.filterPost) {
-      const lowerCaseFilter = this.filterPost.toLowerCase();
-      this.dataSource2.data = this.dataSource2.data.filter((item: any) => {
-        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
-      });
-    } else {
-      // Restaurar los datos originales si no hay filtro aplicado
-      this.dataSource2.data = this.listaUsuarios;;
-    }
-  }
-
-
-
 
   public seleccionar(element: any) {
 
@@ -290,16 +300,11 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
 
-
-
-
-  public seleccionarUsuario(element: any) {
-    this.usuarioSele.id = element.id;
-    this.usuarioSele.username = element.username;
-    this.usuarioSele.password = element.password
-    this.usuarioSele.persona.primer_nombre = element.persona.primer_nombre;
-    this.usuarioSele.persona.primer_apellido = element.persona.primer_apellido;
-
+  public seleccionarUsuario(elemento: any) {
+    this.usuarioSele.id = elemento.id;
+    console.log("id traido "+this.usuarioSele.id)
+    this.usuarioSele.username = elemento.usua;
+    this.usuarioSele.persona = elemento.nombres;
   }
 
   public AsignaUsuario(element: any) {
@@ -363,7 +368,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   Listado() {
-    this.responsableService.listarUsuarioAdmin().subscribe(
+    this.responsableService.getResponsables().subscribe(
       listaUsua => {
         this.listaUsuariosResponsables = listaUsua;
         this.dataSource2.data = this.listaUsuariosResponsables;
@@ -534,7 +539,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
       if (result.isConfirmed) {
         this.asignarEvidenciaService.eliminarAsignaLogic(id).subscribe((response) => {
 
-          this.ListarAsignacion()
+          this.ListarAsignacion();
+          this.Listado();
         });
 
         Swal.fire('Eliminado!', 'Registro eliminado.', 'success');

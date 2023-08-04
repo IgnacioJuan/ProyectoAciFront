@@ -67,10 +67,23 @@ export class DashboardComponent2 implements OnInit {
   notificaciones: Notificacion[] = [];
   numNotificacionesSinLeer: number = 0;
   selectedColor: string="";
-  
+  abrir: boolean = false;
   itemsPerPageLabel = 'Actividades por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
   titulo= 'Avance de los Criterios';
   titulo2= 'Avance de las Actividades';
   titulo3= 'Responsables';
@@ -128,7 +141,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.services.getActividadrechazada().subscribe((data: ActivAprobadaProjection[]) => {
       this.dataSource1 = data;
       console.log("rechazadai", JSON.stringify(this.dataSource1))
-      this.cacheSpan('actividades', (d) => d.actividades);
+      this.cacheSpan('actividad', (d) => d.actividades);
       this.cacheSpan('inicio', (d) => d.actividades + d.inicio);
       this.cacheSpan('fin', (d) => d.actividades + d.inicio + d.fin);
       this.cacheSpan('encargado', (d) => d.actividades + d.inicio + d.fin + d.encargado);
@@ -145,12 +158,12 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
-    //filas
-    //'actividad', 'inicio', 'fin','encargado'
-    
+    this.paginatorIntl.getRangeLabel=this.rango;
    }
 
-
+   abrirOpcn() {
+    this.abrir = !this.abrir;
+  }
    onSelect(event: any) {
     console.log(event);
   }
@@ -199,8 +212,6 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
       let count = 1;
 
       for (let j = i + 1; j < this.dataSource1.length; j++) {
-        console.log('Comparing:', currentValue, accessor(this.dataSource1[j]));
-  
         if (currentValue !== accessor(this.dataSource1[j])) {
           break;
         }
@@ -249,7 +260,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     return this.spans2[index] && this.spans2[index][col];
   }
   
- //listar act
+ //listar archivos
  obtenerNombreArchivo(url: string): string {
   if (url) {
     const nombreArchivo = url.substring(url.lastIndexOf('/') + 1);
@@ -303,7 +314,7 @@ obtenerActividades() {
     const menu = document.getElementById("menu");
     const notif = document.getElementById("notif");
     const txt = document.getElementById("txt");
-
+    const graf = document.getElementById("graf");
     if (body) {
       body.style.backgroundColor = color;
     }
@@ -311,12 +322,18 @@ obtenerActividades() {
     if(color==="white"){
     if (enc) {
       enc.style.backgroundColor = "#eeeee4";
+      enc.style.background = "#eeeee4";
     }
     if (let1) {
       let1.style.color = "black";
+      let1.style.backgroundColor="#eeeee4";
+      let1.style.boxShadow = "";
     }
     if (let2) {
       let2.style.color = "black";
+    }
+    if(fig){
+      fig.style.backgroundColor = "white";
     }
     if (notif) {
       notif.style.backgroundColor = "white";
@@ -326,15 +343,26 @@ obtenerActividades() {
       txt.style.backgroundColor = "white";
       txt.style.color = "black";
     }
+    if(fig5){
+      fig5.style.backgroundColor = "white";
+    }
     if(menu){
       menu.style.backgroundColor = "#b0bec5";
     }
+
+    if(graf){
+      graf.style.color = "black";
+    }
+    // Tema 2
   } else if (color === "#151a30") {
     if (enc) {
       enc.style.backgroundColor = "#222b45";
+      enc.style.background = "#222b45";
     }
     if (let1) {
       let1.style.color = "white";
+      let1.style.backgroundColor="#222b45";
+      let1.style.boxShadow = "";
     }
     if (let2) {
       let2.style.color = "white";
@@ -358,6 +386,43 @@ obtenerActividades() {
     }
     if(cal){
       cal.style.color = "white";
+    }
+
+    if(graf){
+      graf.style.color = "black";
+    }
+    // Tema 3
+  } else  if(color==="#131a22"){
+    if (enc) {
+      enc.style.background = "radial-gradient(circle, #6e14c4, #00b2d6)";
+    }
+    if (let1) {
+      let1.style.color = "white";
+      let1.style.backgroundColor="rgba(2, 27, 32, 0.25)";
+      let1.style.boxShadow = "0 0 10px #00b2d6, 0 0 20px #00b2d6, 0 0 40px #00b2d6, 0 0 80px #00b2d6";
+    }
+    if (let2) {
+      let2.style.color = "white";
+    }
+    if (notif) {
+      notif.style.backgroundColor = "";
+      notif.style.color = "white";
+    }
+    if(txt){
+      txt.style.backgroundColor = "rgba(254,30,241,0.25)";
+      txt.style.color = "white";
+    }
+    if(fig){
+      fig.style.backgroundColor = "rgb(0,247,255, 0.5) ";
+    }
+    if(fig5){
+      fig5.style.backgroundColor = "rgb(0,247,255, 0.25)";
+    }
+    if(menu){
+      menu.style.backgroundColor = "radial-gradient(circle, #013b3f, ##01060a)";
+    }
+    if(graf){
+      graf.style.color = "black";
     }
   }
   }

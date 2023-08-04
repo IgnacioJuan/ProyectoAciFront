@@ -257,18 +257,20 @@
     </blockquote>
     <div class="card">
       <div class="card-body">
-        <div class="form-group">
-          <input
-            type="text"
-            class="form-control"
-            name="filterPost3"
-            placeholder="Buscar..."
-            [(ngModel)]="filterPost" 
-          />
+        <div class="card-body">
+          <div class="form-group">
+            <input
+              type="text"
+              class="form-control"
+              name="filterPost3"
+              placeholder="Buscar..."
+              [(ngModel)]="filterPost" 
+            />
+          </div>
         </div>
 
         <div class="mat-elevation-z8 table-responsive" style="margin-bottom: 5%">
-          <table mat-table [dataSource]="dataSource2.data | buscarUsuario: filterPost">
+          <table mat-table [dataSource]="dataSource2.data | responsable: filterPost">
             <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef>ID</th>
               <td mat-cell *matCellDef="let elemento">
@@ -278,30 +280,29 @@
             <ng-container matColumnDef="nombre">
               <th mat-header-cell *matHeaderCellDef>Nombre</th>
               <td mat-cell *matCellDef="let elemento">
-                {{ elemento?.persona?.primer_nombre }}
-                {{ elemento?.persona?.primer_apellido }}
+                {{ elemento.nombres }}
               </td>
             </ng-container>
             <ng-container matColumnDef="usuario">
-              <th mat-header-cell *matHeaderCellDef>USUARIO</th>
+              <th mat-header-cell *matHeaderCellDef>Usuario</th>
               <td mat-cell *matCellDef="let elemento">
-                {{ elemento.username }}
+                {{ elemento.usua }}
               </td>
             </ng-container>
-            <ng-container matColumnDef="contraseña">
-              <th mat-header-cell *matHeaderCellDef>CONTRASEÑA</th>
+            <ng-container matColumnDef="evidencia">
+              <th mat-header-cell *matHeaderCellDef>Evidencia</th>
               <td mat-cell *matCellDef="let elemento">
-                {{ elemento.password }}
+                {{ elemento.evidencias }}
               </td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
-              <td mat-cell *matCellDef="let element">
+              <td mat-cell *matCellDef="let elemento">
                 <button
                   class="btn btn-danger"
                   style="background-color: red"
-                  (click)="eliminar(element)"
+                  (click)="eliminar(elemento)"
                   style="margin-right: 5%"
                 >
                   <i class="fas fa-user-times"></i>
@@ -314,7 +315,7 @@
                   style="background-color: rgb(32, 67, 165)"
                   data-bs-toggle="modal"
                   data-bs-target="#exampleModal4"
-                  (click)="seleccionarUsuario(element)"
+                  (click)="seleccionarUsuario(elemento)"
 
                 >
                   <i class="fas fa-plus-circle"></i>
@@ -480,17 +481,10 @@
                           </div>
                           <div class="col-md-6">
                             <div class="form-floating mb-3">
-                              <input disabled type="text" class="form-control" id="floatingInput" [value]="usuarioSele.persona.primer_nombre" />
-                              <label for="floatingInput">Nombre</label>
+                              <input disabled type="text" class="form-control" id="floatingInput" [value]="usuarioSele.persona" />
+                              <label for="floatingInput">Nombres</label>
                             </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                              <input disabled type="text" class="form-control" id="floatingInput" [value]="usuarioSele.persona.primer_apellido" />
-                              <label for="floatingInput">Apellido</label>
-                            </div>
-                          </div>
-                          
+                          </div> 
                         </div>
                       </div>
                     </div>
