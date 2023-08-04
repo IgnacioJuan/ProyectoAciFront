@@ -58,7 +58,7 @@ export class DetalleModeloComponent implements OnInit {
 
   columnsToDisplay = ['nombre', 'descripcion'];
 
-  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'matriz', 'ponderacion', 'asignar'];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay,'subcriterios', 'matriz', 'ponderacion', 'asignar'];
   expandedElement: any;
 
   model: Modelo = new Modelo();
@@ -114,7 +114,6 @@ export class DetalleModeloComponent implements OnInit {
               this.mostrarSecundario = 1;
             }
             this.dataSourcePonderacion = fechas;
-            console.log(this.dataSourcePonderacion); // Realiza las operaciones necesarias con las fechas
           }
         );
       } else {
@@ -128,9 +127,10 @@ export class DetalleModeloComponent implements OnInit {
       }
       this.model = data;
       this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.id)).subscribe(info => {
-        this.criterioService.getCriterios().subscribe(result => {
+        this.criterioService.listarCriterio().subscribe(result => {
           this.dataSource = [];
           this.asignacion = info;
+          console.log(this.asignacion);
           this.dataSource = result.filter((criterio: any) => {
             return info.some((asignacion: any) => {
               return criterio.id_criterio === asignacion.indicador.subcriterio.criterio.id_criterio;
@@ -155,7 +155,7 @@ export class DetalleModeloComponent implements OnInit {
   ponderacionCriterio(event: Event, element: any) {
     event.stopPropagation();
     // código del método del botón
-    this.router.navigate(['/sup/ponderacion/ponderacion-criterio'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
+    this.router.navigate(['/sup/ponderacion/ponderacion-criterio'], { state: { criterio: element, modelo: this.model } });
   }
 
   mostrar(element: any) {
@@ -166,8 +166,8 @@ export class DetalleModeloComponent implements OnInit {
 
   evaluacion(event: Event, element: any) {
     event.stopPropagation();
-    // código del método del botón
-    this.router.navigate(['/sup/modelo/matriz-evaluacion'], { queryParams: { criterio: element.id_criterio, modelo: this.id } });
+    console.log(this.model)
+    this.router.navigate(['/sup/modelo/matriz-evaluacion'], { state: { criterio: element, modelo: this.model } });
   }
 
   ponderacion(event: Event, element: any) {

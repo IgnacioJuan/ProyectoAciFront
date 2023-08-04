@@ -21,21 +21,21 @@
             />
           </mat-form-field>
           <mat-form-field class="example-full-width">
-            <mat-label>Primer Apellido:</mat-label>
+            <mat-label>Primer Nombre:</mat-label>
             <input
               matInput
-              placeholder="Ingresar cédula"
-              [(ngModel)]="fenix.primer_apellido"
-              name="primer_apellido"
+              placeholder="Ingrese el primer nombre"
+              [(ngModel)]="fenix.primer_nombre"
+              name="primer_nombre"
             />
           </mat-form-field>
           <mat-form-field class="example-full-width">
-            <mat-label>Segundo Apellido:</mat-label>
+            <mat-label>Segundo Nombre:</mat-label>
             <input
               matInput
-              placeholder="Ingresar cédula"
-              [(ngModel)]="fenix.segundo_apellido"
-              name="segundo_apellido"
+              placeholder="Ingrese el segundo nombre"
+              [(ngModel)]="fenix.segundo_nombre"
+              name="segundo_nombre"
             />
           </mat-form-field>
           <button mat-raised-button color="primary" (click)="consultar()">

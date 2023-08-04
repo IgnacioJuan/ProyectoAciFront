@@ -43,7 +43,49 @@
       <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+    <!-- Cambiar color -->
+    <script type="text/javascript">
+      function cambiar(x){
+        var body=document.getElementById("body");
+        var enc=document.getElementById("enc");
+        var let=document.getElementById("letra");
+        var let2=document.getElementById("letra2");
+        var cal=document.getElementById("cal");
+        var fig=document.getElementById("fig");
+        var fig2=document.getElementById("tooltip");
+        var menu=document.getElementById("menu");
+        var notif=document.getElementById("notif");
+        var txt=document.getElementById("txt");
+        var selectedColor = x.value;
+        localStorage.setItem('selectedColor', selectedColor);
+        body.style.backgroundColor=selectedColor;
+        console.log('Color seleccionado:', selectedColor);
+        if(x.value==="white"){
+          enc.style.backgroundColor="#eeeee4";
+          fig.style.backgroundColor="white";
+          let.style.color="black";
+          let2.style.color="black";
+          notif.style.backgroundColor="white";
+          txt.style.backgroundColor="white";
+          notif.style.color="black";
+          txt.style.color="black";
+          fig2.style.color="green";
+          menu.style.backgroundColor="#b0bec5";
+      } else if(x.value==="#151a30"){
+        enc.style.backgroundColor="#222b45";
+        menu.style.backgroundColor="#BEC8DC80";
+        txt.style.backgroundColor="#0d47a1";
+        notif.style.backgroundColor="#151a30";
+        let.style.color="white";
+        notif.style.color="white";
+        txt.style.color="white";
+        let2.style.color="white";
+        cal.style.color="white";
+        fig.style.backgroundColor="#BEC8DC80";
+        fig2.style.color="white";
+      }
+      }
+    </script>
 </head>
   <body class="mat-typography sidebar-mini sidebar-collapse">
     <app-root class="wrapper"></app-root>

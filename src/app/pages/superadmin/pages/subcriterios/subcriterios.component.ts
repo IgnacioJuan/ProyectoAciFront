@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Indicador } from 'src/app/models/Indicador';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { SubcriterioIndicadoresProjectionFull } from 'src/app/interface/SubcriterioIndicadoresProjectionFull';
 import { Subcriterio } from 'src/app/models/Subcriterio';
-import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 @Component({
   selector: 'app-subcriterios',
@@ -9,55 +10,52 @@ import { SubcriteriosService } from 'src/app/services/subcriterios.service';
   styleUrls: ['./subcriterios.component.css']
 })
 export class SubcriteriosComponent implements OnInit {
-  searchText = '';
+
+ 
+  miModal!: ElementRef;
+  public subcrite = new Subcriterio();
+  subcriterios: any[] = [];
+
+  filterPost = '';
+  dataSource = new MatTableDataSource<SubcriterioIndicadoresProjectionFull>();
+  columnasUsuario: string[] = ['nombreCriterio', 'id_subcriterio', 'nombre', 'descripcion', 'cantidadIndicadores'];
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   constructor(
-    private indicadorservice: IndicadoresService,
     private subcriterioservice: SubcriteriosService,
   ) {
+  }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
   }
   ngOnInit() {
     this.listar()
   }
 
-  buscar = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
-  miModal!: ElementRef;
-  public subcrite = new Subcriterio();
-  subcriterios: any[] = [];
-
+  
   
   listar(): void {
-    this.subcriterioservice.getSubcriterios().subscribe(
-      (data: Subcriterio[]) => {
+    this.subcriterioservice.obtenerDatosSubcriteriosFull().subscribe(
+      (data: any[]) => {
         this.subcriterios = data;
+        this.dataSource.data = this.subcriterios;
       },
       (error: any) => {
         console.error('Error al listar los subcriterios:', error);
       }
     );
-    this.listarSub();
   }
-
-  //Numero de indicadores
-  lista_indicadores: any[] = [];
-  getIndicadoresPorSubriterio(subcriterio: Subcriterio): number {
-    let contador = 0;
-    for (let indicador of this.lista_indicadores) {
-      if (indicador.subcriterio.id_subcriterio === subcriterio.id_subcriterio) {
-        contador++;
-      }
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+      this.dataSource.data = this.subcriterios;;
     }
-    return contador;
   }
-  listarSub(): void {
-    this.indicadorservice.getIndicadors().subscribe(
-      (data: Indicador[]) => {
-        this.lista_indicadores = data;
-      },
-      (error: any) => {
-        console.error('Error al listar los indicadores:', error);
-      }
-    );
-  }
-
 }

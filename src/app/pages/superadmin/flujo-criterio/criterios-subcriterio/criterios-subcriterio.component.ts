@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { SubcriterioIndicadoresProjection } from 'src/app/interface/SubcriterioIndicadoresProjection';
 import { Criterio } from 'src/app/models/Criterio';
-import { Indicador } from 'src/app/models/Indicador';
 import { Subcriterio } from 'src/app/models/Subcriterio';
-import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 import Swal from 'sweetalert2';
 
@@ -14,22 +15,40 @@ import Swal from 'sweetalert2';
   styleUrls: ['./criterios-subcriterio.component.css']
 })
 export class CriteriosSubcriterioComponent implements OnInit {
-  searchText = '';
+  frmSubcriterio: FormGroup;
+  guardadoExitoso: boolean = false;
+
+  criterio: Criterio = new Criterio();
+  subcriterios: any[] = [];
+
+  miModal!: ElementRef;
+  public subcrite = new Subcriterio();
+
+  filterPost = '';
+  dataSource = new MatTableDataSource<SubcriterioIndicadoresProjection>();
+  columnasUsuario: string[] = ['id_subcriterio', 'nombre', 'descripcion', 'cantidadIndicadores', 'actions'];
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   constructor(
-    private indicadorservice: IndicadoresService,
     private subcriterioservice: SubcriteriosService,
-    private router: Router, private fb: FormBuilder,
-    private route: ActivatedRoute
+    private router: Router, private fb: FormBuilder
   ) {
     this.frmSubcriterio = fb.group({
       nombre: ['', Validators.required],
       descripcion: ['', [Validators.required]]
     })
   }
-  criterio: Criterio = new Criterio();
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
+  }
   ngOnInit() {
     const data = history.state.data;
     this.criterio = data;
+    console.log(this.criterio);
     if (this.criterio == undefined) {
       this.router.navigate(['user-dashboard']);
       location.replace('/use/user-dashboard');
@@ -37,13 +56,7 @@ export class CriteriosSubcriterioComponent implements OnInit {
     this.listar()
   }
 
-  buscar = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
-  miModal!: ElementRef;
-  public subcrite = new Subcriterio();
-  subcriterios: any[] = [];
-  frmSubcriterio: FormGroup;
-  guardadoExitoso: boolean = false;
+  
 
   guardar() {
     this.subcrite = this.frmSubcriterio.value;
@@ -78,9 +91,7 @@ export class CriteriosSubcriterioComponent implements OnInit {
       confirmButtonText: 'Cacelar',
       denyButtonText: `Eliminar`,
     }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
       if (!result.isConfirmed) {
-        if (this.getIndicadoresPorSubriterio(subcriterio) == 0) {
           this.subcriterioservice.eliminar(subcriterio).subscribe(
             (response) => {
               this.listar()
@@ -88,24 +99,21 @@ export class CriteriosSubcriterioComponent implements OnInit {
 
             }
           );
-        } else {
-          Swal.fire('Error!', 'Este subcriterio no se puede eliminar, tiene indicadores', 'warning')
-        }
       }
     })
 
   }
-
+  //optimizar
   listar(): void {
-    this.subcriterioservice.getSubcriterios().subscribe(
-      (data: Subcriterio[]) => {
-        this.subcriterios = data.filter(subcriterio => subcriterio.criterio?.id_criterio === this.criterio.id_criterio);
+    this.subcriterioservice.obtenerDatosCriterios(this.criterio.id_criterio).subscribe(
+      (data: any[]) => {
+        this.subcriterios = data;
+        this.dataSource.data = this.subcriterios;
       },
       (error: any) => {
         console.error('Error al listar los subcriterios:', error);
       }
     );
-    this.listarSub();
   }
 
   editDatos(subcriterio: Subcriterio) {
@@ -141,25 +149,14 @@ export class CriteriosSubcriterioComponent implements OnInit {
     this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
   }
 
-  //Numero de indicadores
-  lista_indicadores: any[] = [];
-  getIndicadoresPorSubriterio(subcriterio: Subcriterio): number {
-    let contador = 0;
-    for (let indicador of this.lista_indicadores) {
-      if (indicador.subcriterio.id_subcriterio === subcriterio.id_subcriterio) {
-        contador++;
-      }
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+      this.dataSource.data = this.subcriterios;;
     }
-    return contador;
-  }
-  listarSub(): void {
-    this.indicadorservice.getIndicadors().subscribe(
-      (data: Indicador[]) => {
-        this.lista_indicadores = data;
-      },
-      (error: any) => {
-        console.error('Error al listar los indicadores:', error);
-      }
-    );
   }
 }

@@ -137,6 +137,55 @@ export class CrearUsuariosComponent implements OnInit {
     )
   }
 
+  //consumir servicio de fenix para obtener datos de la persona por primer_nombre
+  public consultarPorNombre() {
+    /*if (this.fenix.primer_nombre == null || this.fenix.primer_nombre == '') {
+      Swal.fire('Error', 'Debe ingresar un nombre', 'error');
+      return;
+    }*/
+    if (this.fenix.primer_nombre == null || this.fenix.primer_nombre == '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, ingrese un nombre válido',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+    this.fenix_service.getDocenteByPrimerNombre(this.fenix.primer_nombre).subscribe(
+      (result) => {
+        this.dataSource = result;
+      }
+    )
+  }
+
+  //consumir servicio de fenix para obtener datos de la persona por segundo_nombre
+  public consultarPorSegundoNombre() {
+    if (this.fenix.segundo_nombre == null || this.fenix.segundo_nombre == '') {
+      Swal.fire('Error', 'Por favor, ingrese un nombre válido', 'error');
+      return;
+    }
+    this.fenix_service.getDocenteBySegundoNombre(this.fenix.segundo_nombre).subscribe(
+      (result) => {
+        this.dataSource = result;
+      }
+    )
+  }
+
+  //consumir servicio de fenix para obtener datos de la persona por primer_nombre y segundo_nombre
+  public consultarPorPrimerNombreSegundoNombre() {
+    if ((this.fenix.primer_nombre == null || this.fenix.primer_nombre == '')  && (this.fenix.segundo_nombre == null || this.fenix.segundo_nombre == '')) {
+      Swal.fire('Error', 'Por favor, ingrese los nombres válidos', 'error');
+      return;
+    }
+    this.fenix_service.getDocenteByPrimerNombreSegundoNombre(this.fenix.primer_nombre, this.fenix.segundo_nombre).subscribe(
+      (result) => {
+        this.dataSource = result;
+      }
+    )
+  }
+
   //consumir servicio de fenix para obtener datos de la persona por primer_apellido
   public consultarPorApellido() {
     if (this.fenix.primer_apellido == null || this.fenix.primer_apellido == '') {
@@ -176,17 +225,19 @@ export class CrearUsuariosComponent implements OnInit {
   }
 
 
-  //crear un metodo que una los servicios de cedula, primer_apellido y segundo_apellido
+  //crear un metodo que una los servicios de cedula, primer_nombre,primer_apellido, segundo_nombre y segundo_apellido
   public consultar() {
     if (this.fenix.cedula != null && this.fenix.cedula != '') {
       this.consultarPorCedula();
-    } else if ((this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') && (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '')) {
+    }else if (this.fenix.primer_nombre != null && this.fenix.primer_nombre != '') {
       console.log('si entra');
-      this.consultarPorPrimerApellidoAndSegundoApellido();
-    } else if (this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') {
-      this.consultarPorApellido();
-    } else if (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '') {
-      this.consultarPorSegundoApellido();
+      this.consultarPorNombre();
+    }else if (this.fenix.segundo_nombre != null && this.fenix.segundo_nombre != '') {
+      console.log('si entra');
+      this.consultarPorSegundoNombre();
+    }else if ((this.fenix.primer_nombre != null && this.fenix.primer_nombre != '') && (this.fenix.segundo_nombre != null && this.fenix.segundo_nombre != '')) {
+      console.log('si entra');
+      this.consultarPorPrimerNombreSegundoNombre();
     } else {
       Swal.fire('Error', 'Debe ingresar un valor a buscar', 'error');
       return;
