@@ -6,6 +6,7 @@ import { BuscarUsuarioPipe } from './buscar-usuario.pipe';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { FiltrarEvidenciasPorIDPipe } from 'src/app/pages/admin/aprobar-rechazar-admin/filtro-prueba.pipe';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
@@ -35,6 +36,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatTabsModule } from '@angular/material/tabs';
 @NgModule({
   declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
+    FiltrarEvidenciasPorIDPipe,
   ],
   imports: [
     CommonModule,
@@ -73,7 +75,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     BuscarPipe,
     BuscarUsuarioPipe,
     PageNotFoundComponent,
-
+    FiltrarEvidenciasPorIDPipe,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,

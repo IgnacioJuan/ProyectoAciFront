@@ -14,6 +14,7 @@ import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriterio
 })
 export class CriteriosService {
 
+  private url: string = 'http://localhost:5000/api/criterio';
   constructor(private http: HttpClient) { }
   getCriterioById(id: number): Observable<Criterio> {
 
@@ -85,5 +86,9 @@ export class CriteriosService {
   }
   obtenerDatosCriterios(): Observable<CriterioSubcriteriosProjection[]> {
     return this.http.get<CriterioSubcriteriosProjection[]>(`${baserUrl}/api/criterio/datosCriterios`);
+  }
+
+  getCriterioPorEvidencia(idEvidencia: number): Observable<Criterio[]> {
+    return this.http.get<Criterio[]>(`${this.url}/obtenerNombreCriterioPorEvidencia/${idEvidencia}`);
   }
 }
