@@ -126,5 +126,13 @@ export class FenixService {
         );
     }
 
+    public getDocenteByNombresCompletos(primer_nombre: string, primer_apellido: string): Observable<any> {
+        return this.http.get(this.url + '/p-nombres/' + primer_nombre + '/' + primer_apellido).pipe(
+            catchError((error) => {
+                console.error(error);
+                throw error;
+            })
+        );
+    }
 }
 

@@ -30,7 +30,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
   columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
   columnasEvidencia: string[] = ['idevi', 'descripcion', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['idasigna', 'usuario', 'descripcion', 'actions'];
-//Cambiar texto tabla
+  rowspanArray: number[] = [];
+  //Cambiar texto tabla
   itemsPerPageLabel = 'Datos por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
@@ -51,7 +52,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   usuarioGuardar = new Usuario2();
   dataSource2 = new MatTableDataSource<ResponsableProjection>();
   dataSource3 = new MatTableDataSource<Evidencia>();
-  dataSource4 = new MatTableDataSource<Asigna_Evi>();
+  dataSource4 = new MatTableDataSource<any>();
   fenix: Fenix = new Fenix();
   listaPersonas: Persona2[] = [];
   listaUsuarios: ResponsableProjection[] = [];
@@ -118,6 +119,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
     this.dataSource2.data = this.listaUsuarios;
+    
   }
 
   ngOnInit(): void {
@@ -138,8 +140,32 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.listar();
 
     this.Listado();
-
+    this.ListarAsignacion();
   }
+  cacheSpan(key: string, accessor: (data: any) => any): void {
+    let prevValue: any = undefined;
+    let rowspan = 1;
+  
+    this.listaAsignaEvidencias.forEach((row: any, index: number) => {
+      const value = accessor(row);
+      if (index === 0) {
+        prevValue = value;
+      } else if (value === prevValue) {
+        rowspan++;
+      } else {
+        // Set the rowspan and reset the values for the next group of rows.
+        this.dataSource4.data[index - rowspan][key + '-rowspan'] = rowspan;
+        rowspan = 1;
+        prevValue = value;
+      }
+  
+      // Set rowspan for the last group of rows.
+      if (index === this.listaAsignaEvidencias.length - 1) {
+        this.dataSource4.data[index][key + '-rowspan'] = rowspan;
+      }
+    });
+  }
+
 
   notificar() {
     this.noti.fecha = new Date();
@@ -210,6 +236,19 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
 
   //consumir servicio de fenix para obtener datos de la persona por cedula
+  public consultarPorNombreCompleto(){
+    if (this.fenix.primer_nombre == null && this.fenix.primer_apellido == null || this.fenix.primer_nombre == "" && this.fenix.primer_apellido == ""){
+      Swal.fire('Error', 'Debe llenar los campos', 'error');
+      return; 
+    }
+    this.fenix_service.getDocenteByNombresCompletos(this.fenix.primer_nombre,this.fenix.primer_apellido).subscribe(
+      (result) => {
+        this.dataSource = result;
+        console.log(this.dataSource);
+      }
+    )
+  }
+  
   public consultarPorCedula() {
     if (this.fenix.cedula == null || this.fenix.cedula == '') {
       Swal.fire('Error', 'Debe ingresar una cedula', 'error');
@@ -238,12 +277,12 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   //consumir servicio de fenix para obtener datos de la persona por segundo_apellido
-  public consultarPorSegundoApellido() {
-    if (this.fenix.segundo_apellido == null || this.fenix.segundo_apellido == '') {
-      Swal.fire('Error', 'Debe ingresar un apellido', 'error');
+  public consultarPrimerNombre() {
+    if (this.fenix.primer_nombre == null || this.fenix.primer_nombre == '') {
+      Swal.fire('Error', 'Debe ingresar un nombre', 'error');
       return;
     }
-    this.fenix_service.getDocenteBySegundoApellido(this.fenix.segundo_apellido).subscribe(
+    this.fenix_service.getDocenteByPrimerNombre(this.fenix.primer_nombre).subscribe(
       (result) => {
         this.dataSource = result;
       }
@@ -265,20 +304,22 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
   //crear un metodo que una los servicios de cedula, primer_apellido y segundo_apellido
   public consultar() {
-    if (this.fenix.cedula != null && this.fenix.cedula != '') {
+    if (this.fenix.primer_nombre && this.fenix.primer_apellido) {
+      this.consultarPorNombreCompleto();
+    } else if (this.fenix.cedula) {
       this.consultarPorCedula();
-    } else if ((this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') && (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '')) {
-      console.log('si entra');
+    } else if (this.fenix.primer_apellido && this.fenix.segundo_apellido) {
       this.consultarPorPrimerApellidoAndSegundoApellido();
-    } else if (this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') {
+    } else if (this.fenix.primer_apellido) {
       this.consultarPorApellido();
-    } else if (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '') {
-      this.consultarPorSegundoApellido();
+    } else if (this.fenix.primer_nombre) {
+      this.consultarPrimerNombre();
     } else {
       Swal.fire('Error', 'Debe ingresar un valor a buscar', 'error');
       return;
     }
   }
+  
 
 
 
@@ -355,18 +396,37 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
 
-  ListarAsignacion() {
+ ListarAsignacion() {
     this.asignarEvidenciaService.listarAsignarEvi().subscribe(
       listaAsig => {
         this.listaAsignaEvidencias = listaAsig;
         this.dataSource4.data = this.listaAsignaEvidencias;
-
+        this.calculateRowSpan(); // Llamamos a la función para calcular rowspan
       }
     );
-
-
   }
 
+  calculateRowSpan() {
+    this.rowspanArray = [];
+    const rowCount = this.dataSource4.data.length;
+
+    for (let i = 0; i < rowCount; i++) {
+      this.rowspanArray[i] = 1;
+      if (i > 0) {
+        const current = this.dataSource4.data[i].usuario.persona.primer_nombre;
+        const previous = this.dataSource4.data[i - 1].usuario.persona.primer_nombre;
+        if (current === previous) {
+          this.rowspanArray[i] = 0;
+        }
+      }
+    }
+
+    for (let i = rowCount - 1; i >= 0; i--) {
+      if (this.rowspanArray[i] === 0 && i > 0) {
+        this.rowspanArray[i - 1] += 1;
+      }
+    }
+  }
   Listado() {
     this.responsableService.getResponsables().subscribe(
       listaUsua => {
