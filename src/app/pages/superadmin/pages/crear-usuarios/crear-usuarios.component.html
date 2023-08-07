@@ -15,7 +15,7 @@
             <mat-label>Cédula:</mat-label>
             <input
               matInput
-              placeholder="Ingresar cédula"
+              placeholder="Ingrese la cédula"
               [(ngModel)]="fenix.cedula"
               name="cedula"
             />
@@ -24,22 +24,24 @@
             <mat-label>Primer Nombre:</mat-label>
             <input
               matInput
-              placeholder="Ingrese el primer nombre"
+              placeholder="Ingresar un nombre"
               [(ngModel)]="fenix.primer_nombre"
               name="primer_nombre"
             />
           </mat-form-field>
           <mat-form-field class="example-full-width">
-            <mat-label>Segundo Nombre:</mat-label>
+            <mat-label>Primer Apellido:</mat-label>
             <input
               matInput
-              placeholder="Ingrese el segundo nombre"
-              [(ngModel)]="fenix.segundo_nombre"
-              name="segundo_nombre"
+              placeholder="Ingrese el apellido"
+              [(ngModel)]="fenix.primer_apellido"
+              name="primer_apellido"
             />
           </mat-form-field>
+          
           <button mat-raised-button color="primary" (click)="consultar()">
             Buscar
+            <mat-icon>search</mat-icon>
           </button>
         </form>
       </div>
@@ -112,7 +114,7 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
         </table>
-
+       
         <!-- Modal -->
         <div
           #modal

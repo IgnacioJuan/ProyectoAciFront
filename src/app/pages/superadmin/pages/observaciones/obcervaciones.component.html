@@ -15,26 +15,30 @@
               <th>Archivo</th>
               <th>Subido por</th>
               <th>Actividad</th>
-              <th>Fecha de fin</th>
+              <th>Fecha inicio</th>
+              <th>Fecha fin</th>
               <th>Enviar Mensaje</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let a of arch| buscar: searchTerm">
               <td>
-                <a href="{{ a.enlace }}">{{a.nombre}}</a>
+                <a href="{{ a.enlac }}">{{a.archiv}}</a>
               </td>
               <td>
-                {{a.actividad?.usuario?.persona?.primer_nombre}} {{a.actividad?.usuario?.persona?.primer_apellido}}
+                {{a.resp}}
               </td>
               <td>
-                {{a.actividad?.nombre}}
+                {{a.activid}}
               </td>
               <td>
-                {{a.actividad?.fecha_fin}}
+                {{a.ini}}
               </td>
               <td>
-                <button type="button" data-bs-toggle="modal" (click)="mecorreo(a.actividad?.usuario?.persona?.correo); notificar(a.actividad?.usuario?.id)"
+                {{a.finish}}
+              </td>
+              <td>
+                <button type="button" data-bs-toggle="modal" (click)="mecorreo(a.correo); notificar(a.idper)"
                   data-bs-target="#staticBackdrop" class="btn btn-outline-primary">
                   <i class="fas fa-paper-plane mr-2"></i>
                   Enviar correo
@@ -59,7 +63,7 @@
         <div class="modal-body">
           <form (ngSubmit)="enviar()">
             <label for="toUser">Para: </label>
-            <input type="email" id="toUser" name="toUser" [(ngModel)]="toUser" required disabled="true" />
+            <input type="email" id="toUser" name="toUser" [(ngModel)]="toUser" required disabled="false" />
             <label for="subject">Asunto:</label>
             <input type="text" id="subject" name="subject" [(ngModel)]="subject" required />
             <label for="message">Mensaje:</label>
