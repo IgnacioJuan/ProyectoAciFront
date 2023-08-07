@@ -143,10 +143,9 @@ export class PonderacionCriterioComponent implements OnInit {
   }
 
   recoverPdf(id:number){
-    alert('clicl')
-    this.indicadorservice.recoverPdfLink(id).subscribe(
+    this.indicadorservice.recoverPdfLink(39).subscribe(
       (data) => {
-        alert()
+        this.recoverPdf;
       }
     );
   }

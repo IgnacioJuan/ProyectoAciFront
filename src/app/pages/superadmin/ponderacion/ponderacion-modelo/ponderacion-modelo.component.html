@@ -66,12 +66,10 @@
                   >
                     <tr>
                       <td
-                        [attr.rowspan]="
-                          getRowCountCriterio(
-                            column.subcriterio.criterio.nombre,
-                            i
-                          )
-                        "
+
+                       [attr.rowspan]="getRowCountCriterioName(i)" *ngIf="shouldShowCriterioName(i)">
+                        {{ dataSource[i].subcriterio.criterio.nombre }}
+                                           
                       >
                         {{ column.subcriterio.criterio.nombre }}
                       </td>
@@ -166,10 +164,10 @@
         <button
           type="submit"
           class="btn btn-primary"
-          (click)="guardarDatosEnAPI()"
+          (click)="guardarDatosEnAPI1()"
           *ngIf="!ocultarBoton"
         >
-          Guardar
+          Guardar datos
         </button>
       </form>
 

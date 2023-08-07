@@ -100,6 +100,8 @@ export class PonderacionModeloComponent implements OnInit {
 
     let idModelo = localStorage.getItem("id");
 
+    console.log("this.conf:", this.conf);
+  console.log("this.fechaSeleccionada:", this.fechaSeleccionada);
 
     this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
       this.model = dataModelo;
@@ -165,9 +167,6 @@ export class PonderacionModeloComponent implements OnInit {
             this.coloresTabla();
           }
 
-
-
-
           // this.createChart();
           // //this.pieChart();
           // this.GraficaPastel();
@@ -193,9 +192,7 @@ export class PonderacionModeloComponent implements OnInit {
       const fechaSistema = new Date();
   
       // Verificar si ya existe un registro en la API en la misma fecha
-     
-  
-        
+
             // No existe un registro en la misma fecha, proceder con la operación de guardado
             this.dataSource.forEach((indicador: any) => {
               const ponderacion: Ponderacion = new Ponderacion();
@@ -524,10 +521,7 @@ export class PonderacionModeloComponent implements OnInit {
   }
 
 
-  //crear ponderacion
   crearPonderacion(ponderacionClase: Ponderacion) {
-
-
     this.servicePonderacion.guardarPonderacion(ponderacionClase)
       .subscribe(
         (data: any) => {
@@ -539,13 +533,12 @@ export class PonderacionModeloComponent implements OnInit {
           this.listarPonderacion();
         },
         (error: any) => {
-          console.error('Error al crear el subcriterio:', error);
+          console.error('Error al crear la ponderación:', error);
         }
       );
-    //this.router.navigate(['/sup/ponderacion']);
-
-
+     this.router.navigate(['/sup/ponderacion']);
   }
+  
 
   listarPonderacion() {
     this.servicePonderacion.listarPonderacion().subscribe(data => {
