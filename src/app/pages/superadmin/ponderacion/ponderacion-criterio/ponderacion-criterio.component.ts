@@ -14,6 +14,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Criterio } from 'src/app/models/Criterio';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { Chart } from 'chart.js';
+import { Archivo } from 'src/app/models/Archivo';
 
 
 
@@ -26,6 +27,7 @@ export class PonderacionCriterioComponent implements OnInit {
 
 
   model: Modelo = new Modelo();
+  archivos: Archivo[] = [];
   critrioClase = new Criterio();
   dataSource: any;
   asignacion: any;
@@ -33,6 +35,7 @@ export class PonderacionCriterioComponent implements OnInit {
   modelo: Modelo = new Modelo();
   color: any
   chart: any;
+  idndicadorseleccionado: number = 0;
 
   constructor(
     private indicadorservice: IndicadoresService,
@@ -48,12 +51,11 @@ export class PonderacionCriterioComponent implements OnInit {
 
     this.llenar_datasource();
 
-
   }
 
   llenar_datasource() {
-    this.criterio=history.state.criterio;
-    this.modelo=history.state.modelo;
+    this.criterio = history.state.criterio;
+    this.modelo = history.state.modelo;
     const id_criterio = 1; // Reemplaza con el ID de criterio correcto
     const id_modelo = 2; // Reemplaza con el ID de modelo correcto
     this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
@@ -64,11 +66,11 @@ export class PonderacionCriterioComponent implements OnInit {
             enlace: `http://localhost:5000/archivo/${indicador.id_indicador}.pdf` // Reemplaza 'URL_DEL_BACKEND' con la URL correcta de tu backend
           };
         });
-  
+
         console.log(this.dataSource + 'criteriooooooo');
 
-     this.coloresTabla();
-     this.GraficaPastel();
+        this.coloresTabla();
+        this.GraficaPastel();
 
 
 
@@ -77,8 +79,8 @@ export class PonderacionCriterioComponent implements OnInit {
 
   }
 
- 
-  coloresTabla(){
+
+  coloresTabla() {
     this.dataSource.forEach((indicador: any) => {
 
       if (indicador.porc_obtenido > 75 && indicador.porc_obtenido <= 100) {
@@ -102,7 +104,7 @@ export class PonderacionCriterioComponent implements OnInit {
 
   GraficaPastel() {
 
-  
+
 
     this.chart = new Chart("pastel", {
       type: 'pie',
@@ -112,10 +114,10 @@ export class PonderacionCriterioComponent implements OnInit {
           {
             label: "Porcentaje de logro",
             data: [
-              this.dataSource.filter((indicador:any) => indicador.porc_obtenido <= 25).length,
-              this.dataSource.filter((indicador:any)  => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
-              this.dataSource.filter((indicador:any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
-              this.dataSource.filter((indicador:any)  => indicador.porc_obtenido >= 75).length
+              this.dataSource.filter((indicador: any) => indicador.porc_obtenido <= 25).length,
+              this.dataSource.filter((indicador: any) => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
+              this.dataSource.filter((indicador: any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
+              this.dataSource.filter((indicador: any) => indicador.porc_obtenido >= 75).length
             ],
             backgroundColor: ['red', 'orange', 'yellow', 'green']
           }
@@ -125,11 +127,11 @@ export class PonderacionCriterioComponent implements OnInit {
         aspectRatio: 2.5
       }
     });
-    
-    
-    
+
+
+
   }
-  
+
 
   regresar() {
     this.router.navigate(['/sup/modelo/detallemodelo']);
@@ -142,13 +144,24 @@ export class PonderacionCriterioComponent implements OnInit {
 
   }
 
-  recoverPdf(id:number){
+
+  recoverPdf(id: number) {
+
     this.indicadorservice.recoverPdfLink(39).subscribe(
       (data) => {
         this.recoverPdf;
-      }
-    );
-  }
+        this.idndicadorseleccionado = id;
 
+        this.indicadorservice.getarchivorecoverPdf(39).subscribe(
+          (data) => {
+
+            this.archivos = data;
+            console.log(this.archivos);
+
+          }
+        );
+      });
+
+  }
 
 }

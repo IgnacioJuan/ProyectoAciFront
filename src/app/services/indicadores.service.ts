@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import baserUrl from './helper';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { IndicadorEvidenciasProjection } from '../interface/IndicadorEvidenciasProjection';
+import { Archivo } from '../models/Archivo';
 
 
 @Injectable({
@@ -100,11 +101,16 @@ export class IndicadoresService {
   }
 
   
-  //consumir servicio de back @GetMapping("/listarIndicadorPorCriterioModelo/{id_criterio}/{id_modelo}")
+  //consumir servicio de back @GetMapping("/listarIndicadorPorCriterioModelo/{id_criterio}")
   public recoverPdfLink(id_criterio: number): Observable<string> {
     return this.http
       .get(`${baserUrl}/archivo/recoverPdf/${id_criterio}`)
       .pipe(map((response) => response as string));
+  }
+
+
+  public getarchivorecoverPdf(id_indicador: number): Observable<Archivo[]> {
+    return this.http.get<Archivo[]>(`${baserUrl}/archivo/recoverPdf/${id_indicador}`);
   }
 
 

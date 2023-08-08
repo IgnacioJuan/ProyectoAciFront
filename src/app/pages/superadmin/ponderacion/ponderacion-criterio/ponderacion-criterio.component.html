@@ -2,15 +2,12 @@
   <div class="container bg-light border border-start-0 rounded-4">
     <blockquote class="blockquote text-dark" style="margin-top: 5%">
       <h1 style="text-transform: uppercase">
-        <strong
-          ><a style="cursor: pointer" (click)="irinicio()">Modelos </a>
+        <strong><a style="cursor: pointer" (click)="irinicio()">Modelos </a>
           >
-          <a style="cursor: pointer" (click)="regresar()"
-            >{{ modelo.nombre }}
+          <a style="cursor: pointer" (click)="regresar()">{{ modelo.nombre }}
           </a>
           >
-          <a>{{ criterio.nombre }} </a></strong
-        >
+          <a>{{ criterio.nombre }} </a></strong>
       </h1>
     </blockquote>
     <h1 class="display-1">PONDERACIÓN DEL CRITERIO</h1>
@@ -34,22 +31,25 @@
               <td>{{ column.id_indicador }}</td>
               <td>{{ column.nombre }}</td>
               <td>{{ column.peso }}</td>
-
-              <td
-                [class.color-verde]="column.color === 'verde'"
-                [class.color-rojo]="column.color === 'rojo'"
-                [class.color-naranja]="column.color === 'naranja'"
-                [class.color-amarillo]="column.color === 'amarillo'"
-              >
+              <td [class.color-verde]="column.color === 'verde'" [class.color-rojo]="column.color === 'rojo'"
+                [class.color-naranja]="column.color === 'naranja'" [class.color-amarillo]="column.color === 'amarillo'">
                 {{ column.porc_obtenido }} %
               </td>
 
               <td>{{ column.porc_utilida_obtenida }} %</td>
               <td>{{ column.valor_obtenido }}</td>
               <td>
-                <a *ngIf="column.enlace" (click)="recoverPdf(column.id_indicador)" target="_blank">Ver PDF</a>
-                <span *ngIf="!column.enlace">Sin enlace</span>
-              </td>
+                <a (click)="recoverPdf(column.id_indicador)">Descargar PDF</a>
+                <div *ngIf="column.id_indicador=== idndicadorseleccionado ">
+
+                  <p *ngFor="let archi of archivos">
+
+                    <a href="{{ archi.enlace}}" target="_blank">
+                      {{ archi.nombre}}
+                    </a>
+                  </p>
+                  <span *ngIf="archivos.length == 0">Sin enlace</span>
+                </div>
             </tr>
           </tbody>
         </table>
