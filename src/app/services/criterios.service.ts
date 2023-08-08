@@ -7,8 +7,7 @@ import { Modelo } from '../models/Modelo';
 import { Observacion } from '../models/Observacion';
 import { Persona2 } from '../models/Persona2';
 import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriteriosProjection';
-
-
+import { IndicadorProjection } from '../interface/IndicadorProjection';
 @Injectable({
   providedIn: 'root'
 })
@@ -51,9 +50,11 @@ export class CriteriosService {
 
   getObtenerIndicadores(id: any): Observable<any[]> {
     return this.http.get<any[]>(`${baserUrl}/api/indicadores/buscarindicador/` + id);
-
   }
 
+  getIndicador(): Observable<IndicadorProjection[]> {
+    return this.http.get<IndicadorProjection[]>(`${baserUrl}/api/indicadores/listarindi`)
+  }
   getModeMaximo(): Observable<Modelo> {
     return this.http.get<any>(`${baserUrl}/api/modelo/listarMax`)
   }

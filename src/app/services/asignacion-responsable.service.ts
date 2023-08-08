@@ -6,6 +6,7 @@ import { Criterio } from '../models/Criterio';
 import { asigna_R } from '../models/Asigna-Responsable';
 import { usuario } from '../models/Usuario';
 import { Usuario2 } from '../models/Usuario2';
+import { ResponsableProjection } from '../interface/ResponsableProjection';
  
 
 @Injectable({
@@ -20,7 +21,11 @@ export class AsignacionResponsableService {
     return this.httpClient.get(`${baserUrl}/usuarios/listar`).
       pipe(map((response) => response as usuario[]));
   }
-
+ //Listar responsables
+ public getResponsables(): Observable<ResponsableProjection[]> {
+  return this.httpClient.get(`${baserUrl}/usuarios/responsables`).
+    pipe(map((response) => response as ResponsableProjection[]));
+}
 
  //LISTAR RESPONSABLEAdmin
  public listarUsuarioAdmin(): Observable<Usuario2[]> {

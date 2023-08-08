@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
  import baserUrl from './helper';
 import { Archivo } from '../models/Archivo';
+import { ArchivoProjection } from '../interface/ArchivoProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,9 @@ get():Observable<Archivo[]>{
   return this.http.get<Archivo[]>(`${baserUrl}/archivo/listarv`);
 }
 
-
+getDatos():Observable<ArchivoProjection[]>{
+  return this.http.get<ArchivoProjection[]>(`${baserUrl}/archivo/listararchi`);
+}
 //listado de la clase archivo
   listar(){
     return this.http.get(`${this.baserrl}/archivo/listar`);

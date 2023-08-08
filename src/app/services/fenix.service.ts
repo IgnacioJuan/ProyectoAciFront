@@ -35,6 +35,67 @@ export class FenixService {
         );
     }
 
+    /*
+    error 
+    public getDocenteByPrimerNombre(primer_nombre: string): Observable<any> {
+    const url = `${this.url}/p-nombre/${primer_nombre}`;
+    return this.http.get(url).pipe(
+        catchError((error) => {
+            console.error('Error al obtener docente por primer nombre:', error);
+            throw error;
+        })
+    );
+    }
+     */
+
+    /*
+    Preuba random en este caso se podria mandar un mensaje pero no sirve v:
+    import { throwError } from 'rxjs';
+    import { catchError } from 'rxjs/operators';
+    import Swal from 'sweetalert2';
+
+    public getDocenteByPrimerNombre(primer_nombre: string): Observable<any> {
+    const url = `${this.url}/p-nombre/${primer_nombre}`;
+    return this.http.get(url).pipe(
+        catchError((error) => {
+        const errorMessage = 'Ocurrió un error al obtener los docentes por primer nombre.';
+        Swal.fire('Error', errorMessage, 'error');
+        return throwError(errorMessage);
+        })
+    );
+    }
+    */
+   
+    //metodo para obtener docentes por primer_apellido
+    public getDocenteByPrimerNombre(primer_nombre: string): Observable<any> {
+        return this.http.get(this.url + '/p-nombre/' + primer_nombre).pipe(
+            catchError((error) => {
+                console.error(error);
+                throw error;
+            })
+        );
+    }
+
+    //metodo para obtener docentes por segundo_apellido
+    public getDocenteBySegundoNombre(segundo_nombre: string): Observable<any> {
+        return this.http.get(this.url + '/s-nombre/' + segundo_nombre).pipe(
+            catchError((error) => {
+                console.error(error);
+                throw error;
+            })
+        );
+    }
+
+    //metodo para obtener docentes por su primer_nombre y segundo_nombre
+    public getDocenteByPrimerNombreSegundoNombre(primer_nombre: string, segundo_nombre: string): Observable<any> {
+        return this.http.get(this.url + '/nombres/' + primer_nombre + '/' + segundo_nombre).pipe(
+            catchError((error) => {
+                console.error(error);
+                throw error;
+            })
+        );
+    }
+
     //metodo para obtener docentes por primer_apellido
     public getDocenteByPrimerApellido(primer_apellido: string): Observable<any> {
         return this.http.get(this.url + '/p-apellido/' + primer_apellido).pipe(
@@ -65,5 +126,13 @@ export class FenixService {
         );
     }
 
+    public getDocenteByNombresCompletos(primer_nombre: string, primer_apellido: string): Observable<any> {
+        return this.http.get(this.url + '/p-nombres/' + primer_nombre + '/' + primer_apellido).pipe(
+            catchError((error) => {
+                console.error(error);
+                throw error;
+            })
+        );
+    }
 }
 

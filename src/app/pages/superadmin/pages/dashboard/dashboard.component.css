@@ -1,9 +1,50 @@
+.config-button {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.custom-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  display: none;
+  background-color: white; /* Ajusta los estilos según tus necesidades */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  min-width: 100px; /* Ajusta el ancho del dropdown según tus necesidades */
+  z-index: 1;
+}
+
+.show-dropdown .custom-dropdown {
+  display: block;
+}
+
+.show-dropdown .config-button {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.men{
+  margin-bottom: 6%;
+}
+
+.cole{
+  color: white;
+}
+
+.tab-rech {
+  background-color: rgba(255, 0, 0, 0.158);
+}
+.tab-apr{
+  background-color: rgba(0, 255, 64, 0.158);
+}
 .barra{
   display: flex;
   justify-content: center;
   width: 15%;
   height: 15%;
-  border-color: #299b63;
 }
 
 .titu{
@@ -13,13 +54,12 @@ font-weight: bold;
 }
 
 table {
-  width: 80%;
+  width: 70%;
 }
 
 .calenda{
   flex-grow: 1;
   margin-block-end: auto;
-  border-block-start: thick double #32a1ce;
   writing-mode: horizontal-tb;
 }
 
@@ -37,7 +77,7 @@ table {
 }
 
 .calendar-container {
-  width: 50%; 
+  width: 80%; 
   height: 60%;
 }
 

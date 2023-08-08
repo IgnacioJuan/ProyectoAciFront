@@ -18,7 +18,6 @@ export class CriteriosSubcriterioComponent implements OnInit {
   frmSubcriterio: FormGroup;
   guardadoExitoso: boolean = false;
 
-
   criterio: Criterio = new Criterio();
   subcriterios: any[] = [];
 
@@ -31,7 +30,6 @@ export class CriteriosSubcriterioComponent implements OnInit {
 
   @ViewChild('datosModalRef') datosModalRef: any;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
-
 
   constructor(
     private subcriterioservice: SubcriteriosService,

@@ -7,6 +7,7 @@ import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { IndicadorEvidenciasProjection } from '../interface/IndicadorEvidenciasProjection';
 import { Archivo } from '../models/Archivo';
 
+import { IndicadorEvidenciasProjectionFull } from '../interface/IndicadorEvidenciasProjectionFull';
 
 @Injectable({
   providedIn: 'root'
@@ -114,4 +115,7 @@ export class IndicadoresService {
   }
 
 
+  obtenerDatosIndicadoresFull(): Observable<IndicadorEvidenciasProjectionFull[]> {
+    return this.http.get<IndicadorEvidenciasProjectionFull[]>(`${baserUrl}/api/indicadores/datosIndicadoresFull`);
+  }
 }
