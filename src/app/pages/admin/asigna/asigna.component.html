@@ -106,7 +106,7 @@ crear responsable
                             <select class="form-select" id="selecionarr" aria-label="Default select example"
                                 name="selecionar" [(ngModel)]="asignaN.criterio">
 
-                                <option selected disabled> Seleccione el producto </option>
+                                <option selected disabled> Seleccione el criterio </option>
                                 <option *ngFor="let crite of criterios" [ngValue]="crite.id_criterio">
                                     {{crite.nombre}}</option>
 
@@ -152,8 +152,8 @@ crear responsable
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary">Aceptar</button>
       </div>
     </div>
   </div>

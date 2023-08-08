@@ -8,6 +8,7 @@ import { PersonaService } from 'src/app/services/persona.service';
 
 import swal from 'sweetalert2';
 import { Archivo } from 'src/app/models/Archivo';
+import { ArchivoProjection } from 'src/app/interface/ArchivoProjection';
 
 @Component({
   selector: 'app-obcervaciones',
@@ -24,7 +25,8 @@ export class ObcervacionesComponent implements OnInit {
   subject: string = "";
   message: string = " El archivo";
   personas!: any[];
-  arch!: Archivo[];
+  arch!: ArchivoProjection[];
+  combinedRows: { resp: string, activid: string, rowspans: number }[] = [];
 
   constructor(private archivo: ArchivoService,
     private _snackBar: MatSnackBar,
@@ -34,6 +36,7 @@ export class ObcervacionesComponent implements OnInit {
   ngOnInit(): void {
     this.listar();
   }
+  
   searchTerm: string = '';
 correo:string ="";
 
@@ -43,7 +46,7 @@ this.toUser=coreo;
 }
   listar() {
     console.log(this.arch)
-    this.subiarchivo.get().subscribe(
+    this.subiarchivo.getDatos().subscribe(
       (data: any) => {
         console.log(data);
         this.arch = data;
