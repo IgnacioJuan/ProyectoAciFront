@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { Router } from '@angular/router';
 import { Modelo } from 'src/app/models/Modelo';
@@ -14,6 +14,8 @@ import { AsignarCriterioComponent } from './asignar-criterio/asignar-criterio.co
 import { PonderacionService } from 'src/app/services/ponderacion.service';
 import * as moment from 'moment';
 import Swal from 'sweetalert2';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 type ColumnNames = {
   [key: string]: string;
@@ -42,28 +44,13 @@ interface f {
 })
 export class DetalleModeloComponent implements OnInit {
 
-  public columnNames: ColumnNames = {
-    nombre: 'Nombre del Criterio',
-    descripcion: 'Descripción del Criterio'
-  };
-
-  public ponderar: ponderar = {
-    fecha: 'Fecha de Ponderación',
-  }
-
-  dataSource: any;
-
+  
+  dataSource = new MatTableDataSource<any>();
   asignacion: any;
-
-
   columnsToDisplay = ['nombre', 'descripcion'];
-
-  columnsToDisplayWithExpand = [...this.columnsToDisplay,'subcriterios', 'matriz', 'ponderacion', 'asignar'];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'subcriterios', 'matriz', 'ponderacion', 'asignar'];
   expandedElement: any;
-
   model: Modelo = new Modelo();
-
-
   mostrarPrincipal: number = 0;
   mostrarSecundario: number = 0;
 
@@ -77,13 +64,19 @@ export class DetalleModeloComponent implements OnInit {
 
   fechas: Date[] = [];
   fechasfinal: Date[] = [];
+  id = localStorage.getItem("id");
+  ocultarBoton: boolean = false;
 
+  public columnNames: ColumnNames = {
+    nombre: 'Nombre del Criterio',
+    descripcion: 'Descripción del Criterio'
+  };
 
-
-  pond(fecha: Date) {
-
-    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
+  public ponderar: ponderar = {
+    fecha: 'Fecha de Ponderación',
   }
+
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
     private route: ActivatedRoute,
@@ -97,11 +90,16 @@ export class DetalleModeloComponent implements OnInit {
     private dialog: MatDialog,
     private ponderacionService: PonderacionService,
   ) { }
-  ocultarBoton: boolean = false;
+  
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
+  }
   ngOnInit(): void {
     this.recibeModelo();
   }
-  id = localStorage.getItem("id");
+
+ 
   recibeModelo() {
     this.modeloService.getModeloById(Number(this.id)).subscribe(data => {
       if (data.visible) {
@@ -128,10 +126,10 @@ export class DetalleModeloComponent implements OnInit {
       this.model = data;
       this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.id)).subscribe(info => {
         this.criterioService.listarCriterio().subscribe(result => {
-          this.dataSource = [];
+          this.dataSource.data = [];
           this.asignacion = info;
           console.log(this.asignacion);
-          this.dataSource = result.filter((criterio: any) => {
+          this.dataSource.data = result.filter((criterio: any) => {
             return info.some((asignacion: any) => {
               return criterio.id_criterio === asignacion.indicador.subcriterio.criterio.id_criterio;
             });
@@ -142,19 +140,13 @@ export class DetalleModeloComponent implements OnInit {
   }
 
   irPonderacionModelo(modelo: Modelo): void {
-
-    //llevar modelo
-
     localStorage.setItem("id", modelo.id_modelo.toString());
     console.log(modelo.id_modelo)
     this.model = modelo;
     this.router.navigate(['/sup/ponderacion/ponderacion-modelo']);
-
-
   }
   ponderacionCriterio(event: Event, element: any) {
     event.stopPropagation();
-    // código del método del botón
     this.router.navigate(['/sup/ponderacion/ponderacion-criterio'], { state: { criterio: element, modelo: this.model } });
   }
 
@@ -172,16 +164,17 @@ export class DetalleModeloComponent implements OnInit {
 
   ponderacion(event: Event, element: any) {
     event.stopPropagation();
-    // código del método del botón
     this.sharedDataService.agregarIdCriterio(element.id_criterio);
   }
 
   irinicio() {
-
-    // código del método del botón
     this.router.navigate(['/sup/modelo/modelo']);
-
   }
+  pond(fecha: Date) {
+
+    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
+  }
+
   asignar_criterio(event: Event, criterio: any) {
     event.stopPropagation();
     const dialogRef = this.dialog.open(AsignarCriterioComponent, {
@@ -200,9 +193,5 @@ export class DetalleModeloComponent implements OnInit {
         });
       }
     });
-
-
-
-
   }
 }

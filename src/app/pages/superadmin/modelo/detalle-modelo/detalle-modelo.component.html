@@ -152,6 +152,15 @@
             class="example-detail-row"
           ></tr>
         </table>
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+          aria-label="Select page of periodic elements"
+          itemsPerPageLabel="Items por página:"
+          nextPageLabel="Siguiente"
+          previousPageLabel="Anterior"
+        >
+        </mat-paginator>
       </div>
       <div class="table-container">
         <ng-container
