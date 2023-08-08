@@ -46,11 +46,11 @@
     <ng-template #template1>
       <div class="table-container">
         <table
-          mat-table
-          [dataSource]="dataSource"
-          multiTemplateDataRows
-          class="mat-elevation-z8"
-        >
+        mat-table
+        [dataSource]="dataSource"
+        multiTemplateDataRows
+        class="mat-elevation-z8"
+      >
           <ng-container
             matColumnDef="{{ column }}"
             *ngFor="let column of columnsToDisplay"
@@ -141,18 +141,16 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-          <tr
-            mat-row
-            *matRowDef="let element; columns: columnsToDisplayWithExpand"
-            class="example-element-row"
-          ></tr>
-          <tr
-            mat-row
-            *matRowDef="let row; columns: ['expandedDetail']"
-            class="example-detail-row"
-          ></tr>
-        </table>
+    <tr  mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand" class="example-element-row"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['expandedDetail']"
+      class="example-detail-row"
+    ></tr>
+  </table>
+ 
       </div>
+      <!-- fin tabla  -->
       <div class="table-container">
         <ng-container
           *ngIf="mostrarSecundario === 1; then template2"

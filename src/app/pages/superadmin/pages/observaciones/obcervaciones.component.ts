@@ -9,6 +9,7 @@ import { PersonaService } from 'src/app/services/persona.service';
 import swal from 'sweetalert2';
 import { Archivo } from 'src/app/models/Archivo';
 import { ArchivoProjection } from 'src/app/interface/ArchivoProjection';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-obcervaciones',
@@ -16,8 +17,27 @@ import { ArchivoProjection } from 'src/app/interface/ArchivoProjection';
   styleUrls: ['./obcervaciones.component.css']
 })
 export class ObcervacionesComponent implements OnInit {
-
-
+//tabla
+  displayedColumns: string[] = ['file', 'uploadedBy', 'activity', 'startDate', 'endDate', 'sendMessage'];
+  spanningColumns = ['uploadedBy', 'activity', 'startDate', 'endDate'];
+  spans: any[] = [];
+  itemsPerPageLabel = 'Archivos por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+//
   fileInfos: Observable<any> | undefined;
   selectedFiles: FileList | undefined;
   sent: boolean = false;
@@ -30,13 +50,44 @@ export class ObcervacionesComponent implements OnInit {
 
   constructor(private archivo: ArchivoService,
     private _snackBar: MatSnackBar,
+    private paginatorIntl: MatPaginatorIntl,
     private perservice3: PersonaService,
     private subiarchivo:ArchivoService,
     private emailService: EmailServiceService) { }
   ngOnInit(): void {
     this.listar();
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
+  }
+  //Contador para combinar celdas
+  cacheSpan(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.arch.length;) {
+      let currentValue = accessor(this.arch[i]);
+      let count = 1;
+
+      for (let j = i + 1; j < this.arch.length; j++) {
+        if (currentValue !== accessor(this.arch[j])) {
+          break;
+        }
+        count++;
+      }
+  
+      if (!this.spans[i]) {
+        this.spans[i] = {};
+      }
+  
+      this.spans[i][key] = count;
+      i += count;
+    }
   }
   
+  
+  getRowSpan(col: any, index: any) {
+    return this.spans[index] && this.spans[index][col];
+  }
+  //
   searchTerm: string = '';
 correo:string ="";
 
@@ -50,6 +101,11 @@ this.toUser=coreo;
       (data: any) => {
         console.log(data);
         this.arch = data;
+        //recorro y asigno las filas
+        this.cacheSpan('uploadedBy', (y) => y.resp);
+        this.cacheSpan('activity', (y) => y.resp+y.activid);
+        this.cacheSpan('startDate', (y) => y.resp+y.activid+y.ini);
+        this.cacheSpan('endDate', (y) => y.resp+y.activid+y.ini+y.finish);
       },
       (error) => {
         console.error(error);

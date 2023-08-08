@@ -7,15 +7,13 @@ import { Modelo } from 'src/app/models/Modelo';
 import Swal from 'sweetalert2';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
+import { format } from 'date-fns';
 
 @Pipe({ name: 'customDate' })
 export class CustomDatePipe implements PipeTransform {
   transform(value: any): string {
-    const date = new Date(value);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${day}-${month}-${year}`;
+    const dateValue = new Date(value);
+    return format(dateValue, 'dd-MM-yyyy');
   }
 }
 
@@ -27,6 +25,7 @@ export class CustomDatePipe implements PipeTransform {
 export class InicioModeloComponent implements OnInit {
   mode = new Modelo();
   asignacion: any;
+  
   datasource: any[] = [];
   constructor(public dialog: MatDialog,
     private router: Router,

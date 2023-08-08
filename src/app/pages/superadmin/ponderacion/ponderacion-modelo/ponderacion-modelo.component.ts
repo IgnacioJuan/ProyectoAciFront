@@ -45,7 +45,7 @@ export class PonderacionModeloComponent implements OnInit {
   valor_obtenido: number = 0;
   indicador1!: Indicador;
   modelo1!: Modelo;
-
+  fechaActual!: Date;
   fechaSeleccionada: any;
   conf: number = 0;
 
@@ -69,6 +69,7 @@ export class PonderacionModeloComponent implements OnInit {
 
   ocultarBoton: boolean = false;
   ngOnInit(): void {
+    this.fechaActual = new Date();
     this.conf = 0;
     this.activatedRoute.queryParams.subscribe(params => {
       this.fechaSeleccionada = params['fecha']; // Obtener la fecha actual
@@ -78,7 +79,7 @@ export class PonderacionModeloComponent implements OnInit {
       } else {
         this.ocultarBoton = false;
       }
-      console.log(this.fechaSeleccionada, this.conf);
+      console.log("Fecha boton "+this.fechaSeleccionada, this.conf);
       // Aquí puedes realizar cualquier otra lógica con la fecha seleccionada en el nuevo formato
     });
 
@@ -188,8 +189,10 @@ export class PonderacionModeloComponent implements OnInit {
     const ponderaciones: Ponderacion[] = [];
   
     let idModelo = localStorage.getItem("id");
+    console.log("Este es id modelo "+idModelo);
     this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
       this.model = dataModelo;
+      console.log("Este es modelo "+this.model);
       const fechaSistema = new Date();
   
       // Verificar si ya existe un registro en la API en la misma fecha

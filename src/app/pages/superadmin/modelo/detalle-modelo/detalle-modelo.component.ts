@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { Router } from '@angular/router';
 import { Modelo } from 'src/app/models/Modelo';
@@ -14,6 +14,8 @@ import { AsignarCriterioComponent } from './asignar-criterio/asignar-criterio.co
 import { PonderacionService } from 'src/app/services/ponderacion.service';
 import * as moment from 'moment';
 import Swal from 'sweetalert2';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 type ColumnNames = {
   [key: string]: string;
@@ -52,7 +54,9 @@ export class DetalleModeloComponent implements OnInit {
   }
 
   dataSource: any;
-
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  pageSize = 10;
+  pageIndex = 0;
   asignacion: any;
 
 
@@ -81,6 +85,7 @@ export class DetalleModeloComponent implements OnInit {
 
 
   pond(fecha: Date) {
+    console.log("esta fecha modelo "+fecha)
 
     this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
   }
@@ -96,10 +101,25 @@ export class DetalleModeloComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private ponderacionService: PonderacionService,
-  ) { }
+  ) {
+
+   }
   ocultarBoton: boolean = false;
   ngOnInit(): void {
     this.recibeModelo();
+  }
+
+  // Función para manejar el cambio de página
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.updateDataSource();
+  }
+
+  // Función para actualizar la fuente de datos con la paginación
+  updateDataSource() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.dataSource = new MatTableDataSource(this.dataSource.data.slice(startIndex, endIndex));
   }
   id = localStorage.getItem("id");
   recibeModelo() {
@@ -122,6 +142,7 @@ export class DetalleModeloComponent implements OnInit {
 
         this.ponderacionService.listarPonderacionPorModelo(Number(this.id)).subscribe(data => {
           this.dataSourcePonderacion = data;
+              this.updateDataSource();
         });
 
       }
