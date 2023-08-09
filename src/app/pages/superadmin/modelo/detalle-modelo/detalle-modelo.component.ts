@@ -128,7 +128,6 @@ export class DetalleModeloComponent implements OnInit {
         this.criterioService.listarCriterio().subscribe(result => {
           this.dataSource.data = [];
           this.asignacion = info;
-          console.log(this.asignacion);
           this.dataSource.data = result.filter((criterio: any) => {
             return info.some((asignacion: any) => {
               return criterio.id_criterio === asignacion.indicador.subcriterio.criterio.id_criterio;
@@ -141,7 +140,6 @@ export class DetalleModeloComponent implements OnInit {
 
   irPonderacionModelo(modelo: Modelo): void {
     localStorage.setItem("id", modelo.id_modelo.toString());
-    console.log(modelo.id_modelo)
     this.model = modelo;
     this.router.navigate(['/sup/ponderacion/ponderacion-modelo']);
   }
@@ -151,14 +149,12 @@ export class DetalleModeloComponent implements OnInit {
   }
 
   mostrar(element: any) {
-    console.log(element);
-    this.sharedDataService.agregarIdCriterio(element.id_criterio);
-    this.router.navigate(['/sup/modelo/detalle-subcriterio']);
+   // this.sharedDataService.agregarIdCriterio(element.id_criterio);
+    this.router.navigate(['/sup/modelo/detalle-subcriterio'], { state: { data: element.id_criterio, modelo: this.model } });
   }
 
   evaluacion(event: Event, element: any) {
     event.stopPropagation();
-    console.log(this.model)
     this.router.navigate(['/sup/modelo/matriz-evaluacion'], { state: { criterio: element, modelo: this.model } });
   }
 

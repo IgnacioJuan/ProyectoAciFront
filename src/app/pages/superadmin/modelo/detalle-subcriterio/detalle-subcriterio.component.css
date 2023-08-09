@@ -10,3 +10,11 @@ p.fant {font-family: sans-serif;
     left : 10px; 
     text-align: left ;
 }
+
+.boton {
+    background-color: #0D6EFD;
+}
+
+.iconoB {
+    color: white;
+}

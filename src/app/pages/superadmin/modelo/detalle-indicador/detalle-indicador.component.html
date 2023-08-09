@@ -18,40 +18,75 @@
     <div class="mat-elevation-z8 table-responsive" style="margin-bottom: 5%">
       <div class="container">
         <div class="detalle">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>NOMBRE</th>
-                <th>DESCRIPCIÓN</th>
-                <th>PESO</th>
-                <th>VALOR OBTENIDO</th>
-                <th>% VALOR OBTENIDO</th>
-                <th>ESTANDAR</th>
-                <th>TIPO</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let indicador of dataSource">
-                <td>{{ indicador.id_indicador }}</td>
-                <td>{{ indicador.nombre }}</td>
-                <td>{{ indicador.descripcion }}</td>
-                <td>{{ indicador.peso }}</td>
-                <td>{{ indicador.valor_obtenido }}</td>
-                <td
-                  [class.color-verde]="indicador.color === 'verde'"
-                  [class.color-rojo]="indicador.color === 'rojo'"
-                  [class.color-naranja]="indicador.color === 'naranja'"
-                  [class.color-amarillo]="indicador.color === 'amarillo'"
-                >
-                  {{ indicador.porc_obtenido }} %
-                </td>
-                <td>{{ indicador.estandar }}</td>
-                <td>{{ indicador.tipo }}</td>
-                <td></td>
-              </tr>
-            </tbody>
+          <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="id_indicador">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.id_indicador }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef>NOMBRE</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.nombre }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="descripcion">
+              <th mat-header-cell *matHeaderCellDef>DESCRIPCIÓN</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.descripcion }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="peso">
+              <th mat-header-cell *matHeaderCellDef>PESO</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.peso }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="valor_obtenido">
+              <th mat-header-cell *matHeaderCellDef>VALOR</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.valor_obtenido }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="porc_obtenido">
+              <th mat-header-cell *matHeaderCellDef>PORCENTAJE</th>
+              <td
+                mat-cell
+                *matCellDef="let elemento"
+                [class.color-verde]="elemento.color === 'verde'"
+                [class.color-rojo]="elemento.color === 'rojo'"
+                [class.color-naranja]="elemento.color === 'naranja'"
+                [class.color-amarillo]="elemento.color === 'amarillo'"
+              >
+                {{ elemento.porc_obtenido }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="estandar">
+              <th mat-header-cell *matHeaderCellDef>ESTANDAR</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.estandar }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="tipo">
+              <th mat-header-cell *matHeaderCellDef>TIPO</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{ elemento.tipo }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnasUsuario"></tr>
+            <tr mat-row *matRowDef="let fila; columns: columnasUsuario"></tr>
           </table>
+          <mat-paginator
+            [pageSizeOptions]="[5, 10, 20]"
+            showFirstLastButtons
+            aria-label="Select page of periodic elements"
+            itemsPerPageLabel="Items por página:"
+            nextPageLabel="Siguiente"
+            previousPageLabel="Anterior"
+          >
+          </mat-paginator>
         </div>
       </div>
     </div>
