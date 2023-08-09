@@ -15,35 +15,7 @@
     </blockquote>
     <div class="mat-elevation-z8 table-responsive" style="margin-bottom: 5%">
       <div class="container">
-        <!-- <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>NOMBRE</th>
-              <th>DESCRIPCIÓN</th>
-              <th>DETALLE INDICADORES</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let subcriterio of dataSource | buscar : searchText">
-              <td>{{ subcriterio.id_subcriterio }}</td>
-              <td>{{ subcriterio.nombre }}</td>
-              <td>{{ subcriterio.descripcion }}</td>
-
-              <td>
-                <button
-                  type="button"
-                  class="btn btn-outline-primary"
-                  (click)="verIndicadores(subcriterio)"
-                >
-                  <mat-icon class="iconoB">info</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table> -->
-
-        <table mat-table [dataSource]="dataSource">
+        <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
           <ng-container matColumnDef="id_subcriterio">
             <th mat-header-cell *matHeaderCellDef>ID</th>
             <td mat-cell *matCellDef="let elemento">
@@ -71,11 +43,10 @@
                 role="button"
                 (click)="verIndicadores(elemento)"
               >
-              <mat-icon class="iconoB">info</mat-icon>
+                <mat-icon class="iconoB">info</mat-icon>
               </button>
             </td>
           </ng-container>
-
 
           <tr mat-header-row *matHeaderRowDef="columnasUsuario"></tr>
           <tr mat-row *matRowDef="let fila; columns: columnasUsuario"></tr>

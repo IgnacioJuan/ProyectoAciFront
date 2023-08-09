@@ -19,7 +19,6 @@
         mat-table
         [dataSource]="dataSource"
         multiTemplateDataRows
-        class="mat-elevation-z8"
       >
         <ng-container
           matColumnDef="{{ column }}"
@@ -70,6 +69,15 @@
           class="example-detail-row"
         ></tr>
       </table>
+      <mat-paginator
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+          aria-label="Select page of periodic elements"
+          itemsPerPageLabel="Items por página:"
+          nextPageLabel="Siguiente"
+          previousPageLabel="Anterior"
+        >
+        </mat-paginator>
     </div>
   </div>
 </body>
