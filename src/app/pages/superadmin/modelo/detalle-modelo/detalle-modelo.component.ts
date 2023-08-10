@@ -44,6 +44,8 @@ interface f {
 })
 export class DetalleModeloComponent implements OnInit {
 
+  
+  dataSource = new MatTableDataSource<any>();
   public columnNames: ColumnNames = {
     nombre: 'Nombre del Criterio',
     descripcion: 'Descripción del Criterio'
@@ -53,21 +55,13 @@ export class DetalleModeloComponent implements OnInit {
     fecha: 'Fecha de Ponderación',
   }
 
-  dataSource: any;
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
   pageSize = 10;
   pageIndex = 0;
   asignacion: any;
-
-
   columnsToDisplay = ['nombre', 'descripcion'];
-
-  columnsToDisplayWithExpand = [...this.columnsToDisplay,'subcriterios', 'matriz', 'ponderacion', 'asignar'];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'subcriterios', 'matriz', 'ponderacion', 'asignar'];
   expandedElement: any;
-
   model: Modelo = new Modelo();
-
-
   mostrarPrincipal: number = 0;
   mostrarSecundario: number = 0;
 contador: number = 0;
@@ -81,6 +75,10 @@ contador: number = 0;
 
   fechas: Date[] = [];
   fechasfinal: Date[] = [];
+  id = localStorage.getItem("id");
+  ocultarBoton: boolean = false;
+
+  
 
 
 
@@ -91,6 +89,7 @@ contador: number = 0;
     localStorage.setItem("contador", element.contador);
     this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
   }
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
     private route: ActivatedRoute,
@@ -103,14 +102,17 @@ contador: number = 0;
     private router: Router,
     private dialog: MatDialog,
     private ponderacionService: PonderacionService,
-  ) {
+  ) { }
+  
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
 
-   }
-  ocultarBoton: boolean = false;
+  }
   ngOnInit(): void {
     this.recibeModelo();
   }
 
+ 
   // Función para manejar el cambio de página
   onPageChange(event: any) {
     this.pageIndex = event.pageIndex;
@@ -123,7 +125,6 @@ contador: number = 0;
     const endIndex = startIndex + this.pageSize;
     this.dataSource = new MatTableDataSource(this.dataSource.data.slice(startIndex, endIndex));
   }
-  id = localStorage.getItem("id");
   recibeModelo() {
     this.modeloService.getModeloById(Number(this.id)).subscribe(data => {
       if (data.visible) {
@@ -152,10 +153,9 @@ contador: number = 0;
       this.model = data;
       this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.id)).subscribe(info => {
         this.criterioService.listarCriterio().subscribe(result => {
-          this.dataSource = [];
+          this.dataSource.data = [];
           this.asignacion = info;
-          console.log(this.asignacion);
-          this.dataSource = result.filter((criterio: any) => {
+          this.dataSource.data = result.filter((criterio: any) => {
             return info.some((asignacion: any) => {
               return criterio.id_criterio === asignacion.indicador.subcriterio.criterio.id_criterio;
             });
@@ -166,46 +166,38 @@ contador: number = 0;
   }
 
   irPonderacionModelo(modelo: Modelo): void {
-
-    //llevar modelo
-
     localStorage.setItem("id", modelo.id_modelo.toString());
-    console.log(modelo.id_modelo)
     this.model = modelo;
     this.router.navigate(['/sup/ponderacion/ponderacion-modelo']);
-
-
   }
   ponderacionCriterio(event: Event, element: any) {
     event.stopPropagation();
-    // código del método del botón
     this.router.navigate(['/sup/ponderacion/ponderacion-criterio'], { state: { criterio: element, modelo: this.model } });
   }
 
   mostrar(element: any) {
-    console.log(element);
-    this.sharedDataService.agregarIdCriterio(element.id_criterio);
-    this.router.navigate(['/sup/modelo/detalle-subcriterio']);
+   // this.sharedDataService.agregarIdCriterio(element.id_criterio);
+    this.router.navigate(['/sup/modelo/detalle-subcriterio'], { state: { data: element.id_criterio, modelo: this.model } });
   }
 
   evaluacion(event: Event, element: any) {
     event.stopPropagation();
-    console.log(this.model)
     this.router.navigate(['/sup/modelo/matriz-evaluacion'], { state: { criterio: element, modelo: this.model } });
   }
 
   ponderacion(event: Event, element: any) {
     event.stopPropagation();
-    // código del método del botón
     this.sharedDataService.agregarIdCriterio(element.id_criterio);
   }
 
   irinicio() {
-
-    // código del método del botón
     this.router.navigate(['/sup/modelo/modelo']);
-
   }
+  // pond(fecha: Date) {
+
+  //   this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
+  // }
+
   asignar_criterio(event: Event, criterio: any) {
     event.stopPropagation();
     const dialogRef = this.dialog.open(AsignarCriterioComponent, {
@@ -224,9 +216,5 @@ contador: number = 0;
         });
       }
     });
-
-
-
-
   }
 }

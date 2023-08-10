@@ -1,5 +1,5 @@
 import { trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { animate, state, style, transition } from '@angular/animations';
 import { Indicador } from 'src/app/models/Indicador';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
@@ -9,6 +9,8 @@ import { CalificacionComponent } from './calificacion/calificacion.component';
 import Swal from 'sweetalert2';
 import { Criterio } from 'src/app/models/Criterio';
 import { Modelo } from 'src/app/models/Modelo';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 type Columnname = {
   [key: string]: string;
@@ -27,11 +29,6 @@ type Columnname = {
   ]
 })
 export class MatrizEvaluacionComponent implements OnInit {
-  ngOnInit(): void {
-    this.llenar_datasource();
-  }
-
-  constructor(private route: Router, private indicadorService: IndicadoresService, private activatedRoute: ActivatedRoute, private dialog: MatDialog) { }
 
   public columnNames: Columnname = {
     nombre: 'Nombre del Indicador',
@@ -40,7 +37,7 @@ export class MatrizEvaluacionComponent implements OnInit {
     valor_obtenido: 'Valor Obtenido'
   };
 
-  dataSource: any;
+  dataSource = new MatTableDataSource<any>();
 
   columnsToDisplay = ['nombre', 'descripcion', 'tipo', 'valor_obtenido'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'evaluar'];
@@ -49,12 +46,27 @@ export class MatrizEvaluacionComponent implements OnInit {
   idmodelo: Modelo = new Modelo();
   indicador: Indicador = new Indicador();
 
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+  constructor(
+    private route: Router,
+    private indicadorService: IndicadoresService,
+    private activatedRoute: ActivatedRoute, 
+    private dialog: MatDialog) 
+  { }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
+  }
+  ngOnInit(): void {
+    this.llenar_datasource();
+  }
+
   llenar_datasource() {
-    this.idcriterio=history.state.criterio;
-    this.idmodelo=history.state.modelo;
+    this.idcriterio = history.state.criterio;
+    this.idmodelo = history.state.modelo;
 
     this.indicadorService.listarIndicadorPorCriterioModelo(this.idcriterio.id_criterio, this.idmodelo.id_modelo).subscribe(data => {
-      this.dataSource = data;
+      this.dataSource.data = data;
     });
   }
 

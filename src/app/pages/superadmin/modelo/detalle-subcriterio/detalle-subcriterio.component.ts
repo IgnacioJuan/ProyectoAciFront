@@ -10,6 +10,8 @@ import { Modelo } from 'src/app/models/Modelo';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { ModeloService } from 'src/app/services/modelo.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-detalle-subcriterio',
@@ -18,9 +20,21 @@ import { ModeloService } from 'src/app/services/modelo.service';
 })
 export class DetalleSubcriterioComponent {
 
-  dataSource: any;
+  dataSource = new MatTableDataSource<any>();
   asignacion: any;
   searchText = '';
+
+  //criterio: Criterio = new Criterio();
+  model: Modelo = new Modelo();
+  modelo: Modelo = new Modelo();
+  buscar = '';
+  miModal!: ElementRef;
+
+  columnasUsuario: string[] = ['id_subcriterio', 'nombre', 'descripcion', 'indicadores'];
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   constructor(
     private subcriterioservice: SubcriteriosService,
     private router: Router,
@@ -28,94 +42,49 @@ export class DetalleSubcriterioComponent {
     public asignacionIndicadorService: AsignacionIndicadorService,
     public criterioService: CriteriosService,
     public modeloService: ModeloService
-
   ) {
+  }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
 
   }
-  criterio: Criterio = new Criterio();
-  model: Modelo = new Modelo();
-  modelo: Modelo = new Modelo();
-
-  subcrite = new Subcriterio();
   ngOnInit() {
-    const data = history.state.data;
-    console.log(data); 
-    this.criterio = data;
-    const savedState = sessionStorage.getItem('savedState');
-    if (savedState) {
-      this.dataSource = JSON.parse(savedState);
-
-    } else {
-      this.recibeSubcriterio();
-    }
     this.recibeSubcriterio();
-
   }
-
-  buscar = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
-  miModal!: ElementRef;
-
-
-
 
   recibeSubcriterio() {
+    this.modelo = history.state.modelo;
+    let id_criterio = history.state.data;
+    this.model = history.state.modelo;
+    this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.modelo.id_modelo)).subscribe(info => {
+      this.subcriterioservice.getSubcriterios().subscribe(result => {
+        this.dataSource.data = [];
+        this.asignacion = info;
+        this.dataSource.data = result.filter((subcriterio: any) => {
+          return info.some((asignacion: any) => {
+            return subcriterio.id_subcriterio === asignacion.indicador.subcriterio.id_subcriterio
+              && subcriterio.criterio?.id_criterio === id_criterio;
 
-    let id = localStorage.getItem("id");
-    this.modeloService.getModeloById(Number(id)).subscribe(data => {
-      this.model = data;
-
-      //optimizar
-
-      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(id)).subscribe(info => {
-        this.subcriterioservice.getSubcriterios().subscribe(result => {
-          this.dataSource = [];
-          this.asignacion = info;
-          this.dataSource = result.filter((subcriterio: any) => {
-            return info.some((asignacion: any) => {
-              return subcriterio.id_subcriterio === asignacion.indicador.subcriterio.id_subcriterio && subcriterio.criterio?.id_criterio === this.sharedDataService.obtenerIdCriterio();
-
-            });
           });
-          console.log(this.dataSource);
-          localStorage.setItem("subcriterios", JSON.stringify(this.dataSource));
         });
       });
-
     });
+
+
   }
 
 
 
 
   verIndicadores(element: any) {
-
-
-
-    console.log(element);
-    this.sharedDataService.mostaridSubcriterio(element.id_subcriterio);
-
-
-    this.router.navigate(['/sup/modelo/detalle-indicador']);
+    this.router.navigate(['/sup/modelo/detalle-indicador'], { state: { data: element.id_subcriterio, modelo: this.model } });
   }
-
-
-
-
   verCriterios() {
     this.router.navigate(['/sup/modelo/detallemodelo']);
   }
-
   irinicio() {
-
-    // código del método del botón
     this.router.navigate(['/sup/modelo/modelo']);
-
   }
-
-
-
-
 }
 
 

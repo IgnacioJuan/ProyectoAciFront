@@ -46,11 +46,10 @@
     <ng-template #template1>
       <div class="table-container">
         <table
-        mat-table
-        [dataSource]="dataSource"
-        multiTemplateDataRows
-        class="mat-elevation-z8"
-      >
+          mat-table
+          [dataSource]="dataSource"
+          multiTemplateDataRows
+        >
           <ng-container
             matColumnDef="{{ column }}"
             *ngFor="let column of columnsToDisplay"
@@ -141,14 +140,26 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-    <tr  mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand" class="example-element-row"></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: ['expandedDetail']"
-      class="example-detail-row"
-    ></tr>
-  </table>
- 
+          <tr
+            mat-row
+            *matRowDef="let element; columns: columnsToDisplayWithExpand"
+            class="example-element-row"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"
+          ></tr>
+        </table>
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+          aria-label="Select page of periodic elements"
+          itemsPerPageLabel="Items por página:"
+          nextPageLabel="Siguiente"
+          previousPageLabel="Anterior"
+        >
+        </mat-paginator>
       </div>
       <!-- fin tabla  -->
       <div class="table-container">

@@ -9,6 +9,8 @@ import { ModeloService } from 'src/app/services/modelo.service';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
 import { SharedDataService } from 'src/app/services/shared-data.service';
 import { SubcriteriosService } from 'src/app/services/subcriterios.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 
 @Component({
@@ -18,7 +20,24 @@ import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 })
 export class DetalleIndicadorComponent implements OnInit {
 
-  searchText = '';
+
+  //subcriterio: Subcriterio = new Subcriterio();
+
+  miModal!: ElementRef;
+  public indic = new Indicador();
+
+  frmIndicador: FormGroup;
+  guardadoExitoso: boolean = false;
+  model: Modelo = new Modelo();
+  subcrite: Subcriterio = new Subcriterio();
+  sub: any;
+  dataSource = new MatTableDataSource<any>();
+  columnasUsuario: string[] = ['id_indicador', 'nombre', 'descripcion', 'peso', 'valor_obtenido', 'porc_obtenido', 'estandar', 'tipo'];
+  asignacion: any;
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router,
@@ -27,7 +46,6 @@ export class DetalleIndicadorComponent implements OnInit {
     public modeloService: ModeloService,
     public asignacionIndicadorService: AsignacionIndicadorService,
     public sharedDataService: SharedDataService,
-    private subcriterioService: SubcriteriosService
   ) {
     this.frmIndicador = fb.group({
       nombre: ['', Validators.required],
@@ -37,42 +55,19 @@ export class DetalleIndicadorComponent implements OnInit {
       tipo: ['', Validators.required],
     });
   }
-  
-  subcriterio: Subcriterio = new Subcriterio();
-  ngOnInit() {
-    const data = history.state.data;
-    console.log(data); // aquí tendrías el objeto `indicador` de la fila seleccionada.
-    this.subcriterio = history.state.data;
-  
-    // Recuperar el estado almacenado al recargar la página
-    const savedState = sessionStorage.getItem('savedState');
-    if (savedState) {
-      this.dataSource = JSON.parse(savedState);
-      this.colresIndicador();
-    } else {
-      this.recibeIndicador();
-    }
-    this.recibeIndicador();
-  
-    // Detectar el evento de retroceso en el navegador
-   this.verSubcriterios();
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
   }
-  
-  buscar = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
-  miModal!: ElementRef;
-  public indic = new Indicador();
-  
-  frmIndicador: FormGroup;
-  guardadoExitoso: boolean = false;
-  model: Modelo = new Modelo();
-  subcrite: Subcriterio = new Subcriterio();
-  sub: any;
-  dataSource: any;
-  asignacion: any;
-  
-  colresIndicador() {
-    this.dataSource.forEach((indicador: any) => {
+  ngOnInit() {
+    this.recibeIndicador();
+    this.verSubcriterios();
+  }
+
+
+  assignColorsToIndicators(indicators: any[]) {
+    indicators.forEach((indicador: any) => {
       if (indicador.porc_obtenido > 75 && indicador.porc_obtenido <= 100) {
         indicador.color = 'verde';
       } else if (indicador.porc_obtenido > 50 && indicador.porc_obtenido <= 75) {
@@ -86,39 +81,41 @@ export class DetalleIndicadorComponent implements OnInit {
       }
     });
   }
+  colresIndicador() {
+    if (this.dataSource.data) {
+      this.assignColorsToIndicators(this.dataSource.data);
+    }
+  }
   //optimizar
   recibeIndicador() {
-    let id = localStorage.getItem('id');
-    this.modeloService.getModeloById(Number(id)).subscribe((data) => {
-      this.model = data;
-      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(id)).subscribe((info) => {
-        this.indicadorservice.getIndicadors().subscribe((result) => {
-          this.dataSource = [];
-          this.asignacion = info;
-          this.dataSource = result.filter((indicador: any) => {
-            return info.some((asignacion: any) => {
-              return (
-                indicador.id_indicador === asignacion.indicador.id_indicador &&
-                indicador.subcriterio?.id_subcriterio === this.sharedDataService.obtenerIdSubCriterio()
-              );
-            });
+    this.model = history.state.modelo;
+    let id = history.state.data;
+    this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(this.model.id_modelo).subscribe((info) => {
+      this.indicadorservice.getIndicadors().subscribe((result) => {
+        this.dataSource.data = [];
+        this.asignacion = info;
+        this.dataSource.data = result.filter((indicador: any) => {
+          return info.some((asignacion: any) => {
+            return (
+              indicador.id_indicador === asignacion.indicador.id_indicador &&
+              indicador.subcriterio?.id_subcriterio === id
+            );
           });
-          this.colresIndicador();
-          console.log(this.dataSource);
-  
-          // Guardar el estado actual antes de navegar a otra página
-          sessionStorage.setItem('savedState', JSON.stringify(this.dataSource));
         });
+        this.assignColorsToIndicators(this.dataSource.data);
+
+        // Guardar el estado actual antes de navegar a otra página
+        //sessionStorage.setItem('savedState', JSON.stringify(this.dataSource));
       });
     });
   }
-  
-  
+
+
   verSubcriterios1(indicador: Indicador) {
     localStorage.setItem("id", indicador.id_indicador.toString());
     this.router.navigate(['/sup/modelo/detalle-subcriterio']);
   }
-  
+
   verSubcriterios() {
     window.onpopstate = () => {
       if (this.router.url === '/sup/modelo/detalle-subcriterio') {
@@ -126,19 +123,16 @@ export class DetalleIndicadorComponent implements OnInit {
       }
     };
   }
-  
+
   verCriterios() {
     this.router.navigate(['/sup/modelo/detallemodelo']);
   }
-   goBack() {
+  goBack() {
     window.history.back();
     this.router.navigate(['/sup/modelo/detalle-subcriterio']);
   }
-  
+
   irinicio() {
-
-    // código del método del botón
     this.router.navigate(['/sup/modelo/modelo']);
-
   }
 }

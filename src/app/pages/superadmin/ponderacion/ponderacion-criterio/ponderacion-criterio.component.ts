@@ -14,6 +14,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Criterio } from 'src/app/models/Criterio';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { Chart } from 'chart.js';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 
 
@@ -27,12 +29,16 @@ export class PonderacionCriterioComponent implements OnInit {
 
   model: Modelo = new Modelo();
   critrioClase = new Criterio();
-  dataSource: any;
   asignacion: any;
   criterio: Criterio = new Criterio();
   modelo: Modelo = new Modelo();
   color: any
   chart: any;
+
+  dataSource = new MatTableDataSource<any>();
+  columnasUsuario: string[] = ['id_indicador', 'nombre','peso', 'porc_valor', 'porc_utilidad','valor'];
+
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
     private indicadorservice: IndicadoresService,
@@ -43,36 +49,30 @@ export class PonderacionCriterioComponent implements OnInit {
   ) {
 
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
+  }
   ngOnInit(): void {
-
-
     this.llenar_datasource();
-
-
   }
 
   llenar_datasource() {
-    this.criterio=history.state.criterio;
-    this.modelo=history.state.modelo;
+    this.criterio = history.state.criterio;
+    this.modelo = history.state.modelo;
     this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
       (data) => {
-        this.dataSource = data;
-        console.log(this.dataSource + 'criteriooooooo');
-
-
-     this.coloresTabla();
-     this.GraficaPastel();
-
-
-
+        this.dataSource.data = data;
+        this.coloresTabla();
+        this.GraficaPastel();
       }
     );
 
   }
 
- 
-  coloresTabla(){
-    this.dataSource.forEach((indicador: any) => {
+
+  coloresTabla() {
+    this.dataSource.data.forEach((indicador: any) => {
 
       if (indicador.porc_obtenido > 75 && indicador.porc_obtenido <= 100) {
         indicador.color = 'verde'; // Indicador con porcentaje mayor a 50% será de color verde
@@ -94,9 +94,6 @@ export class PonderacionCriterioComponent implements OnInit {
   //GRAFICA PASTEL
 
   GraficaPastel() {
-
-  
-
     this.chart = new Chart("pastel", {
       type: 'pie',
       data: {
@@ -105,10 +102,10 @@ export class PonderacionCriterioComponent implements OnInit {
           {
             label: "Porcentaje de logro",
             data: [
-              this.dataSource.filter((indicador:any) => indicador.porc_obtenido <= 25).length,
-              this.dataSource.filter((indicador:any)  => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
-              this.dataSource.filter((indicador:any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
-              this.dataSource.filter((indicador:any)  => indicador.porc_obtenido >= 75).length
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido <= 25).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido >= 75).length
             ],
             backgroundColor: ['red', 'orange', 'yellow', 'green']
           }
@@ -118,22 +115,12 @@ export class PonderacionCriterioComponent implements OnInit {
         aspectRatio: 2.5
       }
     });
-    
-    
-    
   }
-  
-
   regresar() {
     this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   irinicio() {
-
-    // código del método del botón
     this.router.navigate(['/sup/modelo/modelo']);
-
   }
-
-
 }
