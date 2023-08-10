@@ -46,6 +46,17 @@ export class DetalleModeloComponent implements OnInit {
 
   
   dataSource = new MatTableDataSource<any>();
+  public columnNames: ColumnNames = {
+    nombre: 'Nombre del Criterio',
+    descripcion: 'Descripción del Criterio'
+  };
+
+  public ponderar: ponderar = {
+    fecha: 'Fecha de Ponderación',
+  }
+
+  pageSize = 10;
+  pageIndex = 0;
   asignacion: any;
   columnsToDisplay = ['nombre', 'descripcion'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'subcriterios', 'matriz', 'ponderacion', 'asignar'];
@@ -67,14 +78,8 @@ export class DetalleModeloComponent implements OnInit {
   id = localStorage.getItem("id");
   ocultarBoton: boolean = false;
 
-  public columnNames: ColumnNames = {
-    nombre: 'Nombre del Criterio',
-    descripcion: 'Descripción del Criterio'
-  };
+  
 
-  public ponderar: ponderar = {
-    fecha: 'Fecha de Ponderación',
-  }
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
@@ -100,6 +105,18 @@ export class DetalleModeloComponent implements OnInit {
   }
 
  
+  // Función para manejar el cambio de página
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.updateDataSource();
+  }
+
+  // Función para actualizar la fuente de datos con la paginación
+  updateDataSource() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+    this.dataSource = new MatTableDataSource(this.dataSource.data.slice(startIndex, endIndex));
+  }
   recibeModelo() {
     this.modeloService.getModeloById(Number(this.id)).subscribe(data => {
       if (data.visible) {
@@ -120,6 +137,7 @@ export class DetalleModeloComponent implements OnInit {
 
         this.ponderacionService.listarPonderacionPorModelo(Number(this.id)).subscribe(data => {
           this.dataSourcePonderacion = data;
+              this.updateDataSource();
         });
 
       }
