@@ -30,6 +30,8 @@ export class PonderacionModeloComponent implements OnInit {
   dataSource: any;
   asignacion: any;
   indicadorClase: Indicador = new Indicador();
+  indicadores: any[] = [];
+  datos:any[] = [];
   title = 'ng-chart';
   porcentaje!: number;
   indicador: any;
@@ -48,7 +50,8 @@ export class PonderacionModeloComponent implements OnInit {
   fechaActual!: Date;
   fechaSeleccionada: any;
   conf: number = 0;
-
+  contador: number = 0;
+  idmax: number = 0;
 
   @ViewChild('miTabla', { static: true }) miTabla!: ElementRef;
 
@@ -79,29 +82,40 @@ export class PonderacionModeloComponent implements OnInit {
       } else {
         this.ocultarBoton = false;
       }
-      console.log("Fecha boton "+this.fechaSeleccionada, this.conf);
-      // Aquí puedes realizar cualquier otra lógica con la fecha seleccionada en el nuevo formato
+      
+ 
     });
-
-    console.log('Fecha seleccionada:', this.fechaSeleccionada);
+    let id_modelo = localStorage.getItem("id");
+    console.log("id para max "+id_modelo)
+    this.servicePonderacion.idmax(Number(id_modelo)).subscribe(
+      (response: any) => {
+        if (response.length > 0) {
+          const contadorMaximo = response[0].contador;
+          this.idmax=contadorMaximo+1;
+          console.log("Contador máximo:", contadorMaximo+"final "+this.idmax);
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+ 
     this.recibeIndicador();
     this.listPonderacion();
 
-
-
-
-
-
+    this.indicadorservice.getIndicadores().subscribe(data => {
+      this.indicadores = data;
+    });
   }
 
 
 
   recibeIndicador() {
-
-
     let idModelo = localStorage.getItem("id");
-
-
+    let cont = localStorage.getItem("contador");
+  /*  if (cont !== null) {
+      this.contador = parseInt(cont);
+    }*/
     this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
       this.model = dataModelo;
       // Capturar el ID del indicador del modelo
@@ -112,7 +126,7 @@ export class PonderacionModeloComponent implements OnInit {
           this.dataSource = [];
           this.asignacion = info;
 
-          console.log(this.conf);
+        //  console.log("Asignacion "+JSON.stringify(this.asignacion));
           if (this.conf == 1) {
             this.dataSource = result.filter((indicador: any) => {
               return info.some((asignacion: any) => {
@@ -121,11 +135,12 @@ export class PonderacionModeloComponent implements OnInit {
               });
               
             });
-            this.servicePonderacion.listarPonderacionPorFecha(this.fechaSeleccionada).subscribe(data => {
+            this.servicePonderacion.listarPonderacionPorFecha(this.fechaSeleccionada,Number(cont)).subscribe(data => {
               console.log("informacion", data);
               this.dataSource.forEach((indicador: any) => {
                 data.forEach((ponderacion: any) => {
                   if (indicador.id_indicador == ponderacion.indicador.id_indicador) {
+                    indicador.nombre=ponderacion.indicador.nombre;
                     indicador.peso = ponderacion.peso;
                     indicador.porc_obtenido = ponderacion.porc_obtenido;
                     indicador.porc_utilida_obtenida = ponderacion.porc_utilida_obtenida;
@@ -157,26 +172,12 @@ export class PonderacionModeloComponent implements OnInit {
               });
             });
             this.createChart();
-            //this.pieChart();
             this.GraficaPastel();
             this.calculatePromedioPorCriterio();
-
             this.calcularTSumaPesos();
             this.calcularUtilidad();
             this.coloresTabla();
           }
-
-
-
-
-          // this.createChart();
-          // //this.pieChart();
-          // this.GraficaPastel();
-          // this.calculatePromedioPorCriterio();
-
-          // this.calcularTSumaPesos();
-          // this.calcularUtilidad();
-          // this.coloresTabla();
         });
       });
     });
@@ -185,20 +186,71 @@ export class PonderacionModeloComponent implements OnInit {
 
   //metodo para guardar en ponderacion
 
-  guardarDatosEnAPI(): void {
-    const ponderaciones: Ponderacion[] = [];
-  
+  guardarDatosEnAPI(event: Event): void {
+    console.log("Estas en guardar");
+    event.preventDefault();
+    const dataParaGuardar: Ponderacion[] = [];
+    let idModelo = localStorage.getItem("id");
+  this.dataSource.forEach((column: any) => {
+    const indicadorEncontrado = this.indicadores.find((indicador: any) => indicador.nombre === column.nombre);
+    if (indicadorEncontrado) {
+      console.log("Indicador encontrado:", indicadorEncontrado);
+    } else {
+      console.log("Indicador no encontrado para:", column.nombre);
+    }
+    const fila: Ponderacion = {
+   
+      indicador:  { id_indicador: Number(indicadorEncontrado.id_indicador),nombre:'', descripcion:'', peso:0, tipo:'',
+      estandar:0, valor_obtenido:0, porc_obtenido:0, porc_utilida_obtenida:0,subcriterio:null, visible:true },
+      peso: column.peso || 0,
+      porc_obtenido: column.porc_obtenido || 0,
+      porc_utilida_obtenida: column.porc_utilida_obtenida || 0,
+      valor_obtenido: column.valor_obtenido || 0,
+      id_ponderacion: 0,
+      fecha: new Date(),
+      visible: true,
+      modelo: { id_modelo: Number(idModelo), nombre:'', fecha_inicio:this.fecha, fecha_fin:this.fecha, fecha_final_act:this.fecha,
+    visible:true,usuario:null},
+    contador:this.idmax,
+    };
+console.log("Datos a guardar de fila "+JSON.stringify(fila))
+    dataParaGuardar.push(fila);
+    this.datos=dataParaGuardar;
+  });
+  console.log("DAtos a guardar"+dataParaGuardar);
+  this.servicePonderacion.guardarPonderacionLista(dataParaGuardar).subscribe(
+    (response: any) => {
+      // Maneja la respuesta de la API si es necesario
+      console.log(response);
+      Swal.fire({
+        title: 'Ponderacion guardada éxitosamente',
+        icon: 'success',
+        // ...
+      });
+
+      this.router.navigate(['/sup/modelo/detallemodelo']);
+      // Recarga la página después de guardar los datos en la API
+    },
+    (error: any) => {
+      // Maneja el error si ocurre alguno
+      console.error(error);
+      Swal.fire({
+        title: 'Error al guardar ponderación',
+        text: 'Ha ocurrido un error al intentar guardar la ponderación.',
+        icon: 'error',
+      
+      });
+    }
+  );
+  /*  
+  const ponderaciones: Ponderacion[] = [];
     let idModelo = localStorage.getItem("id");
     console.log("Este es id modelo "+idModelo);
     this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
       this.model = dataModelo;
       console.log("Este es modelo "+this.model);
       const fechaSistema = new Date();
-  
       // Verificar si ya existe un registro en la API en la misma fecha
-     
-  
-        
             // No existe un registro en la misma fecha, proceder con la operación de guardado
             this.dataSource.forEach((indicador: any) => {
               const ponderacion: Ponderacion = new Ponderacion();
@@ -229,23 +281,21 @@ export class PonderacionModeloComponent implements OnInit {
                 
                 this.router.navigate(['/sup/modelo/detallemodelo']);
                 // Recargar la página después de guardar los datos en la API
-                
-
               },
               (error: any) => {
                 // Manejar el error si ocurre alguno
                 console.error(error);
+                Swal.fire({
+                  title: 'Error al guardar ponderación',
+                  text: 'Ha ocurrido un error al intentar guardar la ponderación.',
+                  icon: 'error',});
               }
-            );
-  
-           
-          
-        
-    });
+            );   
+    });*/
   }
   
 
-  guardarDatosEnAPI1(): void {
+  /*guardarDatosEnAPI1(): void {
     const ponderaciones: Ponderacion[] = [];
   
     let idModelo = localStorage.getItem("id");
@@ -321,7 +371,7 @@ export class PonderacionModeloComponent implements OnInit {
       );
     });
   }
-  
+  */
   
 
   //enviamos modelo
@@ -522,8 +572,7 @@ export class PonderacionModeloComponent implements OnInit {
       this.dataSource = data;
 
     });
-    console.log(this.dataSource + 'listaaaaaaaaa');
-
+    
   }
 
 

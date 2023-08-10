@@ -70,23 +70,25 @@ export class DetalleModeloComponent implements OnInit {
 
   mostrarPrincipal: number = 0;
   mostrarSecundario: number = 0;
-
+contador: number = 0;
   //lista de objetos de f llamada dataSourcePonderacion
   dataSourcePonderacion: any;
   dataSourcePonderacion2: f[] = [];
   columnsToDisplayPonderacion = ['fecha'];
   columnsToDisplayWithExpandPonderacion = [...this.columnsToDisplayPonderacion, 'revisar'];
 
-  displayedColumns: string[] = ['fecha', 'revisar'];
+  displayedColumns: string[] = ['contador','fecha', 'revisar'];
 
   fechas: Date[] = [];
   fechasfinal: Date[] = [];
 
 
 
-  pond(fecha: Date) {
-    console.log("esta fecha modelo "+fecha)
-
+  pond(element:any) {
+    console.log("esta fecha modelo "+JSON.stringify(element));
+    let fecha=element.fechapo;
+    console.log("fecha elegida: "+fecha+" contador: "+element.contador);
+    localStorage.setItem("contador", element.contador);
     this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
   }
 
@@ -128,7 +130,8 @@ export class DetalleModeloComponent implements OnInit {
         this.mostrarPrincipal = 0;
         this.mostrarSecundario = 0;
         this.ocultarBoton = false;
-        this.ponderacionService.listarPonderacionPorModelo(Number(this.id)).subscribe(
+        
+        this.ponderacionService.listarPonderacionModelo(Number(this.id)).subscribe(
           (fechas) => {
             if (fechas.length > 0) {
               this.mostrarSecundario = 1;
@@ -140,7 +143,7 @@ export class DetalleModeloComponent implements OnInit {
         this.mostrarPrincipal = 1;
         this.ocultarBoton = true;
 
-        this.ponderacionService.listarPonderacionPorModelo(Number(this.id)).subscribe(data => {
+        this.ponderacionService.listarPonderacionModelo(Number(this.id)).subscribe(data => {
           this.dataSourcePonderacion = data;
               this.updateDataSource();
         });
