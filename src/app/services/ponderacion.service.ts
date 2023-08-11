@@ -60,9 +60,8 @@ export class PonderacionService {
   public listarPorFecha(fecha: string): Observable<Ponderacion[]> {
     return this.http.get<Ponderacion[]>(`${baserUrl}/api/ponderacion/listarPorFecha/` + fecha);
   }
-
-
-
-
+  getEliminar(contador: number,fecha:string): Observable<Ponderacion> {
+    return this.http.delete<Ponderacion>(`${baserUrl}/api/ponderacion/eliminarponderacion/${contador}/${fecha}`);
+  }
 
 }
