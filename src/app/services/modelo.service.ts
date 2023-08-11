@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { map, Observable, catchError } from "rxjs";
 import { Modelo } from "../models/Modelo";
 import baserUrl from "./helper";
+import { ModeloVistaProjection } from "../interface/ModeloVistaProjection";
 
 @Injectable({
   providedIn: 'root'
@@ -47,5 +48,8 @@ export class ModeloService {
   
   getModeMaximo(): Observable<Modelo> {
     return this.http.get<any>(`${baserUrl}/api/modelo/listarMax`)
+  }
+  getModelosVista(): Observable<ModeloVistaProjection[]> {
+    return this.http.get<ModeloVistaProjection[]>(`${baserUrl}/api/modelo/datosModelo`)
   }
 }

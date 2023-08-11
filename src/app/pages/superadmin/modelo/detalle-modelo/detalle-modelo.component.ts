@@ -75,7 +75,7 @@ export class DetalleModeloComponent implements OnInit {
 
   fechas: Date[] = [];
   fechasfinal: Date[] = [];
-  id = localStorage.getItem("id");
+  
   ocultarBoton: boolean = false;
 
   
@@ -101,6 +101,8 @@ export class DetalleModeloComponent implements OnInit {
 
   }
   ngOnInit(): void {
+    this.model = history.state.modelo;
+    console.log(this.model)
     this.recibeModelo();
   }
 
@@ -118,12 +120,11 @@ export class DetalleModeloComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.dataSource.data.slice(startIndex, endIndex));
   }
   recibeModelo() {
-    this.modeloService.getModeloById(Number(this.id)).subscribe(data => {
-      if (data.visible) {
+      if (true) {
         this.mostrarPrincipal = 0;
         this.mostrarSecundario = 0;
         this.ocultarBoton = false;
-        this.ponderacionService.listarPonderacionPorModelo(Number(this.id)).subscribe(
+        this.ponderacionService.listarPonderacionPorModelo(this.model.id_modelo).subscribe(
           (fechas) => {
             if (fechas.length > 0) {
               this.mostrarSecundario = 1;
@@ -135,14 +136,13 @@ export class DetalleModeloComponent implements OnInit {
         this.mostrarPrincipal = 1;
         this.ocultarBoton = true;
 
-        this.ponderacionService.listarPonderacionPorModelo(Number(this.id)).subscribe(data => {
+        this.ponderacionService.listarPonderacionPorModelo(Number(this.model.id_modelo)).subscribe(data => {
           this.dataSourcePonderacion = data;
               this.updateDataSource();
         });
 
       }
-      this.model = data;
-      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.id)).subscribe(info => {
+      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.model.id_modelo)).subscribe(info => {
         this.criterioService.listarCriterio().subscribe(result => {
           this.dataSource.data = [];
           this.asignacion = info;
@@ -153,7 +153,6 @@ export class DetalleModeloComponent implements OnInit {
           });
         });
       });
-    });
   }
 
   irPonderacionModelo(modelo: Modelo): void {
