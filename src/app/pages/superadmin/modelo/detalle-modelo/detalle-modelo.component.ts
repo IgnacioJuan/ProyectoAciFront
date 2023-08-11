@@ -92,7 +92,7 @@ contador: number = 0;
 
   fechas: Date[] = [];
   fechasfinal: Date[] = [];
-  id = localStorage.getItem("id");
+  
   ocultarBoton: boolean = false;
   @ViewChild(MatTable)table!: MatTable<any>; 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
@@ -122,6 +122,8 @@ contador: number = 0;
 
   }
   ngOnInit(): void {
+    this.model = history.state.modelo;
+    console.log(this.model)
     this.recibeModelo();
   }
 
@@ -171,13 +173,11 @@ contador: number = 0;
     this.dataSource = new MatTableDataSource(this.dataSource.data.slice(startIndex, endIndex));
   }
   recibeModelo() {
-    this.modeloService.getModeloById(Number(this.id)).subscribe(data => {
-      if (data.visible) {
+      if (true) {
         this.mostrarPrincipal = 0;
         this.mostrarSecundario = 0;
         this.ocultarBoton = false;
-        
-        this.ponderacionService.listarPonderacionModelo(Number(this.id)).subscribe(
+        this.ponderacionService.listarPonderacionPorModelo(this.model.id_modelo).subscribe(
           (fechas) => {
             if (fechas.length > 0) {
               this.mostrarSecundario = 1;
@@ -189,14 +189,13 @@ contador: number = 0;
         this.mostrarPrincipal = 1;
         this.ocultarBoton = true;
 
-        this.ponderacionService.listarPonderacionModelo(Number(this.id)).subscribe(data => {
+        this.ponderacionService.listarPonderacionPorModelo(Number(this.model.id_modelo)).subscribe(data => {
           this.dataSourcePonderacion = data;
               this.updateDataSource();
         });
 
       }
-      this.model = data;
-      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.id)).subscribe(info => {
+      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.model.id_modelo)).subscribe(info => {
         this.criterioService.listarCriterio().subscribe(result => {
           this.dataSource.data = [];
           this.asignacion = info;
@@ -207,7 +206,6 @@ contador: number = 0;
           });
         });
       });
-    });
   }
 
   irPonderacionModelo(modelo: Modelo): void {
