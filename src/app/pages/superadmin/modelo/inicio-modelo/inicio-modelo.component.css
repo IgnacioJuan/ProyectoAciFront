@@ -1,5 +1,6 @@
 .mi-card {
     max-width: 50%;
+    min-width: 200px;
     margin: 10px;
 }
 
@@ -13,7 +14,26 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
+  .mini-table {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
   
+  .mini-table-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .mini-table-header {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .mini-table-value {
+    flex-grow: 1;
+  }
   .mi-card {
     margin: 10px;
     border: 2px solid #ccc; /* Borde predeterminado para todas las tarjetas */
