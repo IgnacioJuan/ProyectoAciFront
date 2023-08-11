@@ -5,43 +5,54 @@
         <strong>Modelos </strong>
       </h1>
     </blockquote>
-    <div class="horizontal-list">
-      <div class="col-auto mb-3">
-        <button
-          type="button"
-          class="btn btn-primary"
-          style="height: 100%; width: 100%"
-          (click)="openDialog()"
-          id="my-button"
-        >
-          Nuevo Modelo
-        </button>
-      </div>
+    <button
+      type="button"
+      class="btn btn-primary btn-lg btn-block"
+      (click)="openDialog()"
+    >
+      Iniciar Nuevo Modelo
+    </button>
 
+    <div class="horizontal-list">
       <ng-container *ngFor="let item of datasource; let i = index">
         <div class="card mi-card card-{{ i }}">
-          <!-- <div class="card-body"> -->
-          <!-- <div class="item"> -->
-          <!-- <div class="card text-center"> -->
-            <div class="card-header">
-              <span *ngIf="i === 0" class="recent-icon">
-                <mat-icon>new_releases</mat-icon> </span
-              >{{ item.nombre }}
+          <div class="card-header">
+            <span *ngIf="i === 0" class="recent-icon">
+              <mat-icon>new_releases</mat-icon> </span
+            >NRO MODELO: {{ item.id_modelo }}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ item.nombre }}</h5>
+            <p class="card-text">
+              FECHA INICIO: {{ item.fecha_inicio | customDate }} <br />
+              FECHA FIN: {{ item.fecha_fin | customDate }}
+            </p>
+            <table class="table text-center">
+              <thead>
+                <tr>
+                  <th scope="col">Criterios</th>
+                  <th scope="col">Subcriterios</th>
+                  <th scope="col">Indicadores</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>{{ item.nro_criterios }}</th>
+                  <td>{{ item.nro_subcriterios }}</td>
+                  <td>{{ item.nro_indicadores }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <br />
+            <div class="btn-group -flex justify-content-center" role="group" aria-label="Basic example">
+              <button (click)="enviarModelo(item)" type="button" class="btn btn-primary">Detalle</button>
+              <button type="button" class="btn btn-danger">Eliminar</button>
+              <button class="btn btn-primary">Modificar</button>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">Special title treatment</h5>
-              <p class="card-text">
-                Inicio: {{ item.fecha_inicio | customDate }} <br>
-                Fin: {{ item.fecha_fin | customDate }}
-              </p>
-              <a (click)="enviarModelo(item)" class="btn btn-primary"
-                >Detalle</a
-              >
-            </div>
-            <div class="card-footer text-muted">2 days ago</div>
-            <!-- </div> -->
-            <!-- </div> -->
-          <!-- </div> -->
+          </div>
+          <div class="card-footer text-muted">
+            LIMITE ACTIVIDADES: {{ item.fecha_final_act | customDate }}
+          </div>
         </div>
       </ng-container>
     </div>
