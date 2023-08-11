@@ -8,7 +8,7 @@ const routes: Routes = [
 
   
   
-  
+  { path: '', redirectTo: 'use/login', pathMatch: 'full' },
 
   //PATHS DE ADMINISTRADOR
   {

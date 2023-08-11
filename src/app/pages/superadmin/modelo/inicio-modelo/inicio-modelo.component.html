@@ -7,36 +7,42 @@
     </blockquote>
     <div class="horizontal-list">
       <div class="col-auto mb-3">
-        <button  type="button" class="btn btn-primary" style="height: 100%; width: 100%;" (click)="openDialog()" id="my-button">
+        <button
+          type="button"
+          class="btn btn-primary"
+          style="height: 100%; width: 100%"
+          (click)="openDialog()"
+          id="my-button"
+        >
           Nuevo Modelo
         </button>
       </div>
 
       <ng-container *ngFor="let item of datasource; let i = index">
-        <mat-card [ngClass]="'mi-card card-' + i">
-          <mat-card-content (click)="enviarModelo(item)">
-            <div class="item" style="cursor: pointer">
-              <h3>
-                <span *ngIf="i === 0" class="recent-icon">
-                  <mat-icon>new_releases</mat-icon>
-                  <!-- Icono de Material Design -->
-                  <!-- <i class="fa fa-clock"></i> -->
-                  <!-- Icono de FontAwesome -->
-                </span>
-                <b
-                  ><strong>{{ item.nombre }}</strong></b
-                >
-                <!-- Agregar el icono para el primer registro -->
-              </h3>
-              <div class="container bg-light border border-start-0 rounded-4">
-                <br />
-                <b> Fecha Inicio: {{ item.fecha_inicio | customDate }}</b>
-                <br />
-                <b> Fecha Fin: {{ item.fecha_fin | customDate }}</b>
-              </div>
+        <div class="card mi-card card-{{ i }}">
+          <!-- <div class="card-body"> -->
+          <!-- <div class="item"> -->
+          <!-- <div class="card text-center"> -->
+            <div class="card-header">
+              <span *ngIf="i === 0" class="recent-icon">
+                <mat-icon>new_releases</mat-icon> </span
+              >{{ item.nombre }}
             </div>
-          </mat-card-content>
-        </mat-card>
+            <div class="card-body">
+              <h5 class="card-title">Special title treatment</h5>
+              <p class="card-text">
+                Inicio: {{ item.fecha_inicio | customDate }} <br>
+                Fin: {{ item.fecha_fin | customDate }}
+              </p>
+              <a (click)="enviarModelo(item)" class="btn btn-primary"
+                >Detalle</a
+              >
+            </div>
+            <div class="card-footer text-muted">2 days ago</div>
+            <!-- </div> -->
+            <!-- </div> -->
+          <!-- </div> -->
+        </div>
       </ng-container>
     </div>
   </div>
