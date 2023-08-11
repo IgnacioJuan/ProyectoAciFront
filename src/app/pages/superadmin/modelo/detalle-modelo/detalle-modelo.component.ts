@@ -15,7 +15,7 @@ import { PonderacionService } from 'src/app/services/ponderacion.service';
 import * as moment from 'moment';
 import Swal from 'sweetalert2';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 
 type ColumnNames = {
   [key: string]: string;
@@ -64,23 +64,20 @@ export class DetalleModeloComponent implements OnInit {
   model: Modelo = new Modelo();
   mostrarPrincipal: number = 0;
   mostrarSecundario: number = 0;
-
+contador: number = 0;
   //lista de objetos de f llamada dataSourcePonderacion
   dataSourcePonderacion: any;
   dataSourcePonderacion2: f[] = [];
   columnsToDisplayPonderacion = ['fecha'];
   columnsToDisplayWithExpandPonderacion = [...this.columnsToDisplayPonderacion, 'revisar'];
 
-  displayedColumns: string[] = ['fecha', 'revisar'];
+  displayedColumns: string[] = ['contador','fecha', 'revisar','eliminar'];
 
   fechas: Date[] = [];
   fechasfinal: Date[] = [];
   
   ocultarBoton: boolean = false;
-
-  
-
-
+  @ViewChild(MatTable)table!: MatTable<any>; 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
@@ -106,6 +103,38 @@ export class DetalleModeloComponent implements OnInit {
     this.recibeModelo();
   }
 
+  pond(element:any) {
+    console.log("esta fecha modelo "+JSON.stringify(element));
+    let fecha=element.fechapo;
+    console.log("fecha elegida: "+fecha+" contador: "+element.contador);
+    localStorage.setItem("contador", element.contador);
+    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
+  }
+
+  elimin(element: any) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.ponderacionService.getEliminar(element.contador,element.fechapo).subscribe(
+          () => {
+            this.recibeModelo();
+            console.log('Registro eliminado exitosamente.');
+          },
+          (error) => {
+            console.error('Error al eliminar el registro:', error);
+          }
+        );
+      }
+    });
+  }
  
   // Función para manejar el cambio de página
   onPageChange(event: any) {
@@ -183,10 +212,10 @@ export class DetalleModeloComponent implements OnInit {
   irinicio() {
     this.router.navigate(['/sup/modelo/modelo']);
   }
-  pond(fecha: Date) {
+  // pond(fecha: Date) {
 
-    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
-  }
+  //   this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
+  // }
 
   asignar_criterio(event: Event, criterio: any) {
     event.stopPropagation();

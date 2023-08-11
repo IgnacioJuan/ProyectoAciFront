@@ -35,6 +35,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CdkTableModule } from '@angular/cdk/table';
 import { ResponsablePipe } from '../pages/admin/asignacion-evidencia/responsable.pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
   declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,ResponsablePipe
   ],
@@ -70,7 +71,8 @@ import { ResponsablePipe } from '../pages/admin/asignacion-evidencia/responsable
     NgChartsModule,
     FullCalendarModule,
     NgxChartsModule,
-    CdkTableModule
+    CdkTableModule,
+    MatTooltipModule
   ],
   exports: [
     BuscarPipe,
