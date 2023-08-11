@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import { Criterio } from 'src/app/models/Criterio';
 import { Modelo } from 'src/app/models/Modelo';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 
 type Columnname = {
   [key: string]: string;
@@ -29,6 +29,24 @@ type Columnname = {
   ]
 })
 export class MatrizEvaluacionComponent implements OnInit {
+  itemsPerPageLabel = 'Indicadores por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
 
   public columnNames: Columnname = {
     nombre: 'Nombre del Indicador',
@@ -48,11 +66,18 @@ export class MatrizEvaluacionComponent implements OnInit {
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   constructor(
-    private route: Router,
+    private route: Router,private paginatorIntl: MatPaginatorIntl,
     private indicadorService: IndicadoresService,
     private activatedRoute: ActivatedRoute, 
     private dialog: MatDialog) 
-  { }
+  { 
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
+  }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator || null;
 

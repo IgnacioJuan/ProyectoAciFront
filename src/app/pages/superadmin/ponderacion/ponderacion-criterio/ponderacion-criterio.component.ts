@@ -14,7 +14,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Criterio } from 'src/app/models/Criterio';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { Chart } from 'chart.js';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 
@@ -25,7 +25,24 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./ponderacion-criterio.component.css']
 })
 export class PonderacionCriterioComponent implements OnInit {
-
+  itemsPerPageLabel = 'Criterios por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
 
   model: Modelo = new Modelo();
   critrioClase = new Criterio();
@@ -43,11 +60,16 @@ export class PonderacionCriterioComponent implements OnInit {
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router, private fb: FormBuilder,
-    public modeloService: ModeloService,
+    public modeloService: ModeloService,private paginatorIntl: MatPaginatorIntl,
     public asignacionIndicadorService: AsignacionIndicadorService,
     private activatedRoute: ActivatedRoute
   ) {
-
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator || null;

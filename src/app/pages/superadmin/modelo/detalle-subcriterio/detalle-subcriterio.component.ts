@@ -10,7 +10,7 @@ import { Modelo } from 'src/app/models/Modelo';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { ModeloService } from 'src/app/services/modelo.service';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -19,7 +19,25 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./detalle-subcriterio.component.css']
 })
 export class DetalleSubcriterioComponent {
-
+  itemsPerPageLabel = 'Subcriterios por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+  
   dataSource = new MatTableDataSource<any>();
   asignacion: any;
   searchText = '';
@@ -37,12 +55,18 @@ export class DetalleSubcriterioComponent {
 
   constructor(
     private subcriterioservice: SubcriteriosService,
-    private router: Router,
+    private router: Router,private paginatorIntl: MatPaginatorIntl,
     private sharedDataService: SharedDataService,
     public asignacionIndicadorService: AsignacionIndicadorService,
     public criterioService: CriteriosService,
     public modeloService: ModeloService
   ) {
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator || null;

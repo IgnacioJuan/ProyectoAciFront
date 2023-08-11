@@ -1,5 +1,5 @@
 .show-hint::before {
-    content: "Haz clic sobre una fila para cargar los responsables";
+    content: "Haga clic sobre una fila para cargar los responsables de los criterios";
     position: absolute;
     top: 25%;
     left: 45%;

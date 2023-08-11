@@ -20,6 +20,7 @@ export class DashboardComponent implements OnInit {
   searchTerm2: string = '';
   showHint!: boolean;
   //
+  nombremodelo: string = '';
   displayedColumns: string[] = ['enc', 'nombrescri','actividasi'];
   displayedColumns2: string[] = ['enc', 'nombrescri','actividasi'];
   spanningColumns = ['enc', 'nombrescri'];
@@ -29,6 +30,8 @@ export class DashboardComponent implements OnInit {
   itemsPerPageLabel = 'Items por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
   rango:any= (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
       return `0 de ${length}`;
@@ -49,6 +52,8 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
     this.listarmodelo();
@@ -104,7 +109,7 @@ cacheSpan2(key: string, accessor: (d: any) => any) {
 
 
 getRowSpan2(col: any, index: any) {
-  return this.spans[index] && this.spans[index][col];
+  return this.spans2[index] && this.spans2[index][col];
 }
 //
   listarmodelo() {
@@ -120,8 +125,7 @@ getRowSpan2(col: any, index: any) {
   }
   //
   cargarTabla(idModelo: number) {
-    // Aquí puedes implementar la lógica para cargar la otra tabla usando el id_modelo como filtro
-    // Puedes llamar a un servicio o realizar cualquier otra acción necesaria
+    this.nombremodelo= this.model.find(m => m.id_modelo === idModelo)?.nombre || '';
     console.log('Cargando tabla para el id_modelo:', idModelo);
     this.service.asignaradmin(idModelo,'true').subscribe((data:AsignacionProjection[])=>{
       this.asig=data;
