@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { Modelo } from 'src/app/models/Modelo';
 import { format } from 'date-fns';
+import Swal from 'sweetalert2';
+import { DialogoModeloModComponent } from '../dialogo-modelo-mod/dialogo-modelo-mod.component';
 
 @Pipe({ name: 'customDate' })
 export class CustomDatePipe implements PipeTransform {
@@ -22,7 +24,7 @@ export class CustomDatePipe implements PipeTransform {
 export class InicioModeloComponent implements OnInit {
   mode = new Modelo();
   asignacion: any;
-  
+
   datasource: any[] = [];
   constructor(public dialog: MatDialog,
     private router: Router,
@@ -60,12 +62,43 @@ export class InicioModeloComponent implements OnInit {
     });
 
   }
+  openDialogMod(item: any) {
+    console.log(item);
+    console.log("---------------------------------")
+    const dialogRef = this.dialog.open(DialogoModeloModComponent, {
+      width: '50%',
+      data: { item } // Envía el parámetro 'item' al diálogo
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.listar();
+    });
+
+  }
 
   enviarModelo(modelo: Modelo): void {
     //localStorage.setItem("id", modelo.id_modelo.toString());
     this.router.navigate(['/sup/modelo/detallemodelo'], { state: { modelo: modelo } });
   }
+  eliminar(modelo: any) {
+    Swal.fire({
+      title: 'Estas seguro de eliminar el registro?',
+      showDenyButton: true,
+      confirmButtonText: 'Cacelar',
+      denyButtonText: `Eliminar`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (!result.isConfirmed) {
+        this.modeloService.eliminarlogic(modelo.id_modelo).subscribe(
+          (response) => {
+            this.listar()
+            Swal.fire('Eliminado!', '', 'success')
 
+          }
+        );
+      }
+    })
+
+  }
 
 
 }
