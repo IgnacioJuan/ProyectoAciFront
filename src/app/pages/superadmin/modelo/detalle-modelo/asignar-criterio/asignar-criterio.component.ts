@@ -97,7 +97,7 @@ export class AsignarCriterioComponent implements OnInit {
     console.log(this.asignacion);
     this.asignacionCriterio.createAsignacion_Admin(this.asignacion).subscribe(data => {
       console.log(data);
-      this.dialogRef.close({ data: 'Succes' });
+      this.dialogRef.close({ data: 'Succes'});
     });
   }
 }

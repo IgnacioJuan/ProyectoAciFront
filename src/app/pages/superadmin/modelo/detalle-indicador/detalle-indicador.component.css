@@ -1,10 +1,4 @@
-div.detalle{
-    border: 2px solid #040936;
-    left : 10px; 
-    
- 
-   
-}
+
 p.fant {font-family: sans-serif;
   
     left : 10px; 
@@ -25,3 +19,20 @@ p.fant {font-family: sans-serif;
   .color-amarillo {
     background-color: yellow;
   }
+
+  body {
+    font: 1em/1.618 Inter, sans-serif;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    min-height: 100vh;
+    padding: 30px;
+    
+    color: #224;
+    background:
+      url(https://source.unsplash.com/E8Ufcyxz514/2400x1823)
+      center / cover no-repeat fixed;
+  }
+  

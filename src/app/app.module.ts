@@ -1,4 +1,3 @@
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
@@ -7,22 +6,8 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CriteriosService } from './services/criterios.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
-import { SignupComponent } from './pages/signup/signup.component';
-import { LoginComponent } from './pages/login/login.component';
-import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { HomeComponent } from './pages/home/home.component';
-import { MatCardModule } from '@angular/material/card';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { authInterceptorProviders } from './services/auth/auth.interceptor';
-import { UserDashboardComponent } from './pages/user/user-dashboard/user-dashboard.component';
-import { ReportesComponent } from './pages/autoridad/reportes/reportes.component';
-import { ConsultaActividadComponent } from './pages/autoridad/consulta-actividad/consulta-actividad.component';
 import { SiderbarComponent } from './components/siderbar/siderbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
@@ -56,16 +41,16 @@ import { GraficosComponent } from './pages/autoridad/graficos/graficos.component
 import { SharedModule } from './shared/shared.module';
 
 
+import { SharedModule } from './shared/shared.module';
+
+
+
+
+
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    SignupComponent,
-    LoginComponent,
-    HomeComponent,
-    UserDashboardComponent,
-    ReportesComponent,
-    ConsultaActividadComponent,
     SiderbarComponent,
     FooterComponent,
     PageNotFoundComponent,
@@ -121,6 +106,7 @@ import { SharedModule } from './shared/shared.module';
     
   
     
+    SharedModule
   ],
 
   providers: [authInterceptorProviders, CriteriosService,

@@ -3,22 +3,19 @@ import { Injectable } from '@angular/core';
 import { Subcriterio } from '../models/Subcriterio';
 import { HttpClient } from '@angular/common/http';
 import baserUrl from './helper';
+import { SubcriterioIndicadoresProjection } from '../interface/SubcriterioIndicadoresProjection';
+import { SubcriterioIndicadoresProjectionFull } from '../interface/SubcriterioIndicadoresProjectionFull';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubcriteriosService {
-  private subcriterioLista: string = 'http://localhost:5000/api/subcriterio/listar';
+
   constructor(private http: HttpClient) { }
 
   getSubcriterios(): Observable<Subcriterio[]> {
     return this.http.get<Subcriterio[]>(`${baserUrl}/api/subcriterio/listar`);
-  }
-  public listarSubcriterio(): Observable<Subcriterio[]> {
-    return this.http
-      .get(this.subcriterioLista)
-      .pipe(map((response) => response as Subcriterio[]));
   }
 
   crear(r: Subcriterio): Observable<Subcriterio> {
@@ -28,6 +25,12 @@ export class SubcriteriosService {
         throw error;
       })
     );
+  }
+
+  public listarSubcriterio(): Observable<Subcriterio[]> {
+    return this.http
+      .get(`${baserUrl}/api/subcriterio/listar`)
+      .pipe(map((response) => response as Subcriterio[]));
   }
 
   actualizar(id: any, crite: any): Observable<any> {
@@ -51,5 +54,11 @@ export class SubcriteriosService {
       .pipe(map((response) => response as Subcriterio[]));
   }
 
+  obtenerDatosCriterios(id_criterio: any): Observable<SubcriterioIndicadoresProjection[]> {
+    return this.http.get<SubcriterioIndicadoresProjection[]>(`${baserUrl}/api/subcriterio/datosSubcriterios/${id_criterio}`);
+  }
+  obtenerDatosSubcriteriosFull(): Observable<SubcriterioIndicadoresProjectionFull[]> {
+    return this.http.get<SubcriterioIndicadoresProjectionFull[]>(`${baserUrl}/api/subcriterio/datosSubcriteriosFull`);
+  }
 
 }

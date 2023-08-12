@@ -292,7 +292,7 @@ notificaraprobadmin() {
   }
 
   verDetalles(evidencia: any) {
-    this.router.navigate(['/detalleAprobarRechazar'], {
+    this.router.navigate(['/adm/detalleAprobarRechazar'], {
       state: { data: evidencia, usuarioEnviar: this.usuarioSeleccionado },
     });
     // if (evidencia.estado === 'pendiente') {

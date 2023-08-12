@@ -7,7 +7,7 @@ import { UserService } from 'src/app/services/user.service';
 import { Fenix } from 'src/app/models/Fenix';
 import { FenixService } from 'src/app/services/fenix.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
  import { UsuariorolService } from 'src/app/services/usuariorol.service';
 import { catchError, tap, throwError } from 'rxjs';
@@ -35,6 +35,27 @@ export class CrearUsuariosComponent implements OnInit {
   usuariosEdit = new UsuarioRol();
   usuariosEditGuar = new UsuarioRol();
   selectedRol: any;
+  //Cambiar texto tabla
+  itemsPerPageLabel = 'Usuarios por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+  //
 
   roles = [
     { rolId: 1, rolNombre: 'ADMIN' },
@@ -58,6 +79,7 @@ export class CrearUsuariosComponent implements OnInit {
     private userService: UserService,
     private fenix_service: FenixService,
     private formBuilder: FormBuilder,
+    private paginatorIntl: MatPaginatorIntl,
     private usuariorolservice: UsuariorolService
   ) {
     this.formulario = this.formBuilder.group({
@@ -65,6 +87,12 @@ export class CrearUsuariosComponent implements OnInit {
       password: ['', Validators.required],
       rol: ['', this.validateRol]
     });
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
   }
 
 
@@ -137,6 +165,55 @@ export class CrearUsuariosComponent implements OnInit {
     )
   }
 
+  //consumir servicio de fenix para obtener datos de la persona por primer_nombre
+  public consultarPorNombre() {
+    /*if (this.fenix.primer_nombre == null || this.fenix.primer_nombre == '') {
+      Swal.fire('Error', 'Debe ingresar un nombre', 'error');
+      return;
+    }*/
+    if (this.fenix.primer_nombre == null || this.fenix.primer_nombre == '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Por favor, ingrese un nombre válido',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+      });
+      return;
+    }
+    this.fenix_service.getDocenteByPrimerNombre(this.fenix.primer_nombre).subscribe(
+      (result) => {
+        this.dataSource = result;
+      }
+    )
+  }
+
+  //consumir servicio de fenix para obtener datos de la persona por segundo_nombre
+  public consultarPorSegundoNombre() {
+    if (this.fenix.segundo_nombre == null || this.fenix.segundo_nombre == '') {
+      Swal.fire('Error', 'Por favor, ingrese un nombre válido', 'error');
+      return;
+    }
+    this.fenix_service.getDocenteBySegundoNombre(this.fenix.segundo_nombre).subscribe(
+      (result) => {
+        this.dataSource = result;
+      }
+    )
+  }
+
+  //consumir servicio de fenix para obtener datos de la persona por primer_nombre y segundo_nombre
+  public consultarPorPrimerNombreSegundoNombre() {
+    if ((this.fenix.primer_nombre == null || this.fenix.primer_nombre == '')  && (this.fenix.segundo_nombre == null || this.fenix.segundo_nombre == '')) {
+      Swal.fire('Error', 'Por favor, ingrese los nombres válidos', 'error');
+      return;
+    }
+    this.fenix_service.getDocenteByPrimerNombreSegundoNombre(this.fenix.primer_nombre, this.fenix.segundo_nombre).subscribe(
+      (result) => {
+        this.dataSource = result;
+      }
+    )
+  }
+
   //consumir servicio de fenix para obtener datos de la persona por primer_apellido
   public consultarPorApellido() {
     if (this.fenix.primer_apellido == null || this.fenix.primer_apellido == '') {
@@ -176,24 +253,47 @@ export class CrearUsuariosComponent implements OnInit {
   }
 
 
-  //crear un metodo que una los servicios de cedula, primer_apellido y segundo_apellido
+  //crear un metodo que una los servicios de cedula, primer_nombre,primer_apellido, segundo_nombre y segundo_apellido
   public consultar() {
-    if (this.fenix.cedula != null && this.fenix.cedula != '') {
+    if (this.fenix.primer_nombre && this.fenix.primer_apellido) {
+      this.consultarPorNombreCompleto();
+    } else if (this.fenix.cedula) {
       this.consultarPorCedula();
-    } else if ((this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') && (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '')) {
-      console.log('si entra');
+    } else if (this.fenix.primer_apellido && this.fenix.segundo_apellido) {
       this.consultarPorPrimerApellidoAndSegundoApellido();
-    } else if (this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') {
+    } else if (this.fenix.primer_apellido) {
       this.consultarPorApellido();
-    } else if (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '') {
-      this.consultarPorSegundoApellido();
+    } else if (this.fenix.primer_nombre) {
+      this.consultarPrimerNombre();
     } else {
       Swal.fire('Error', 'Debe ingresar un valor a buscar', 'error');
       return;
     }
   }
 
-
+  public consultarPorNombreCompleto(){
+    if (this.fenix.primer_nombre == null && this.fenix.primer_apellido == null || this.fenix.primer_nombre == "" && this.fenix.primer_apellido == ""){
+      Swal.fire('Error', 'Debe llenar los campos', 'error');
+      return; 
+    }
+    this.fenix_service.getDocenteByNombresCompletos(this.fenix.primer_nombre,this.fenix.primer_apellido).subscribe(
+      (result) => {
+        this.dataSource = result;
+        console.log(this.dataSource);
+      }
+    )
+  }
+  public consultarPrimerNombre() {
+    if (this.fenix.primer_nombre == null || this.fenix.primer_nombre == '') {
+      Swal.fire('Error', 'Debe ingresar un nombre', 'error');
+      return;
+    }
+    this.fenix_service.getDocenteByPrimerNombre(this.fenix.primer_nombre).subscribe(
+      (result) => {
+        this.dataSource = result;
+      }
+    )
+  }
 
 
 

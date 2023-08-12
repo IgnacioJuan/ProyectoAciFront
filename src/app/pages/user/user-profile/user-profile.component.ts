@@ -81,7 +81,7 @@ export class UserProfileComponent implements OnInit {
               if (result.isConfirmed) {
 
                 this.login.logout();
-                location.replace('/login');
+                location.replace('/use/login');
               }
             })
           });

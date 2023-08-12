@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import baserUrl from './helper';
  import { Observacion2 } from '../models/Observaciones2';
 import { Actividades } from '../models/actividades';
+import { ActividadesProjection } from '../interface/ActividadesProjection';
+import { ActivAprobadaProjection } from '../interface/ActivAprobadaProjection';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActividadService {
 
-private actividalista:string='http://localhost:5000/api/actividad'
   constructor( private http: HttpClient ) { }
 
 
@@ -24,14 +25,22 @@ private actividalista:string='http://localhost:5000/api/actividad'
     const url = `${baserUrl}/api/actividad/listarv`;
     return this.http.get<Actividades[]>(url);
   }
-
+  getAc(): Observable<ActividadesProjection[]> {
+    const url = `${baserUrl}/api/actividad/listaractiv`;
+    return this.http.get<ActividadesProjection[]>(url);
+  }
   crear(actividad: Actividades): Observable<Actividades> {
     return this.http.post<Actividades>(`${baserUrl}/api/actividad/crear`, actividad);
   }
 
- /* getOne(id: number): Observable<Actividades> {
-    return this.http.get<Actividades>(this.url + id);
-  }*/
+ getActividadrechazada(): Observable<ActivAprobadaProjection[]> {
+    return this.http.get<ActivAprobadaProjection[]>(`${baserUrl}/api/actividad/actividadatrasa`);
+  }
+
+  getActividadaprobada(): Observable<ActivAprobadaProjection[]> {
+    return this.http.get<ActivAprobadaProjection[]>(`${baserUrl}/api/actividad/actividadaprobada`);
+  }
+
 
   update(id: number, actividades: Actividades): Observable<any> {
     console.log(actividades)
@@ -70,5 +79,8 @@ public getActByUsua(idUsua: number): Observable<Actividades[]> {
   return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscarByUsuario/${idUsua}`);
 }
 
-
+public getActUsu(idEvi: number): Observable<Actividades[]> {
+  return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscaractiv/${idEvi}`);
+  
+}
 }

@@ -6,29 +6,25 @@ import baserUrl from './helper';
 import { Modelo } from '../models/Modelo';
 import { Observacion } from '../models/Observacion';
 import { Persona2 } from '../models/Persona2';
-
-
+import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriteriosProjection';
+import { IndicadorProjection } from '../interface/IndicadorProjection';
 @Injectable({
   providedIn: 'root'
 })
 export class CriteriosService {
 
-  //private httpHeaders=new HttpHeaders({'Content-Type':'application/json'});
-  private criterioLista: string = 'http://localhost:5000/api/criterio/listar';
   constructor(private http: HttpClient) { }
-  private url: string = 'http://localhost:5000/api/criterio';
   getCriterioById(id: number): Observable<Criterio> {
 
-    return this.http.get<Criterio>(this.url + '/buscar/' + id);
-  }
-
-  getCriterios(): Observable<Criterio[]> {
-    return this.http.get<Criterio[]>(`${baserUrl}/api/criterio/listar`);
+    return this.http.get<Criterio>(`${baserUrl}/api/criterio/buscar/${id}`);
   }
   public listarCriterio(): Observable<Criterio[]> {
     return this.http
-      .get(this.criterioLista)
+      .get(`${baserUrl}/api/criterio/listar`)
       .pipe(map((response) => response as Criterio[]));
+  }
+  getCriterios(): Observable<Criterio[]> {
+    return this.http.get<Criterio[]>(`${baserUrl}/api/criterio/listar`);
   }
   crear(r: Criterio): Observable<Criterio> {
     return this.http.post<Criterio>(`${baserUrl}/api/criterio/crear`, r
@@ -54,9 +50,11 @@ export class CriteriosService {
 
   getObtenerIndicadores(id: any): Observable<any[]> {
     return this.http.get<any[]>(`${baserUrl}/api/indicadores/buscarindicador/` + id);
-
   }
 
+  getIndicador(): Observable<IndicadorProjection[]> {
+    return this.http.get<IndicadorProjection[]>(`${baserUrl}/api/indicadores/listarindi`)
+  }
   getModeMaximo(): Observable<Modelo> {
     return this.http.get<any>(`${baserUrl}/api/modelo/listarMax`)
   }
@@ -86,5 +84,7 @@ export class CriteriosService {
     return this.http.get<Observacion[]>(`${baserUrl}/api/observacion/buscarObserByActiv/`+id);
 
   }
-
+  obtenerDatosCriterios(): Observable<CriterioSubcriteriosProjection[]> {
+    return this.http.get<CriterioSubcriteriosProjection[]>(`${baserUrl}/api/criterio/datosCriterios`);
+  }
 }

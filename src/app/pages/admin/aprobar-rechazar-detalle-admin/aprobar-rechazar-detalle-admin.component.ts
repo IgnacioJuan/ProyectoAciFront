@@ -125,12 +125,12 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
 
     if (this.evidencia == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
 
     if (this.usuarioCorreo == undefined) {
       this.router.navigate(['user-dashboard']);
-      location.replace('/user-dashboard');
+      location.replace('/use/user-dashboard');
     }
 
     this.listar();
@@ -425,7 +425,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/apruebaAdmin']);
+    this.router.navigate(['/adm/apruebaAdmin']);
   }
 
   Aprobado() {

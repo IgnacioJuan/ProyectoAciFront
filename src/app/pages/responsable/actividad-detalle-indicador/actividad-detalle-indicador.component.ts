@@ -91,10 +91,10 @@ export class ActiviadDetalleIndicadorComponent implements OnInit {
     });
   }
   verSubcriterios() {
-    this.router.navigate(['/criterios-subcriterio'], { state: { data: this.subcriterio.criterio } });
+    this.router.navigate(['/sup/flujo-criterio/criterios-subcriterio'], { state: { data: this.subcriterio.criterio } });
   }
   verCriterios() {
-    this.router.navigate(['/criterioSuper']);
+    this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
   }
 
 }

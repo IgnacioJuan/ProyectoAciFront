@@ -74,11 +74,11 @@ export class NavbarComponent implements OnInit {
 
   public logout() {
     this.login.logout();
-    location.replace('/login');
+    location.replace('/use/login');
   }
 
   perfil() {
-    location.replace('/admin');
+    location.replace('/adm/admin');
   }
 
 

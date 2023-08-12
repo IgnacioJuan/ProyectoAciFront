@@ -14,6 +14,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Criterio } from 'src/app/models/Criterio';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { Chart } from 'chart.js';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 
 
@@ -23,79 +25,76 @@ import { Chart } from 'chart.js';
   styleUrls: ['./ponderacion-criterio.component.css']
 })
 export class PonderacionCriterioComponent implements OnInit {
-
+  itemsPerPageLabel = 'Criterios por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
 
   model: Modelo = new Modelo();
   critrioClase = new Criterio();
-  dataSource: any;
   asignacion: any;
-  id: any;
+  criterio: Criterio = new Criterio();
+  modelo: Modelo = new Modelo();
   color: any
   chart: any;
-  idModelo: any;
+
+  dataSource = new MatTableDataSource<any>();
+  columnasUsuario: string[] = ['id_indicador', 'nombre','peso', 'porc_valor', 'porc_utilidad','valor'];
+
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router, private fb: FormBuilder,
-
-    public modeloService: ModeloService,
+    public modeloService: ModeloService,private paginatorIntl: MatPaginatorIntl,
     public asignacionIndicadorService: AsignacionIndicadorService,
-    private sharedDataService: SharedDataService,
-    private criterioService: CriteriosService,
     private activatedRoute: ActivatedRoute
   ) {
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
+  }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
 
   }
   ngOnInit(): void {
-    //this.recibeCriterio();
-
-
     this.llenar_datasource();
-
-
   }
-
-  recibeCriterio() {
-    let id = localStorage.getItem("id");
-    this.modeloService.getModeloById(Number(id)).subscribe(data => {
-      this.model = data;
-
-      this.indicadorservice.obtenerIndicadoresPorCriterio(Number(id)).subscribe(result => {
-        this.dataSource = result;
-
-        console.log(this.dataSource);
-      });
-
-    });
-  }
-
-
 
   llenar_datasource() {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.id = params['criterio'];
-      this.idModelo = params['modelo'];
-
-    });
-    this.indicadorservice.listarIndicadorPorCriterioModelo(this.id, this.idModelo).subscribe(
+    this.criterio = history.state.criterio;
+    this.modelo = history.state.modelo;
+    this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
       (data) => {
-        this.dataSource = data;
-        console.log(this.dataSource + 'criteriooooooo');
-
-
-     this.coloresTabla();
-     this.GraficaPastel();
-
-
-
+        this.dataSource.data = data;
+        this.coloresTabla();
+        this.GraficaPastel();
       }
     );
 
   }
 
- 
-  coloresTabla(){
-    this.dataSource.forEach((indicador: any) => {
+
+  coloresTabla() {
+    this.dataSource.data.forEach((indicador: any) => {
 
       if (indicador.porc_obtenido > 75 && indicador.porc_obtenido <= 100) {
         indicador.color = 'verde'; // Indicador con porcentaje mayor a 50% será de color verde
@@ -117,9 +116,6 @@ export class PonderacionCriterioComponent implements OnInit {
   //GRAFICA PASTEL
 
   GraficaPastel() {
-
-  
-
     this.chart = new Chart("pastel", {
       type: 'pie',
       data: {
@@ -128,10 +124,10 @@ export class PonderacionCriterioComponent implements OnInit {
           {
             label: "Porcentaje de logro",
             data: [
-              this.dataSource.filter((indicador:any) => indicador.porc_obtenido <= 25).length,
-              this.dataSource.filter((indicador:any)  => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
-              this.dataSource.filter((indicador:any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
-              this.dataSource.filter((indicador:any)  => indicador.porc_obtenido >= 75).length
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido <= 25).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido >= 75).length
             ],
             backgroundColor: ['red', 'orange', 'yellow', 'green']
           }
@@ -141,17 +137,12 @@ export class PonderacionCriterioComponent implements OnInit {
         aspectRatio: 2.5
       }
     });
-    
-    
-    
   }
-  
-
-  verSubcriterios() {
-    this.router.navigate(['/detallemodelo']);
+  regresar() {
+    this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
-
-
-
+  irinicio() {
+    this.router.navigate(['/sup/modelo/modelo']);
+  }
 }
