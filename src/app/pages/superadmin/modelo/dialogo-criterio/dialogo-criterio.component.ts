@@ -49,15 +49,15 @@ let ELEMENT_SELECTED: IndicadorElement[] = [];
 export class DialogoCriterioComponent implements OnInit {
 
   public columnNames: ColumnNames = {
-    nombre: 'Nombre del Criterio'
+    nombre: 'CRITERIOS'
   };
 
   public columnNamesSub: ColumnNamesSub = {
-    nombre: 'Nombre del Subcriterio'
+    nombre: 'SUBCRITERIOS'
   };
 
   public columnNamesInd: ColumnNamesInd = {
-    nombre: 'Nombre del Indicador'
+    nombre: 'INDICADORES'
   };
 
   dataSource: any;
