@@ -1,10 +1,12 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Criterio } from 'src/app/models/Criterio';
 import { Indicador } from 'src/app/models/Indicador';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
@@ -14,7 +16,33 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
   templateUrl: './criterio-reporte.component.html',
   styleUrls: ['./criterio-reporte.component.css']
 })
-export class CriterioReporteComponent {
+export class CriterioReporteComponent implements AfterViewInit {
+  dataSource: MatTableDataSource<Indicador> = new MatTableDataSource<Indicador>();
+
+  displayedColumns: string[] = ['criterio', 'subcriterio', 'indicador', 'descripcion', 'valor_obtenido', 'porc_obtenido', 'porc_utilida_obtenida'];
+  
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator;
+    this.paginator._intl.itemsPerPageLabel = 'Elementos por página:';
+    this.paginator._intl.nextPageLabel = 'Siguiente página';
+    this.paginator._intl.previousPageLabel = 'Página anterior';
+    this.paginator._intl.firstPageLabel = 'Primera página';
+    this.paginator._intl.lastPageLabel = 'Última página';
+    this.paginator._intl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+      if (length === 0 || pageSize === 0) {
+        return `0 de ${length}`;
+      }
+  
+      length = Math.max(length, 0);
+      const startIndex = page * pageSize;
+      const endIndex = startIndex < length ? Math.min(startIndex + pageSize, length) : startIndex + pageSize;
+  
+      return `${startIndex + 1} – ${endIndex} de ${length}`;
+    };
+  }
 
   searchText = '';
   constructor(
@@ -48,6 +76,8 @@ export class CriterioReporteComponent {
       (data: Criterio[]) => {
         // Agregar opción inicial "Seleccione todos"
         this.criterios = data;
+        this.dataSource.data = this.indicadors; // Initialize the data source with the loaded data
+        this.listarcriterio(); 
       },
       (error: any) => {
         console.error('Error al listar los criterios:', error);
@@ -75,6 +105,7 @@ export class CriterioReporteComponent {
       this.indicadorservice.indicadoresPorCriterios(idsCriterios).subscribe(
         (data: Indicador[]) => {
           this.indicadors = data;
+
         },
         (error: any) => {
           console.error('Error al buscar los indicadores por criterio:', error);

@@ -61,32 +61,64 @@
           class="mat-elevation-z8 table-responsive"
           style="margin-bottom: 5%"
         >
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>CRITERIO</th>
-                <th>SUBCRITERIO</th>
-                <th>INDICADOR</th>
-                <th>DESCRIPCION</th>
-                <th>VALOR OBTENIDO</th>
-                <th>PORCENTAJE OBTENIDO</th>
-                <th>PORCENTAJE UTILIDAD</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let indicador of indicadors | buscar : searchText">
-                <td>{{ indicador.subcriterio.criterio.nombre }}</td>
-                <td>{{ indicador.subcriterio.nombre }}</td>
-                <td>{{ indicador.nombre }}</td>
-                <td>{{ indicador.descripcion }}</td>
-                <td>{{ indicador.valor_obtenido }}</td>
-                <td>{{ indicador.porc_obtenido }}</td>
-                <td>{{ indicador.porc_utilida_obtenida }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+<div class="mat-elevation-z8 table-responsive" style="margin-bottom: 5%">
+    <table mat-table [dataSource]="dataSource">
+    
+      <!-- Table Columns -->
+      <ng-container matColumnDef="criterio">
+        <mat-header-cell *matHeaderCellDef> CRITERIO </mat-header-cell>
+        <mat-cell *matCellDef="let indicador"> {{ indicador.subcriterio.criterio.nombre }} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="subcriterio">
+        <mat-header-cell *matHeaderCellDef> SUBCRITERIO </mat-header-cell>
+        <mat-cell *matCellDef="let indicador"> {{ indicador.subcriterio.nombre }} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="indicador">
+        <mat-header-cell *matHeaderCellDef> INDICADOR </mat-header-cell>
+        <mat-cell *matCellDef="let indicador"> {{ indicador.nombre }} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="descripcion">
+        <mat-header-cell *matHeaderCellDef> DESCRIPCIÓN </mat-header-cell>
+        <mat-cell *matCellDef="let indicador"> {{ indicador.descripcion }} </mat-cell>
+      </ng-container>
+    
+      <!-- Add more columns here -->
+      <ng-container matColumnDef="valor_obtenido">
+        <mat-header-cell *matHeaderCellDef> VALOR OBTENIDO </mat-header-cell>
+        <mat-cell *matCellDef="let indicador"> {{ indicador.valor_obtenido }} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="porc_obtenido">
+        <mat-header-cell *matHeaderCellDef> PORCENTAJE OBTENIDO </mat-header-cell>
+        <mat-cell *matCellDef="let indicador"> {{ indicador.porc_obtenido }} </mat-cell>
+      </ng-container>
+    
+      <ng-container matColumnDef="porc_utilida_obtenida">
+        <mat-header-cell *matHeaderCellDef> PORCENTAJE UTILIDAD </mat-header-cell>
+        <mat-cell *matCellDef="let indicador"> {{ indicador.porc_utilida_obtenida }} </mat-cell>
+      </ng-container>
+    
+      <!-- Set the order of the columns you want to display -->
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+     
+    </table>
+     
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons
+  aria-label="Select page of periodic elements">
+ </mat-paginator>
+
+  
       </div>
     </div>
   </div>
-</body>
+
+
+
+<!---->
+<!-- Add this inside your template -->

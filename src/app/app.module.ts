@@ -30,6 +30,7 @@ import { UserProfileComponent } from './pages/user/user-profile/user-profile.com
 import { MatSelectModule } from '@angular/material/select';
 
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 /* importaciones ce diego */
@@ -55,8 +56,6 @@ import { GraficosComponent } from './pages/autoridad/graficos/graficos.component
 import { SharedModule } from './shared/shared.module';
 
 
-
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -74,6 +73,8 @@ import { SharedModule } from './shared/shared.module';
     ActividadAutoridadComponent,
     FenixComponent,
     GraficosComponent,
+  
+   
     
     
   ],
@@ -93,7 +94,7 @@ import { SharedModule } from './shared/shared.module';
     MatToolbarModule,
     MatIconModule,
     FontAwesomeModule,
-
+    NgxPaginationModule,
     MatSelectModule,
     MatPaginatorModule,
     MatDialogModule,
@@ -112,10 +113,18 @@ import { SharedModule } from './shared/shared.module';
     MatRadioModule,
     MatListModule,
     NgChartsModule,
-    SharedModule
+    SharedModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    
+  
+    
   ],
 
-  providers: [authInterceptorProviders, CriteriosService],
+  providers: [authInterceptorProviders, CriteriosService,
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

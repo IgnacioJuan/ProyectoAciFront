@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class CriteriosComponent implements OnInit {
   searchText = '';
+  
   @ViewChild('datosModalRef') datosModalRef: any;
   miModal!: ElementRef;
   public crite = new Criterio();

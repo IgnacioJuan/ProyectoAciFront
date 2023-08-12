@@ -7,4 +7,5 @@ export class Usuario2 {
     enabled: boolean = true;
     persona: Persona2 = new Persona2();
     visible: boolean = true;
+    per2:Persona2|null=null;
 }
