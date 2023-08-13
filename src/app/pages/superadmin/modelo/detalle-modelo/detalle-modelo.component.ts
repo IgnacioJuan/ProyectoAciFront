@@ -209,7 +209,7 @@ contador: number = 0;
   irPonderacionModelo(modelo: Modelo): void {
     localStorage.setItem("id", modelo.id_modelo.toString());
     this.model = modelo;
-    this.router.navigate(['/sup/ponderacion/ponderacion-modelo']);
+    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { state: { modelo: this.model } });
   }
   ponderacionCriterio(event: Event, element: any) {
     event.stopPropagation();
