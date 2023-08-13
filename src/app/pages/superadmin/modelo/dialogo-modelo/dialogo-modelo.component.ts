@@ -85,7 +85,7 @@ export class DialogoModeloComponent implements OnInit {
           this.asignacionIndicadorService.createAsignacionIndicador(this.asignacionIndicador).subscribe(
             (result) => {
               console.log(result);
-              this.reiniciarAdmin();
+              //this.reiniciarAdmin();
               this.reiniciarIndicador();
               this.bloquearModelo(response.id_modelo);
               this.sharedDataService.agregarDatos([]);
