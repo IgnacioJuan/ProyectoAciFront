@@ -181,62 +181,7 @@ export class PonderacionModeloComponent implements OnInit {
   }
 
 
-  //metodo para guardar en ponderacion
-
-  guardarDatosEnAPI(): void {
-    const ponderaciones: Ponderacion[] = [];
-  
-    let idModelo = localStorage.getItem("id");
-    this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
-      this.model = dataModelo;
-      const fechaSistema = new Date();
-  
-      // Verificar si ya existe un registro en la API en la misma fecha
-
-            // No existe un registro en la misma fecha, proceder con la operación de guardado
-            this.dataSource.forEach((indicador: any) => {
-              const ponderacion: Ponderacion = new Ponderacion();
-  
-              // Asigna los valores correspondientes a las propiedades de Ponderacion
-              ponderacion.fecha = fechaSistema;
-              ponderacion.peso = indicador.peso;
-              ponderacion.porc_obtenido = indicador.porc_obtenido;
-              ponderacion.valor_obtenido = indicador.valor_obtenido;
-              ponderacion.porc_utilida_obtenida = indicador.porc_utilida_obtenida;
-              ponderacion.indicador = indicador;
-              ponderacion.modelo = dataModelo;
-              ponderaciones.push(ponderacion);
-            });
-  
-            this.servicePonderacion.guardarPonderacionLista(ponderaciones).subscribe(
-              (response: any) => {
-                // Manejar la respuesta de la API si es necesario
-                console.log(response);
-                Swal.fire({
-                  title: 'Ponderacion guardada éxitosamente',
-                  icon: 'success',
-                  iconColor: '#17550c',
-                  color: "#0c3255",
-                  confirmButtonColor: "#0c3255",
-                  background: "#63B68B",
-                });
-                
-                this.router.navigate(['/sup/modelo/detallemodelo']);
-                // Recargar la página después de guardar los datos en la API
-                
-
-              },
-              (error: any) => {
-                // Manejar el error si ocurre alguno
-                console.error(error);
-              }
-            );
-  
-           
-          
-        
-    });
-  }
+ 
   
 
   guardarDatosEnAPI1(): void {

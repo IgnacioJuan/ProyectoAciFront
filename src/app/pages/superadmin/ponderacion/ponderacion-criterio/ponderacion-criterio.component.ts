@@ -147,12 +147,12 @@ export class PonderacionCriterioComponent implements OnInit {
 
   recoverPdf(id: number) {
 
-    this.indicadorservice.recoverPdfLink(39).subscribe(
+    this.indicadorservice.recoverPdfLink(id).subscribe(
       (data) => {
         this.recoverPdf;
         this.idndicadorseleccionado = id;
 
-        this.indicadorservice.getarchivorecoverPdf(39).subscribe(
+        this.indicadorservice.getarchivorecoverPdf(id).subscribe(
           (data) => {
 
             this.archivos = data;

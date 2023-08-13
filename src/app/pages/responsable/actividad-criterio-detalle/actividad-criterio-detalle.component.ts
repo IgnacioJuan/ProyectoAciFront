@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { Router } from '@angular/router';
 import { Modelo } from 'src/app/models/Modelo';
@@ -9,6 +9,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SharedDataService } from 'src/app/services/shared-data.service';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+
 
 type ColumnNames = {
   [key: string]: string;
@@ -36,6 +38,7 @@ export class ActividadCriterioDetalle implements OnInit {
   dataSource: any;
   asignacion: any;
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   columnsToDisplay = ['nombre', 'descripcion'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay];
@@ -55,6 +58,9 @@ export class ActividadCriterioDetalle implements OnInit {
 
   ngOnInit(): void {
     this.recibeModelo();
+    this.dataSource.paginator = this.paginator;
+
+
   }
   id = localStorage.getItem("id");
   recibeModelo() {
@@ -62,17 +68,19 @@ export class ActividadCriterioDetalle implements OnInit {
       this.model = data;
       this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.id)).subscribe(info => {
         this.criterioService.getCriterios().subscribe(result => {
-          this.dataSource = [];
           this.asignacion = info;
           this.dataSource = result.filter((criterio: any) => {
             return info.some((asignacion: any) => {
               return criterio.id_criterio === asignacion.indicador.subcriterio.criterio.id_criterio;
             });
           });
+          this.dataSource.paginator = this.paginator; // Moved here
         });
       });
     });
   }
+
+
 
   irPonderacionModelo(modelo: Modelo): void {
 
