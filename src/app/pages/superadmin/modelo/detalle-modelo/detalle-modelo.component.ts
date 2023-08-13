@@ -128,9 +128,7 @@ contador: number = 0;
   }
 
   pond(element:any) {
-    console.log("esta fecha modelo "+JSON.stringify(element));
     let fecha=element.fechapo;
-    console.log("fecha elegida: "+fecha+" contador: "+element.contador);
     localStorage.setItem("contador", element.contador);
     this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
   }
@@ -243,9 +241,11 @@ contador: number = 0;
 
   asignar_criterio(event: Event, criterio: any) {
     event.stopPropagation();
+    const id_modelo = localStorage.getItem('id');
+    console.log("Id modelo a asignar"+id_modelo+" id criterio "+criterio.id_criterio);
     const dialogRef = this.dialog.open(AsignarCriterioComponent, {
       width: '45%',
-      data: { id: criterio.id_criterio }
+      data: { id: criterio.id_criterio,modelo:id_modelo }
     });
 
     dialogRef.afterClosed().subscribe(result => {
