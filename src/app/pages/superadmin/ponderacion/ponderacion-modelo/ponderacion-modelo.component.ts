@@ -14,6 +14,7 @@ import { Ponderacion } from 'src/app/models/Ponderacion';
 import Swal from 'sweetalert2';
 import { PonderacionService } from 'src/app/services/ponderacion.service';
 import { HttpClient } from '@angular/common/http';
+import { isEmpty } from 'rxjs';
 
 
 
@@ -30,6 +31,8 @@ export class PonderacionModeloComponent implements OnInit {
   dataSource: any;
   asignacion: any;
   indicadorClase: Indicador = new Indicador();
+  indicadores: any[] = [];
+  datos:any[] = [];
   title = 'ng-chart';
   porcentaje!: number;
   indicador: any;
@@ -45,10 +48,11 @@ export class PonderacionModeloComponent implements OnInit {
   valor_obtenido: number = 0;
   indicador1!: Indicador;
   modelo1!: Modelo;
-
+  fechaActual!: Date;
   fechaSeleccionada: any;
   conf: number = 0;
-
+  contador: number = 1;
+  idmax: number = 0;
 
   @ViewChild('miTabla', { static: true }) miTabla!: ElementRef;
 
@@ -69,6 +73,7 @@ export class PonderacionModeloComponent implements OnInit {
 
   ocultarBoton: boolean = false;
   ngOnInit(): void {
+    this.fechaActual = new Date();
     this.conf = 0;
     this.activatedRoute.queryParams.subscribe(params => {
       this.fechaSeleccionada = params['fecha']; // Obtener la fecha actual
@@ -78,30 +83,46 @@ export class PonderacionModeloComponent implements OnInit {
       } else {
         this.ocultarBoton = false;
       }
-      console.log(this.fechaSeleccionada, this.conf);
-      // Aquí puedes realizar cualquier otra lógica con la fecha seleccionada en el nuevo formato
+      
+ 
     });
-
-    console.log('Fecha seleccionada:', this.fechaSeleccionada);
+    let id_modelo = localStorage.getItem("id");
+    console.log("id para max "+id_modelo)
+    this.servicePonderacion.idmax(Number(id_modelo)).subscribe(
+      (response: any) => {
+        if (response.length > 0) {
+          const contadorMaximo = response[0].contador;
+          if (contadorMaximo !== null) {
+            this.idmax = contadorMaximo + 1;
+            console.log("Contador máximo:", contadorMaximo, "Final:", this.idmax);
+          } else {
+            
+            this.idmax = 1;
+            console.log("Contador es nulo:"+this.idmax );
+          }
+        } else {
+          this.idmax = 1;
+          console.log("Contador es cadena:"+this.idmax );
+        }
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
+ 
     this.recibeIndicador();
     this.listPonderacion();
 
-
-
-
-
-
+    this.indicadorservice.getIndicadores().subscribe(data => {
+      this.indicadores = data;
+    });
   }
 
 
 
   recibeIndicador() {
-
-
     let idModelo = localStorage.getItem("id");
-
-    console.log("this.conf:", this.conf);
-  console.log("this.fechaSeleccionada:", this.fechaSeleccionada);
+    let cont = localStorage.getItem("contador");
 
     this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
       this.model = dataModelo;
@@ -113,7 +134,6 @@ export class PonderacionModeloComponent implements OnInit {
           this.dataSource = [];
           this.asignacion = info;
 
-          console.log(this.conf);
           if (this.conf == 1) {
             this.dataSource = result.filter((indicador: any) => {
               return info.some((asignacion: any) => {
@@ -122,11 +142,11 @@ export class PonderacionModeloComponent implements OnInit {
               });
               
             });
-            this.servicePonderacion.listarPonderacionPorFecha(this.fechaSeleccionada).subscribe(data => {
-              console.log("informacion", data);
+            this.servicePonderacion.listarPonderacionPorFecha(this.fechaSeleccionada,Number(cont)).subscribe(data => {
               this.dataSource.forEach((indicador: any) => {
                 data.forEach((ponderacion: any) => {
                   if (indicador.id_indicador == ponderacion.indicador.id_indicador) {
+                    indicador.nombre=ponderacion.indicador.nombre;
                     indicador.peso = ponderacion.peso;
                     indicador.porc_obtenido = ponderacion.porc_obtenido;
                     indicador.porc_utilida_obtenida = ponderacion.porc_utilida_obtenida;
@@ -158,116 +178,84 @@ export class PonderacionModeloComponent implements OnInit {
               });
             });
             this.createChart();
-            //this.pieChart();
             this.GraficaPastel();
             this.calculatePromedioPorCriterio();
-
             this.calcularTSumaPesos();
             this.calcularUtilidad();
             this.coloresTabla();
           }
-
-          // this.createChart();
-          // //this.pieChart();
-          // this.GraficaPastel();
-          // this.calculatePromedioPorCriterio();
-
-          // this.calcularTSumaPesos();
-          // this.calcularUtilidad();
-          // this.coloresTabla();
         });
       });
     });
   }
 
 
- 
-  
+  //metodo para guardar en ponderacion
 
-  guardarDatosEnAPI1(): void {
-    const ponderaciones: Ponderacion[] = [];
-  
+  guardarDatosEnAPI(event: Event): void {
+    console.log("Estas en guardar");
+    event.preventDefault();
+    const dataParaGuardar: Ponderacion[] = [];
     let idModelo = localStorage.getItem("id");
-    this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
-      this.model = dataModelo;
-      const fechaSistema = new Date();
-  
-      // Verificar si ya existe un registro en la API en la misma fecha
-      this.servicePonderacion.listarPonderacionPorFecha(fechaSistema.toISOString()).subscribe(
-        (response: any) => {
-          this.ponderacionv=response;
+  this.dataSource.forEach((column: any) => {
+    const indicadorEncontrado = this.indicadores.find((indicador: any) => indicador.nombre === column.nombre);
+    if (indicadorEncontrado) {
+      console.log("Indicador encontrado:", indicadorEncontrado);
+    } else {
+      console.log("Indicador no encontrado para:", column.nombre);
+    }
+    const fila: Ponderacion = {
+   
+      indicador:  { id_indicador: Number(indicadorEncontrado.id_indicador),nombre:'', descripcion:'', peso:0, tipo:'',
+      estandar:0, valor_obtenido:0, porc_obtenido:0, porc_utilida_obtenida:0,subcriterio:null, visible:true },
+      peso: column.peso || 0,
+      porc_obtenido: column.porc_obtenido || 0,
+      porc_utilida_obtenida: column.porc_utilida_obtenida || 0,
+      valor_obtenido: column.valor_obtenido || 0,
+      id_ponderacion: 0,
+      fecha: new Date(),
+      visible: true,
+      modelo: { id_modelo: Number(idModelo), nombre:'', fecha_inicio:this.fecha, fecha_fin:this.fecha, fecha_final_act:this.fecha,
+    visible:true,usuario:null},
+    contador:this.idmax,
+    };
 
-          const existeFechaEnBD = response.some((ponderacionv: Ponderacion) => {
-            // Comparar si la fecha de la ponderación en la base de datos es igual a la fecha actual
-            return (
-              
-              new Date(ponderacionv.fecha).toDateString() === fechaSistema.toDateString() &&
-              this.ponderacionv.modelo.id_modelo === this.model.id_modelo
-            );
-          });
-  
-          if (existeFechaEnBD) {
-            // Ya existe un registro en la misma fecha, mostrar alerta
-            Swal.fire('Ya ha realizado ponderacion el dia de hoy', '', 'info');
-          } else {
-            // No existe un registro en la misma fecha, proceder con la operación de guardado
-            this.dataSource.forEach((indicador: any) => {
-              const ponderacion: Ponderacion = new Ponderacion();
-  
-              // Asigna los valores correspondientes a las propiedades de Ponderacion
-              ponderacion.fecha = fechaSistema;
-              ponderacion.peso = indicador.peso;
-              ponderacion.porc_obtenido = indicador.porc_obtenido;
-              ponderacion.valor_obtenido = indicador.valor_obtenido;
-              ponderacion.porc_utilida_obtenida = indicador.porc_utilida_obtenida;
-              ponderacion.indicador = indicador;
-              ponderacion.modelo = dataModelo;
-              ponderaciones.push(ponderacion);
-            });
-  
-            this.servicePonderacion.guardarPonderacionLista(ponderaciones).subscribe(
-              (response: any) => {
-                // Manejar la respuesta de la API si es necesario
-                console.log(response);
-                Swal.fire({
-                  title: 'Ponderacion guardada éxitosamente',
-                  icon: 'success',
-                  iconColor: '#17550c',
-                  color: "#0c3255",
-                  confirmButtonColor: "#0c3255",
-                  background: "#63B68B",
-                });
-                
-                this.router.navigate(['/sup/ponderacion/ponderacion-final']);
-                // Recargar la página después de guardar los datos en la API
-                window.location.reload();
+    dataParaGuardar.push(fila);
+    this.datos=dataParaGuardar;
+  });
+  console.log("Datos a guardar"+dataParaGuardar);
+  this.servicePonderacion.guardarPonderacionLista(dataParaGuardar).subscribe(
+    (response: any) => {
+      // Maneja la respuesta de la API si es necesario
+      console.log(response);
+      Swal.fire({
+        title: 'Ponderacion guardada éxitosamente',
+        icon: 'success',
+        // ...
+      });
 
-              },
-              (error: any) => {
-                // Manejar el error si ocurre alguno
-                console.error(error);
-              }
-            );
-  
-           
-          }
-        },
-        (error: any) => {
-          // Manejar el error si ocurre alguno al obtener los registros por fecha
-          console.error(error);
-        }
-        
-      );
-    });
+      this.router.navigate(['/sup/modelo/detallemodelo']);
+      // Recarga la página después de guardar los datos en la API
+    },
+    (error: any) => {
+      // Maneja el error si ocurre alguno
+      console.error(error);
+      Swal.fire({
+        title: 'Error al guardar ponderación',
+        text: 'Ha ocurrido un error al intentar guardar la ponderación.',
+        icon: 'error',
+      
+      });
+    }
+  );
   }
-  
   
 
   //enviamos modelo
   enviarModelo(modelo: Modelo): void {
     localStorage.setItem("id", modelo.id_modelo.toString());
     this.model = modelo;
-    //this.router.navigate(['/sup/modelo/detallemodelo']);
+   // this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   //Calculamos el promedio de cada criterio
@@ -304,9 +292,6 @@ export class PonderacionModeloComponent implements OnInit {
 
   ///Grafica del pastel
   GraficaPastel() {
-
-
-
     this.chart = new Chart("pastel", {
       type: 'pie',
       data: {
@@ -328,9 +313,6 @@ export class PonderacionModeloComponent implements OnInit {
         aspectRatio: 2.5
       }
     });
-
-
-
   }
 
   //Grafica de barras
@@ -428,7 +410,6 @@ export class PonderacionModeloComponent implements OnInit {
   }
 
 
-
   //colores de la celda de la tabla
   coloresTabla() {
     this.dataSource.forEach((indicador: any) => {
@@ -461,8 +442,7 @@ export class PonderacionModeloComponent implements OnInit {
       this.dataSource = data;
 
     });
-    console.log(this.dataSource + 'listaaaaaaaaa');
-
+    
   }
 
 
@@ -481,7 +461,7 @@ export class PonderacionModeloComponent implements OnInit {
           console.error('Error al crear la ponderación:', error);
         }
       );
-     this.router.navigate(['/sup/ponderacion']);
+    //this.router.navigate(['/sup/ponderacion']);
   }
   
 
@@ -517,11 +497,6 @@ export class PonderacionModeloComponent implements OnInit {
     }
     return count;
   }
-
-
-  // ...
-
-
 
 
   //Suma de todos los pesos

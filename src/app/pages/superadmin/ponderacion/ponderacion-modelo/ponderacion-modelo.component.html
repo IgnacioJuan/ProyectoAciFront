@@ -31,7 +31,7 @@
     <div class="container">
       
 
-      <form action="">
+      <form (submit)="guardarDatosEnAPI($event)" action="">
         <div class="tabla-contenedor">
           <table id="miTabla" border="1px" class="table">
             <thead class="table-dark">
@@ -66,19 +66,22 @@
                   >
                     <tr>
                       <td
-
-                       [attr.rowspan]="getRowCountCriterioName(i)" *ngIf="shouldShowCriterioName(i)">
-                        {{ dataSource[i].subcriterio.criterio.nombre }}
-                                           
-                      >
-                        {{ column.subcriterio.criterio.nombre }}
-                      </td>
+                      [attr.rowspan]="
+                        getRowCountCriterio(
+                          column.subcriterio?.criterio?.nombre,
+                          i
+                        )
+                      "
+                    >
+                      {{ column.subcriterio?.criterio?.nombre }}
+                    </td>
+                    
                       <td
                         [attr.rowspan]="
-                          getRowCountSubcriterio(column.subcriterio.nombre, i)
+                          getRowCountSubcriterio(column.subcriterio?.nombre, i)
                         "
                       >
-                        {{ column.subcriterio.nombre }}
+                        {{ column.subcriterio?.nombre }}
                       </td>
                       <td>{{ column.nombre }}</td>
                       <td>{{ column.peso }}</td>
@@ -162,13 +165,12 @@
           </table>
         </div>
         <button
-          type="submit"
-          class="btn btn-primary"
-          (click)="guardarDatosEnAPI1()"
-          *ngIf="!ocultarBoton"
-        >
-          Guardar datos
-        </button>
+    type="submit"
+    class="btn btn-primary"
+    *ngIf="!ocultarBoton"
+  >
+    Guardar
+  </button>
       </form>
 
       <br />

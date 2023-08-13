@@ -23,17 +23,19 @@ export class AsignarCriterioComponent implements OnInit {
   user: any = null;
   idusuario: any = null;
   nombre: any = null;
-
+  id_modelo!:number;
   constructor(public login: LoginService, private notificationService: NotificacionService, private usuarioService: UsuarioService, private asignacionCriterio: AsignacionCriterioService, public dialogRef: MatDialogRef<DetalleModeloComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
     this.user = this.login.getUser();
+    this.id_modelo=this.data.modelo;
+    console.log("ID modelo recibido: "+this.id_modelo);
     this.usuarioService.listarAdminDatos().subscribe(data => {
       this.datasource = data;
       console.log(this.datasource);
     });
-    console.log(this.data.id);
-    this.asignacionCriterio.listarAsignacion_AdminPorUsuario(this.data.id).subscribe(result => {
+    console.log("id criterio"+this.data.id);
+    this.asignacionCriterio.listarAsignacion_AdminPorUsuario(this.data.id,this.id_modelo).subscribe(result => {
       if (result == null) {
         return;
       }
@@ -47,7 +49,7 @@ export class AsignarCriterioComponent implements OnInit {
   notificaruser() {
     this.noti.fecha = new Date();
     this.noti.rol = "";
-    this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " te ha asignado el criterio " + this.nombre;
+    this.noti.mensaje = this.user?.persona?.primer_nombre + " " + this.user?.persona?.primer_apellido + " te ha asignado el criterio " + this.nombre;
     this.noti.visto = false;
     this.noti.usuario = this.idusuario;
     console.log("El nombre es " + this.nombre)
@@ -66,7 +68,7 @@ export class AsignarCriterioComponent implements OnInit {
   guardar() {
     console.log(this.valorSeleccionado);
 
-    this.asignacionCriterio.listarAsignacion_AdminPorUsuarioCriterio(this.data.id, this.valorSeleccionado).subscribe(result => {
+    this.asignacionCriterio.listarAsignacion_AdminPorUsuarioCriterio(this.data.id, this.valorSeleccionado,this.id_modelo).subscribe(result => {
       if (result == null) {
         this.crearAsignacion();
         return;
@@ -74,9 +76,10 @@ export class AsignarCriterioComponent implements OnInit {
 
       this.asignacion = result;
       console.log(this.asignacion);
-      this.asignacion.visible = true;
+      this.asignacion.visible = false;
       this.asignacionCriterio.updateAsignacion_Admin(this.asignacion.id_asignacion, this.asignacion).subscribe(data => {
-        console.log(data);
+        console.log("actualizo datos"+data);
+        this.crearAsignacion();
         this.dialogRef.close({ data: 'Succes' });
       });
     });
@@ -84,7 +87,7 @@ export class AsignarCriterioComponent implements OnInit {
     this.idusuario = this.valorSeleccionado;
     this.nombre = this.data.nombre;
     console.log("iduser" + this.idusuario);
-    this.notificaruser();
+    
 
   }
 
@@ -93,11 +96,12 @@ export class AsignarCriterioComponent implements OnInit {
     this.asignacion.usuario.id = this.valorSeleccionado;
     this.asignacion.criterio.id_criterio = this.data.id;
     this.asignacion.visible = true;
-
-    console.log(this.asignacion);
+    this.asignacion.id_modelo=this.id_modelo
+    console.log("Datos de asignacion recibido: "+this.asignacion);
     this.asignacionCriterio.createAsignacion_Admin(this.asignacion).subscribe(data => {
-      console.log(data);
-      this.dialogRef.close({ data: 'Succes' });
+      console.log("Datos de asignacion: "+data);
+      this.notificaruser();
+      this.dialogRef.close({ data: 'Succes'});
     });
   }
 }

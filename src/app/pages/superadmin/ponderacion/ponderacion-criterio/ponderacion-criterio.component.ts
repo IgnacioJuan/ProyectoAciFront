@@ -1,22 +1,19 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-
-
-
-import { Indicador } from 'src/app/models/Indicador';
-import { Modelo } from 'src/app/models/Modelo';
-import { Subcriterio } from 'src/app/models/Subcriterio';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
-import { SharedDataService } from 'src/app/services/shared-data.service';
-import { FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Criterio } from 'src/app/models/Criterio';
-import { CriteriosService } from 'src/app/services/criterios.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { FormBuilder } from '@angular/forms';
 import { Chart } from 'chart.js';
-import { Archivo } from 'src/app/models/Archivo';
 
+import { Modelo } from 'src/app/models/Modelo';
+import { Criterio } from 'src/app/models/Criterio';
 
+type Archivo = {
+  // Define las propiedades correctas para el tipo Archivo
+};
 
 @Component({
   selector: 'app-ponderacion-criterio',
@@ -24,88 +21,91 @@ import { Archivo } from 'src/app/models/Archivo';
   styleUrls: ['./ponderacion-criterio.component.css']
 })
 export class PonderacionCriterioComponent implements OnInit {
+  itemsPerPageLabel = 'Criterios por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel = 'Primera';
+  previousPageLabel = 'Anterior';
+  rango = (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
 
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
 
   model: Modelo = new Modelo();
   archivos: Archivo[] = [];
   critrioClase = new Criterio();
-  dataSource: any;
   asignacion: any;
   criterio: Criterio = new Criterio();
   modelo: Modelo = new Modelo();
-  color: any
+  color: any;
   chart: any;
   idndicadorseleccionado: number = 0;
+
+  dataSource = new MatTableDataSource<any>();
+  columnasUsuario: string[] = ['id_indicador', 'nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor'];
+
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router, private fb: FormBuilder,
-    public modeloService: ModeloService,
+    public modeloService: ModeloService, private paginatorIntl: MatPaginatorIntl,
     public asignacionIndicadorService: AsignacionIndicadorService,
     private activatedRoute: ActivatedRoute
   ) {
-
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel = this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel = this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel = this.rango;
   }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+  }
+
   ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.criterio = params['criterio'];
+      this.modelo = params['modelo'];
 
-
-    this.llenar_datasource();
-
+      this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
+        (data) => {
+          this.dataSource.data = data;
+          this.coloresTabla();
+          this.GraficaPastel();
+        }
+      );
+    });
   }
-
-  llenar_datasource() {
-    this.criterio = history.state.criterio;
-    this.modelo = history.state.modelo;
-    const id_criterio = 1; // Reemplaza con el ID de criterio correcto
-    const id_modelo = 2; // Reemplaza con el ID de modelo correcto
-    this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
-      (data) => {
-        this.dataSource = data.map((indicador: any) => {
-          return {
-            ...indicador,
-            enlace: `http://localhost:5000/archivo/${indicador.id_indicador}.pdf` // Reemplaza 'URL_DEL_BACKEND' con la URL correcta de tu backend
-          };
-        });
-
-        console.log(this.dataSource + 'criteriooooooo');
-
-        this.coloresTabla();
-        this.GraficaPastel();
-
-
-
-      }
-    );
-
-  }
-
 
   coloresTabla() {
-    this.dataSource.forEach((indicador: any) => {
-
+    this.dataSource.data.forEach((indicador: any) => {
       if (indicador.porc_obtenido > 75 && indicador.porc_obtenido <= 100) {
-        indicador.color = 'verde'; // Indicador con porcentaje mayor a 50% será de color verde
-      }
-      else if (indicador.porc_obtenido > 50 && indicador.porc_obtenido <= 75) {
-        indicador.color = 'amarillo'; // Indicador con porcentaje mayor a 50% será de color verde
-      }
-      else if (indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50) {
-        indicador.color = 'naranja'; // Indicador con porcentaje mayor a 50% será de color verde
+        indicador.color = 'verde';
+      } else if (indicador.porc_obtenido > 50 && indicador.porc_obtenido <= 75) {
+        indicador.color = 'amarillo';
+      } else if (indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50) {
+        indicador.color = 'naranja';
       } else if (indicador.porc_obtenido <= 25) {
-        indicador.color = 'rojo'; // Indicador con porcentaje menor a 30% será de color rojo
+        indicador.color = 'rojo';
       } else {
-        indicador.color = ''; // No se asigna ningún color a los indicadores que no cumplen las condiciones anteriores
+        indicador.color = '';
       }
     });
   }
 
-
-  //GRAFICA PASTEL
-
   GraficaPastel() {
-
-
-
     this.chart = new Chart("pastel", {
       type: 'pie',
       data: {
@@ -114,10 +114,10 @@ export class PonderacionCriterioComponent implements OnInit {
           {
             label: "Porcentaje de logro",
             data: [
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido <= 25).length,
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido >= 75).length
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido <= 25).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido >= 75).length
             ],
             backgroundColor: ['red', 'orange', 'yellow', 'green']
           }
@@ -127,41 +127,13 @@ export class PonderacionCriterioComponent implements OnInit {
         aspectRatio: 2.5
       }
     });
-
-
-
   }
-
 
   regresar() {
     this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   irinicio() {
-
-    // código del método del botón
     this.router.navigate(['/sup/modelo/modelo']);
-
   }
-
-
-  recoverPdf(id: number) {
-
-    this.indicadorservice.recoverPdfLink(id).subscribe(
-      (data) => {
-        this.recoverPdf;
-        this.idndicadorseleccionado = id;
-
-        this.indicadorservice.getarchivorecoverPdf(id).subscribe(
-          (data) => {
-
-            this.archivos = data;
-            console.log(this.archivos);
-
-          }
-        );
-      });
-
-  }
-
 }

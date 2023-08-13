@@ -7,6 +7,7 @@ import { PonderacionIndicadorComponent } from './ponderacion-indicador/ponderaci
 import { PonderacionCriterioComponent } from './ponderacion-criterio/ponderacion-criterio.component';
 import { PonderacionModeloComponent } from './ponderacion-modelo/ponderacion-modelo.component';
 import { PonderacionfinalComponent } from './ponderacionfinal/ponderacionfinal.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { PonderacionfinalComponent } from './ponderacionfinal/ponderacionfinal.c
   ],
   imports: [
     CommonModule,
-    PonderacionRoutingModule
+    PonderacionRoutingModule,
+    SharedModule
   ]
 })
 export class PonderacionModule { }

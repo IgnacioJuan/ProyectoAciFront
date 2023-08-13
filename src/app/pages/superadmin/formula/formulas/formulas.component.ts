@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Cuantitativa } from 'src/app/models/Cuantitativa';
 import { Formulas } from 'src/app/models/Formulas';
@@ -12,25 +14,58 @@ import { FormulaService } from 'src/app/services/formula.service';
 })
 export class FormulasComponent implements OnInit {
 
-  searchText = '';
-  @ViewChild('datosModalRef') datosModalRef: any;
+  itemsPerPageLabel = 'Fórmulas por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+  
   miModal!: ElementRef;
   public formu = new Formulas();
   listaFromulas: Formulas[] = [];
   frmFormula: FormGroup;
   guardadoExitoso: boolean = false;
 
+  filterPost = '';
+  dataSource = new MatTableDataSource<Formulas>();
+  columnasUsuario: string[] = ['id_formula', 'descripcion','formula', 'actions'];
+
+  @ViewChild('datosModalRef') datosModalRef: any;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   constructor(
-    private service: FormulaService,
+    private service: FormulaService,private paginatorIntl: MatPaginatorIntl,
     private fb: FormBuilder,
     private router: Router
   ) {
     this.frmFormula = fb.group({
       descripcion: ['', Validators.required],
       formula: ['', [Validators.required, Validators.maxLength(250)]]
-    })
+    });
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
 
+  }
   ngOnInit(): void {
     this.listar();
   }
@@ -69,6 +104,7 @@ export class FormulasComponent implements OnInit {
       subscribe(
         (data: any) => {
           this.listaFromulas = data;
+          this.dataSource.data=this.listaFromulas;
         },
         (error: any) => {
           console.error('Error al listar las formula', error);
@@ -101,7 +137,16 @@ export class FormulasComponent implements OnInit {
 
   //TS PARA CUANTITATIVA
 
-
+aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+      this.dataSource.data = this.listaFromulas;;
+    }
+  }
 }
 
 

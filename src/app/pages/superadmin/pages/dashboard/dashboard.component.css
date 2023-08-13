@@ -9,11 +9,11 @@
   right: 0;
   top: 100%;
   display: none;
-  background-color: white; /* Ajusta los estilos según tus necesidades */
+  background-color: white; 
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 8px;
-  min-width: 100px; /* Ajusta el ancho del dropdown según tus necesidades */
+  min-width: 100px;
   z-index: 1;
 }
 

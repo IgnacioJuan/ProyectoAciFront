@@ -12,47 +12,66 @@
     </blockquote>
     <h1 class="display-1">PONDERACIÓN DEL CRITERIO</h1>
     <br />
-    <div class="mat-elevation-z8 table-responsive" style="margin-bottom: 5%">
+    <div class="table-responsive" style="margin-bottom: 5%">
       <div class="tabla-contenedor">
-        <table border="1px" class="table">
-          <thead class="table-dark">
-            <tr>
-              <th>Id Indicador</th>
-              <th>Nombre de Indicador</th>
-              <th>Peso</th>
-              <th>% Valor Obtenido</th>
-              <th>% Utilidad Obtenido</th>
-              <th>Valor obtenido</th>
-              <th>Archivo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let column of dataSource">
-              <td>{{ column.id_indicador }}</td>
-              <td>{{ column.nombre }}</td>
-              <td>{{ column.peso }}</td>
-              <td [class.color-verde]="column.color === 'verde'" [class.color-rojo]="column.color === 'rojo'"
-                [class.color-naranja]="column.color === 'naranja'" [class.color-amarillo]="column.color === 'amarillo'">
-                {{ column.porc_obtenido }} %
-              </td>
+        <table mat-table [dataSource]="dataSource">
+          <ng-container matColumnDef="id_indicador">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.id_indicador }}
+            </td>
+          </ng-container>
+          
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef>NOMBRE</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.nombre }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="peso">
+            <th mat-header-cell *matHeaderCellDef>PESO</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.peso }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="porc_valor">
+            <th mat-header-cell *matHeaderCellDef>% OBTENIDO</th>
+            <td
+              mat-cell
+              *matCellDef="let elemento"
+              [class.color-verde]="elemento.color === 'verde'"
+              [class.color-rojo]="elemento.color === 'rojo'"
+              [class.color-naranja]="elemento.color === 'naranja'"
+              [class.color-amarillo]="elemento.color === 'amarillo'"
+            >
+              {{ elemento.porc_obtenido }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="porc_utilidad">
+            <th mat-header-cell *matHeaderCellDef>% UTILIDAD</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.porc_utilida_obtenida  }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="valor">
+            <th mat-header-cell *matHeaderCellDef>VALOR OBTENIDO</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.valor_obtenido  }}
+            </td>
+          </ng-container>
 
-              <td>{{ column.porc_utilida_obtenida }} %</td>
-              <td>{{ column.valor_obtenido }}</td>
-              <td>
-                <a (click)="recoverPdf(column.id_indicador)">Descargar PDF</a>
-                <div *ngIf="column.id_indicador=== idndicadorseleccionado ">
-
-                  <p *ngFor="let archi of archivos">
-
-                    <a href="{{ archi.enlace}}" target="_blank">
-                      {{ archi.nombre}}
-                    </a>
-                  </p>
-                  <span *ngIf="archivos.length == 0">Sin enlace</span>
-                </div>
-            </tr>
-          </tbody>
+          <tr mat-header-row *matHeaderRowDef="columnasUsuario"></tr>
+          <tr mat-row *matRowDef="let fila; columns: columnasUsuario"></tr>
         </table>
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+          aria-label="Select page of periodic elements"
+          itemsPerPageLabel="Items por página:"
+          nextPageLabel="Siguiente"
+          previousPageLabel="Anterior"
+        >
+        </mat-paginator>
       </div>
     </div>
     <br />

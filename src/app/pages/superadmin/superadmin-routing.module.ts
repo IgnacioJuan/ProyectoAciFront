@@ -10,6 +10,7 @@ import { IndicadorComponent } from './pages/indicador/indicador.component';
 import { EvidenciasComponent } from './pages/evidencias/evidencias.component';
 import { EvidenciaAtrasadaComponent } from './pages/evidencia-atrasada/evidencia-atrasada.component';
 import { CriterioReporteComponent } from './pages/criterio-reporte/criterio-reporte.component';
+import { DashboardComponent } from '../admin/dashboard/dashboard.component';
 
 const routes: Routes = [{
   path: 'dashboard',
@@ -74,7 +75,13 @@ const routes: Routes = [{
   canActivate: [RoleguardGuard],
   data: { allowedRoles: ['SUPERADMIN', 'ADMIN', 'AUTORIDAD'] }
 },
-
+{
+  path: 'actividad_responsable',
+  component: DashboardComponent,
+  pathMatch: 'full',
+  canActivate: [RoleguardGuard],
+  data: { allowedRoles: ['SUPERADMIN', 'ADMIN'] }
+},
 {
   path: 'modelo',
   loadChildren: () => import("./modelo/modelo.module").then(m => m.ModeloModule)

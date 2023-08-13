@@ -118,4 +118,7 @@ export class IndicadoresService {
   obtenerDatosIndicadoresFull(): Observable<IndicadorEvidenciasProjectionFull[]> {
     return this.http.get<IndicadorEvidenciasProjectionFull[]>(`${baserUrl}/api/indicadores/datosIndicadoresFull`);
   }
+  getIndicadorPorModelo(id_modelo: number): Observable<Indicador[]> {
+    return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/indicadorespormodelo/${id_modelo}`);
+  }
 }

@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Ponderacion } from '../models/Ponderacion';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { map, Observable, catchError } from "rxjs";
-
+import baserUrl from './helper';
+import { PonderacionProjection } from '../interface/PonderacionProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -11,22 +12,19 @@ export class PonderacionService {
 
   private httpHeaders = new HttpHeaders({ 'Content-Type': 'application/json' })
   constructor(private http: HttpClient) { }
-
-  private url: string = 'http://localhost:5000/api/ponderacion';
-
   //metodo para crear 
   public guardarPonderacion(ponderacion: Ponderacion): Observable<Ponderacion> {
-    return this.http.post<Ponderacion>(this.url + '/crear', ponderacion);
+    return this.http.post<Ponderacion>(`${baserUrl}/api/ponderacion/crear`, ponderacion);
   }
 
   public guardarPonderacionLista(ponderaciones: Ponderacion[]): Observable<Ponderacion[]> {
-    return this.http.post<Ponderacion[]>(this.url + '/crearLista', ponderaciones);
+    return this.http.post<Ponderacion[]>(`${baserUrl}/api/ponderacion/crearLista`, ponderaciones);
   }
 
   //metodo para listar ponderacion
   public listarPonderacion(): Observable<Ponderacion[]> {
     return this.http
-      .get(this.url + '/listar')
+      .get(`${baserUrl}/api/ponderacion/listar`)
       .pipe(map((response) => response as Ponderacion[]));
   } 
 
@@ -35,30 +33,35 @@ export class PonderacionService {
 
   public getPonderacionById(id: number): Observable<Ponderacion> {
 
-    return this.http.get<Ponderacion>(this.url + '/buscar/' + id);
+    return this.http.get<Ponderacion>(`${baserUrl}/api/ponderacion/buscar/${id}`);
   }
 
   actualizar(id: any, crite: any): Observable<any> {
-    return this.http.put(`${this.url}/actualizar/${id}`, crite);
+    return this.http.put(`${baserUrl}/api/ponderacion/actualizar/${id}`, crite);
   }
 
 
   public listarPonderacionPorModelo(id_modelo: number): Observable<Ponderacion[]> {
-    return this.http.get<Ponderacion[]>(this.url + '/listarPonderacionPorModelo/' + id_modelo);
+    return this.http.get<Ponderacion[]>(`${baserUrl}/api/ponderacion/listarPonderacionPorModelo/${id_modelo}`);
   }
 
+  public idmax(id_modelo: number): Observable<PonderacionProjection[]> {
+    return this.http.get<PonderacionProjection[]>(`${baserUrl}/api/ponderacion/idmax/${id_modelo}`);
+  }
 
-  public listarPonderacionPorFecha(fecha: string): Observable<Ponderacion[]> {
-    return this.http.get<Ponderacion[]>(this.url + '/listarPonderacionPorFecha/' + fecha);
+  public listarPonderacionModelo(id_modelo: number): Observable<PonderacionProjection[]> {
+    return this.http.get<PonderacionProjection[]>(`${baserUrl}/api/ponderacion/listarPonderacionPorModelo/${id_modelo}`);
+  }
+  public listarPonderacionPorFecha(fecha: string,contador:number): Observable<Ponderacion[]> {
+    return this.http.get<Ponderacion[]>(`${baserUrl}/api/ponderacion/listarPonderacionPorFecha/${fecha}/${contador}`);
   }
 
   //@GetMapping("/listarPorFecha/{fecha}")
   public listarPorFecha(fecha: string): Observable<Ponderacion[]> {
-    return this.http.get<Ponderacion[]>(this.url + '/listarPorFecha/' + fecha);
+    return this.http.get<Ponderacion[]>(`${baserUrl}/api/ponderacion/listarPorFecha/` + fecha);
   }
-
-
-
-
+  getEliminar(contador: number,fecha:string): Observable<Ponderacion> {
+    return this.http.delete<Ponderacion>(`${baserUrl}/api/ponderacion/eliminarponderacion/${contador}/${fecha}`);
+  }
 
 }
