@@ -7,6 +7,9 @@ import { CriteriosService } from 'src/app/services/criterios.service';
 import { Subcriterio } from 'src/app/models/Subcriterio';
 import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 import Swal from 'sweetalert2';
+import { CriterioSubcriteriosProjection } from 'src/app/interface/CriterioSubcriteriosProjection';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 @Component({
   selector: 'app-criterios-admin',
   templateUrl: './criterios-admin.component.html',
@@ -20,6 +23,34 @@ export class CriteriosAdminComponent implements OnInit {
   criterios: any[] = [];
   frmCriterio: FormGroup;
   guardadoExitoso: boolean = false;
+
+
+
+  //tabla
+  itemsPerPageLabel = 'Criterios por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+
+  filterPost = '';
+  dataSource = new MatTableDataSource<CriterioSubcriteriosProjection>();
+  columnasUsuario: string[] = ['id_criterio', 'nombre', 'descripcion'];
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
   constructor(
     private criterioservice: CriteriosService,
     private router: Router, private fb: FormBuilder
@@ -29,110 +60,36 @@ export class CriteriosAdminComponent implements OnInit {
       descripcion: ['', [Validators.required]]
     })
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
+  }
   ngOnInit(): void {
     this.listar();
   }
-  guardar() {
-    this.crite = this.frmCriterio.value;
-    this.criterioservice.crear(this.crite)
-      .subscribe(
-        (response) => {
-          console.log('Criterio creado con éxito:', response);
-          this.guardadoExitoso = true;
-          this.listar();
-          Swal.fire(
-            'Exitoso',
-            'Se ha completado el registro con exito',
-            'success'
-          )
-        },
-        (error) => {
-          console.error('Error al crear el criterio:', error);
-          Swal.fire(
-            'Error',
-            'Ha ocurrido un error',
-            'warning'
-          )
-        }
-      );
-
-  }
-  eliminar(criterio: any) {
-    Swal.fire({
-      title: 'Estas seguro de eliminar el registro?',
-      showDenyButton: true,
-      confirmButtonText: 'Cacelar',
-      denyButtonText: `Eliminar`,
-    }).then((result) => {
-      /* Read more about isConfirmed, isDenied below */
-      if (!result.isConfirmed) {
-        if (this.getSubcriteriosPorCriterio(criterio) == 0) {
-          this.criterioservice.eliminar(criterio).subscribe(
-            (response) => {
-              this.listar()
-              Swal.fire('Eliminado!', '', 'success')
-            }
-          );
-        } else {
-          Swal.fire('Error!', 'Este criterio no se puede eliminar, tiene subcriterios', 'warning')
-        }
-      }
-    })
-
-  }
-
+ 
   listar(): void {
-    this.criterioservice.getCriterios().subscribe(
+    this.criterioservice.obtenerDatosCriterios().subscribe(
       (data: any[]) => {
         this.criterios = data;
+        this.dataSource.data = this.criterios;
       },
       (error: any) => {
         console.error('Error al listar los criterios:', error);
       }
     );
   }
-
-  editDatos(criterio: Criterio) {
-    // this.crite.id_criterio = criterio.id_criterio
-    // this.crite.nombre = criterio.nombre
-    // this.crite.descripcion = criterio.descripcion
-    this.crite = criterio;
-    this.frmCriterio = new FormGroup({
-      nombre: new FormControl(criterio.nombre),
-      descripcion: new FormControl(criterio.descripcion)
-
-    });
-  }
-
-  limpiarFormulario() {
-    this.frmCriterio.reset();
-    this.crite = new Criterio;
-  }
-
-  actualizar() {
-    this.crite.nombre = this.frmCriterio.value.nombre;
-    this.crite.descripcion = this.frmCriterio.value.descripcion;
-    this.criterioservice.actualizar(this.crite.id_criterio, this.crite)
-      .subscribe(response => {
-        this.crite = new Criterio();
-        this.listar();
-        Swal.fire('Operacion exitosa!', 'El registro se actualizo con exito', 'success')
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
       });
-  }
-
-  verDetalles(criterio: any) {
-    this.router.navigate(['/sup/flujo-criterio/criterios-subcriterio'], { state: { data: criterio } });
-  }
-
-  lista_subcriterios: any[] = [];
-
-  getSubcriteriosPorCriterio(criterio: Criterio): number {
-    let contador = 0;
-    for (let subcriterio of this.lista_subcriterios) {
-      if (subcriterio.criterio.id_criterio === criterio.id_criterio) {
-        contador++;
-      }
+    } else {
+      this.dataSource.data = this.criterios;;
     }
-    return contador;
   }
+
+
+  
 }

@@ -1,4 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { CriterioSubcriteriosProjection } from 'src/app/interface/CriterioSubcriteriosProjection';
 import { Indicador } from 'src/app/models/Indicador';
 import { Subcriterio } from 'src/app/models/Subcriterio';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
@@ -15,6 +18,10 @@ export class SubcriteriosAdminComponent {
     private subcriterioservice: SubcriteriosService,
   ) {
   }
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+
+  }
   ngOnInit() {
     this.listar()
   }
@@ -25,38 +32,53 @@ export class SubcriteriosAdminComponent {
   public subcrite = new Subcriterio();
   subcriterios: any[] = [];
 
-  
+
+  //tabla
+  itemsPerPageLabel = 'Criterios por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel = 'Primera';
+  previousPageLabel = 'Anterior';
+  rango: any = (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+
+  filterPost = '';
+  dataSource = new MatTableDataSource<CriterioSubcriteriosProjection>();
+  columnasUsuario: string[] = ['nombreCriterio', 'id_subcriterio', 'nombre', 'descripcion', 'cantidadIndicadores'];
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+
+
   listar(): void {
-    this.subcriterioservice.getSubcriterios().subscribe(
-      (data: Subcriterio[]) => {
+    this.subcriterioservice.obtenerDatosSubcriteriosFull().subscribe(
+      (data: any[]) => {
         this.subcriterios = data;
+        this.dataSource.data = this.subcriterios;
       },
       (error: any) => {
         console.error('Error al listar los subcriterios:', error);
       }
     );
-    this.listarSub();
   }
-
   //Numero de indicadores
-  lista_indicadores: any[] = [];
-  getIndicadoresPorSubriterio(subcriterio: Subcriterio): number {
-    let contador = 0;
-    for (let indicador of this.lista_indicadores) {
-      if (indicador.subcriterio.id_subcriterio === subcriterio.id_subcriterio) {
-        contador++;
-      }
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+      this.dataSource.data = this.subcriterios;;
     }
-    return contador;
-  }
-  listarSub(): void {
-    this.indicadorservice.getIndicadors().subscribe(
-      (data: Indicador[]) => {
-        this.lista_indicadores = data;
-      },
-      (error: any) => {
-        console.error('Error al listar los indicadores:', error);
-      }
-    );
   }
 }
