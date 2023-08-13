@@ -7,6 +7,7 @@ import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { ActivProyection } from 'src/app/interface/ActivProyection';
 
 
 
@@ -17,7 +18,7 @@ import { MatSort } from '@angular/material/sort';
   styleUrls: ['./actividad-autoridad.component.css']
 })
 export class ActividadAutoridadComponent implements AfterViewInit, OnInit {
-  dataSource = new MatTableDataSource<usuario>();
+  dataSource = new MatTableDataSource<ActivProyection>();
   displayedColumns: string[] = ['username', 'primer_nombre', 'primer_apellido', 'correo', 'acciones'];
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -37,7 +38,8 @@ export class ActividadAutoridadComponent implements AfterViewInit, OnInit {
   public actividades: Actividades[] = [];
   responsable: usuario[] = [];
   public actividad = new Actividades();
-  filteredActividades: usuario[] = [];
+  filteredActividades: ActivProyection[] = [];
+  resActividad: ActivProyection[] = [];
 
 
   ngAfterViewInit() {
@@ -64,22 +66,23 @@ export class ActividadAutoridadComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     this.dataSource.paginator = this.paginator; // Configura el paginator en la inicialización
     this.getResponsables();
+    
    
   }
 
   get() {
     this.services.get().subscribe((actividades) => {
       this.actividades = actividades;
-      this.filterActividades();
+     /* this.filterActividades();*/
     });
   }
 
   getResponsables() {
-    this.serEvide.listarUsuarioRes().subscribe(
+    this.services.getActiv().subscribe(
       (data) => {
-        this.responsable = data;
-        this.filterActividades();
-        console.log(JSON.stringify(this.responsable));
+        this.resActividad = data;
+        //this.filterActividades();
+        console.log(JSON.stringify(this.resActividad));
     
       }
     );
@@ -94,15 +97,23 @@ export class ActividadAutoridadComponent implements AfterViewInit, OnInit {
     );
   }
 
-  filterActividades() {
-    this.filteredActividades = this.responsable.filter(
+  /*filterActividades() {
+    this.filteredActividades = this.resActividad.filter(
       (actividad) =>
-      
-        actividad.username.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        actividad.persona.primer_nombre.toLowerCase().includes(this.searchTerm.toLowerCase())
+  
+        /*actividad.primer_nombre.toLowerCase().includes(this.searchTerm.toLowerCase())
         
     );
 
+  }*/
+  listaAc(usu: usuario) {
+    this.services.getActByUsua(usu.id).subscribe(
+      (data) => {
+        this.actividades = data;
+        this.dataSource.data = this.filteredActividades;
+      }
+    );
   }
+
   
 }
