@@ -1,9 +1,12 @@
-<h2 mat-dialog-title>Añadir Criterios</h2>
+<br />
+<blockquote class="blockquote text-dark" style="margin-top: 1%">
+  <h1><strong>Seleccione sus indicadores</strong></h1>
+</blockquote>
 <mat-dialog-content>
 
     <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
         <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
-            <th mat-header-cell *matHeaderCellDef>{{columnNames[column]}}</th>
+            <th mat-header-cell *matHeaderCellDef><strong>{{columnNames[column]}}</strong></th>
             <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
         </ng-container>
         <ng-container matColumnDef="expand">
@@ -24,9 +27,9 @@
                     [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
 
 
-                    <table mat-table [dataSource]="dataSource2" multiTemplateDataRows class="mat-elevation-z8">
+                    <table mat-table [dataSource]="dataSource2" multiTemplateDataRows class="mat-elevation-z8" style="background-color: rgba(233, 232, 231, 0.7); box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); ">
                         <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay2">
-                            <th mat-header-cell *matHeaderCellDef>{{columnNamesSub[column]}}</th>
+                            <th mat-header-cell *matHeaderCellDef><strong>{{columnNamesSub[column]}}</strong></th>
                             <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
                         </ng-container>
                         <ng-container matColumnDef="expand">
@@ -51,7 +54,7 @@
                                         class="mat-elevation-z8">
                                         <ng-container matColumnDef="{{column}}"
                                             *ngFor="let column of columnsToDisplay3">
-                                            <th mat-header-cell *matHeaderCellDef>{{columnNamesInd[column]}}</th>
+                                            <th mat-header-cell *matHeaderCellDef><strong>{{columnNamesInd[column]}}</strong></th>
                                             <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
                                         </ng-container>
                                         <ng-container matColumnDef="expand">
@@ -108,6 +111,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancelar</button>
-    <button mat-button [mat-dialog-close]="true" cdkFocusInitial (click)="guardar()">Guardar</button>
+    <button class="btn btn-warning" mat-dialog-close>Cancelar</button>
+    <button class="btn btn-primary"[mat-dialog-close]="true" cdkFocusInitial (click)="guardar()">Guardar</button>
 </mat-dialog-actions>

@@ -6,6 +6,7 @@ export class Asignacion_Criterios {
     usuario: Usuario2 = new Usuario2;
     criterio: Criterio = new Criterio;
     visible: boolean = true;
+    id_modelo:number=0;
 }
 
 

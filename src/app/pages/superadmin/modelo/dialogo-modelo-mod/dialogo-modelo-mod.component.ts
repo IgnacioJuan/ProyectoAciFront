@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DialogoCriterioComponent } from '../dialogo-criterio/dialogo-criterio.component';
 import { ModeloService } from 'src/app/services/modelo.service';
@@ -20,11 +20,11 @@ let VALOR: any[] = [];
 
 
 @Component({
-  selector: 'app-dialogo-modelo',
-  templateUrl: './dialogo-modelo.component.html',
-  styleUrls: ['./dialogo-modelo.component.css']
+  selector: 'app-dialogo-modelo-mod',
+  templateUrl: './dialogo-modelo-mod.component.html',
+  styleUrls: ['./dialogo-modelo-mod.component.css']
 })
-export class DialogoModeloComponent implements OnInit {
+export class DialogoModeloModComponent implements OnInit {
 
   isLoggedIn = false;
   user: any;
@@ -35,20 +35,21 @@ export class DialogoModeloComponent implements OnInit {
   asignacionIndicador: AsignacionIndicador = new AsignacionIndicador();
   listaIndicadores: Indicador[] = [];
 
-  constructor(public login: LoginService, private asignacionIndicadorService: AsignacionIndicadorService, private dialogRef: MatDialogRef<DialogoModeloComponent>, private _formBuilder: FormBuilder, private dialog: MatDialog, private router: Router, private modelo_service: ModeloService, private sharedDataService: SharedDataService,
+  constructor(public login: LoginService, private asignacionIndicadorService: AsignacionIndicadorService, private dialogRef: MatDialogRef<DialogoModeloModComponent>, private _formBuilder: FormBuilder, private dialog: MatDialog, private router: Router, private modelo_service: ModeloService, private sharedDataService: SharedDataService,
     private asignacionAdminService: AsignacionCriterioService,
-    private indicadorService: IndicadoresService) {
+    private indicadorService: IndicadoresService,
+    @Inject(MAT_DIALOG_DATA) public data: any) {
 
   }
 
   ngOnInit(): void {
-
-    this.sharedDataService.datos$.subscribe(data => {
-      this.dataSource = VALOR;
-      this.dataSource = data;
-      console.log(this.dataSource);
-    });
-
+    this.modelo = this.data.item;
+    console.log(this.modelo)
+    // this.sharedDataService.datos$.subscribe(data => {
+    //   this.dataSource = VALOR;
+    //   this.dataSource = data;
+    // });
+    this.listarIndicadores();
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
     this.login.loginStatusSubjec.asObservable().subscribe(
@@ -58,14 +59,24 @@ export class DialogoModeloComponent implements OnInit {
 
       }
     );
-    console.log(this.user);
   }
 
-
+  listarIndicadores(): void {
+    console.log(this.modelo.id_modelo)
+    this.indicadorService.getIndicadorPorModelo(this.modelo.id_modelo).subscribe(
+      (data: Indicador[]) => {
+        console.log(data)
+        this.dataSource = data;
+      },
+      (error: any) => {
+        console.error('Error al listar los criterios:', error);
+      }
+    );
+  }
 
   //metodo para crear un modelo
-  public createModelo(): void {
-    if (this.modelo.fecha_inicio == null || this.modelo.fecha_fin == null || this.modelo.fecha_final_act == null || this.modelo.nombre == null || this.dataSource.length == 0) {
+  public modificarModelo(): void {
+    if (this.modelo.fecha_inicio == null || this.modelo.fecha_fin == null || this.modelo.fecha_final_act == null || this.modelo.nombre == null) {
       Swal.fire('Error', `Debe llenar todos los campos`, 'error');
       return;
     }
@@ -76,26 +87,24 @@ export class DialogoModeloComponent implements OnInit {
       return;
     }
 
-    this.modelo_service.createModelo(this.modelo).subscribe(
-      response => {
-        console.log(response);
-        this.dataSource.forEach((element: any) => {
-          this.asignacionIndicador.indicador = element;
-          this.asignacionIndicador.modelo = response;
-          this.asignacionIndicadorService.createAsignacionIndicador(this.asignacionIndicador).subscribe(
-            (result) => {
-              console.log(result);
-              //this.reiniciarAdmin();
-              this.reiniciarIndicador();
-              this.bloquearModelo(response.id_modelo);
-              this.sharedDataService.agregarDatos([]);
-              this.dialogRef.close();
-            }
-          )
-        });
+
+    Swal.fire({
+      title: 'Estas seguro de modificar el registro?',
+      showDenyButton: true,
+      confirmButtonText: 'Cacelar',
+      denyButtonText: `Modificar`,
+    }).then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (!result.isConfirmed) {
+        this.modelo_service.modificar(this.modelo).subscribe(
+          response => {
+            this.dialogRef.close();
+            Swal.fire('Procesado!', '', 'success')
+          }
+        )
 
       }
-    )
+    })
   }
 
   firstFormGroup = this._formBuilder.group({
@@ -154,13 +163,4 @@ export class DialogoModeloComponent implements OnInit {
     })
   }
 
-  bloquearModelo(id: any) {
-    this.modelo_service.listarModeloExcepto(id).subscribe(data => {
-      data.forEach((element: any) => {
-        this.modelo_service.eliminarlogic(element.id_modelo).subscribe(data => {
-          console.log(data);
-        });
-      });
-    });
-  }
 }
