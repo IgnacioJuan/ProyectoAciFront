@@ -1,3 +1,4 @@
+import { MatTableDataSource } from '@angular/material/table';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 
@@ -15,6 +16,7 @@ import Swal from 'sweetalert2';
 import { PonderacionService } from 'src/app/services/ponderacion.service';
 import { HttpClient } from '@angular/common/http';
 import { isEmpty } from 'rxjs';
+import { MatPaginator } from '@angular/material/paginator';
 
 
 
@@ -28,11 +30,10 @@ export class PonderacionModeloComponent implements OnInit {
   @ViewChild("chart")
   chart: any;
   model: Modelo = new Modelo();
-  dataSource: any;
   asignacion: any;
   indicadorClase: Indicador = new Indicador();
   indicadores: any[] = [];
-  datos:any[] = [];
+  datos: any[] = [];
   title = 'ng-chart';
   porcentaje!: number;
   indicador: any;
@@ -50,12 +51,17 @@ export class PonderacionModeloComponent implements OnInit {
   modelo1!: Modelo;
   fechaActual!: Date;
   fechaSeleccionada: any;
-  conf: number = 0;
+  conf: any;
   contador: number = 1;
   idmax: number = 0;
 
-  @ViewChild('miTabla', { static: true }) miTabla!: ElementRef;
+  dataSource = new MatTableDataSource<any>();
+  filterPost = '';
+  columnasUsuario: string[] = ['criterio_nombre', 'subcriterio_nombre', 'indicador_nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor_obt'];
 
+
+  @ViewChild('miTabla', { static: true }) miTabla!: ElementRef;
+  @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router, private fb: FormBuilder,
@@ -70,48 +76,42 @@ export class PonderacionModeloComponent implements OnInit {
   }
 
 
+  ngAfterViewInit() {
+     this.dataSource.paginator = this.paginator || null;
+  }
 
   ocultarBoton: boolean = false;
   ngOnInit(): void {
-    this.fechaActual = new Date();
-    this.conf = 0;
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.fechaSeleccionada = params['fecha']; // Obtener la fecha actual
-      this.conf = params['conf'];
-      if (this.conf == 1) {
-        this.ocultarBoton = true;
-      } else {
-        this.ocultarBoton = false;
-      }
-      
- 
-    });
-    let id_modelo = localStorage.getItem("id");
-    console.log("id para max "+id_modelo)
-    this.servicePonderacion.idmax(Number(id_modelo)).subscribe(
+    this.fechaActual = history.state.fecha;
+    this.conf = history.state.conf;
+    this.model = history.state.modelo;
+    if (this.conf == 1) {
+      this.ocultarBoton = true;
+    } else {
+      this.ocultarBoton = false;
+    }
+
+    this.servicePonderacion.idmax(Number(this.model.id_modelo)).subscribe(
       (response: any) => {
         if (response.length > 0) {
           const contadorMaximo = response[0].contador;
           if (contadorMaximo !== null) {
             this.idmax = contadorMaximo + 1;
-            console.log("Contador máximo:", contadorMaximo, "Final:", this.idmax);
           } else {
-            
+
             this.idmax = 1;
-            console.log("Contador es nulo:"+this.idmax );
           }
         } else {
           this.idmax = 1;
-          console.log("Contador es cadena:"+this.idmax );
         }
       },
       (error: any) => {
         console.error(error);
       }
     );
- 
+
     this.recibeIndicador();
-    this.listPonderacion();
+    //this.listPonderacion();
 
     this.indicadorservice.getIndicadores().subscribe(data => {
       this.indicadores = data;
@@ -121,70 +121,63 @@ export class PonderacionModeloComponent implements OnInit {
 
 
   recibeIndicador() {
-    let idModelo = localStorage.getItem("id");
-    let cont = localStorage.getItem("contador");
+    // Capturar el ID del indicador del modelo
+    this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.model.id_modelo)).subscribe(info => {
+      let cont = history.state.contador;
+      this.indicadorservice.getIndicadors().subscribe(result => {
+        this.dataSource.data = [];
+        this.asignacion = info;
+        if (this.conf == 1) {
+          this.dataSource.data = result.filter((indicador: any) => {
+            return info.some((asignacion: any) => {
+              return indicador.id_indicador === asignacion.indicador.id_indicador;
 
-    this.modeloService.getModeloById(Number(idModelo)).subscribe(dataModelo => {
-      this.model = dataModelo;
-      // Capturar el ID del indicador del modelo
-
-      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(idModelo)).subscribe(info => {
-
-        this.indicadorservice.getIndicadors().subscribe(result => {
-          this.dataSource = [];
-          this.asignacion = info;
-
-          if (this.conf == 1) {
-            this.dataSource = result.filter((indicador: any) => {
-              return info.some((asignacion: any) => {
-                return indicador.id_indicador === asignacion.indicador.id_indicador;
-                
-              });
-              
             });
-            this.servicePonderacion.listarPonderacionPorFecha(this.fechaSeleccionada,Number(cont)).subscribe(data => {
-              this.dataSource.forEach((indicador: any) => {
-                data.forEach((ponderacion: any) => {
-                  if (indicador.id_indicador == ponderacion.indicador.id_indicador) {
-                    indicador.nombre=ponderacion.indicador.nombre;
-                    indicador.peso = ponderacion.peso;
-                    indicador.porc_obtenido = ponderacion.porc_obtenido;
-                    indicador.porc_utilida_obtenida = ponderacion.porc_utilida_obtenida;
-                    indicador.valor_obtenido = ponderacion.valor_obtenido;
-                    
-                    
-                  }
-                
-                });
-                
-              });
-             
-              this.coloresTabla();
-             
-            });
-            console.log(this.dataSource);
-            this.createChart();
-           
-            this.GraficaPastel();
-            this.calculatePromedioPorCriterio();
 
-            this.calcularTSumaPesos();
-            this.calcularUtilidad();
+          });
+          this.servicePonderacion.listarPonderacionPorFecha(this.fechaSeleccionada, Number(cont)).subscribe(data => {
+            this.dataSource.data.forEach((indicador: any) => {
+              data.forEach((ponderacion: any) => {
+                if (indicador.id_indicador == ponderacion.indicador.id_indicador) {
+                  indicador.nombre = ponderacion.indicador.nombre;
+                  indicador.peso = ponderacion.peso;
+                  indicador.porc_obtenido = ponderacion.porc_obtenido;
+                  indicador.porc_utilida_obtenida = ponderacion.porc_utilida_obtenida;
+                  indicador.valor_obtenido = ponderacion.valor_obtenido;
+
+
+                }
+
+              });
+
+            });
+
             this.coloresTabla();
-          } else {
-            this.dataSource = result.filter((indicador: any) => {
-              return info.some((asignacion: any) => {
-                return indicador.id_indicador === asignacion.indicador.id_indicador;
-              });
+
+          });
+          console.log("hola")
+          console.log(this.dataSource.data);
+          this.createChart();
+
+          this.GraficaPastel();
+          this.calculatePromedioPorCriterio();
+
+          this.calcularTSumaPesos();
+          this.calcularUtilidad();
+          this.coloresTabla();
+        } else {
+          this.dataSource.data = result.filter((indicador: any) => {
+            return info.some((asignacion: any) => {
+              return indicador.id_indicador === asignacion.indicador.id_indicador;
             });
-            this.createChart();
-            this.GraficaPastel();
-            this.calculatePromedioPorCriterio();
-            this.calcularTSumaPesos();
-            this.calcularUtilidad();
-            this.coloresTabla();
-          }
-        });
+          });
+          this.createChart();
+          this.GraficaPastel();
+          this.calculatePromedioPorCriterio();
+          this.calcularTSumaPesos();
+          this.calcularUtilidad();
+          this.coloresTabla();
+        }
       });
     });
   }
@@ -193,69 +186,68 @@ export class PonderacionModeloComponent implements OnInit {
   //metodo para guardar en ponderacion
 
   guardarDatosEnAPI(event: Event): void {
-    console.log("Estas en guardar");
     event.preventDefault();
     const dataParaGuardar: Ponderacion[] = [];
     let idModelo = localStorage.getItem("id");
-  this.dataSource.forEach((column: any) => {
-    const indicadorEncontrado = this.indicadores.find((indicador: any) => indicador.nombre === column.nombre);
-    if (indicadorEncontrado) {
-      console.log("Indicador encontrado:", indicadorEncontrado);
-    } else {
-      console.log("Indicador no encontrado para:", column.nombre);
-    }
-    const fila: Ponderacion = {
-   
-      indicador:  { id_indicador: Number(indicadorEncontrado.id_indicador),nombre:'', descripcion:'', peso:0, tipo:'',
-      estandar:0, valor_obtenido:0, porc_obtenido:0, porc_utilida_obtenida:0,subcriterio:null, visible:true },
-      peso: column.peso || 0,
-      porc_obtenido: column.porc_obtenido || 0,
-      porc_utilida_obtenida: column.porc_utilida_obtenida || 0,
-      valor_obtenido: column.valor_obtenido || 0,
-      id_ponderacion: 0,
-      fecha: new Date(),
-      visible: true,
-      modelo: { id_modelo: Number(idModelo), nombre:'', fecha_inicio:this.fecha, fecha_fin:this.fecha, fecha_final_act:this.fecha,
-    visible:true,usuario:null},
-    contador:this.idmax,
-    };
+    this.dataSource.data.forEach((column: any) => {
+      const indicadorEncontrado = this.indicadores.find((indicador: any) => indicador.nombre === column.nombre);
+      if (indicadorEncontrado) {
+      } else {
+      }
+      const fila: Ponderacion = {
 
-    dataParaGuardar.push(fila);
-    this.datos=dataParaGuardar;
-  });
-  console.log("Datos a guardar"+dataParaGuardar);
-  this.servicePonderacion.guardarPonderacionLista(dataParaGuardar).subscribe(
-    (response: any) => {
-      // Maneja la respuesta de la API si es necesario
-      console.log(response);
-      Swal.fire({
-        title: 'Ponderacion guardada éxitosamente',
-        icon: 'success',
-        // ...
-      });
+        indicador: {
+          id_indicador: Number(indicadorEncontrado.id_indicador), nombre: '', descripcion: '', peso: 0, tipo: '',
+          estandar: 0, valor_obtenido: 0, porc_obtenido: 0, porc_utilida_obtenida: 0, subcriterio: null, visible: true
+        },
+        peso: column.peso || 0,
+        porc_obtenido: column.porc_obtenido || 0,
+        porc_utilida_obtenida: column.porc_utilida_obtenida || 0,
+        valor_obtenido: column.valor_obtenido || 0,
+        id_ponderacion: 0,
+        fecha: new Date(),
+        visible: true,
+        modelo: {
+          id_modelo: Number(idModelo), nombre: '', fecha_inicio: this.fecha, fecha_fin: this.fecha, fecha_final_act: this.fecha,
+          visible: true, usuario: null
+        },
+        contador: this.idmax,
+      };
 
-      this.router.navigate(['/sup/modelo/detallemodelo']);
-      // Recarga la página después de guardar los datos en la API
-    },
-    (error: any) => {
-      // Maneja el error si ocurre alguno
-      console.error(error);
-      Swal.fire({
-        title: 'Error al guardar ponderación',
-        text: 'Ha ocurrido un error al intentar guardar la ponderación.',
-        icon: 'error',
-      
-      });
-    }
-  );
+      dataParaGuardar.push(fila);
+      this.datos = dataParaGuardar;
+    });
+    console.log("Datos a guardar" + dataParaGuardar);
+    this.servicePonderacion.guardarPonderacionLista(dataParaGuardar).subscribe(
+      (response: any) => {
+        Swal.fire({
+          title: 'Ponderacion guardada éxitosamente',
+          icon: 'success',
+          // ...
+        });
+
+        this.router.navigate(['/sup/modelo/detallemodelo'], { state: { modelo: this.model } });
+        // Recarga la página después de guardar los datos en la API
+      },
+      (error: any) => {
+        // Maneja el error si ocurre alguno
+        console.error(error);
+        Swal.fire({
+          title: 'Error al guardar ponderación',
+          text: 'Ha ocurrido un error al intentar guardar la ponderación.',
+          icon: 'error',
+
+        });
+      }
+    );
   }
-  
+
 
   //enviamos modelo
   enviarModelo(modelo: Modelo): void {
     localStorage.setItem("id", modelo.id_modelo.toString());
     this.model = modelo;
-   // this.router.navigate(['/sup/modelo/detallemodelo']);
+    // this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   //Calculamos el promedio de cada criterio
@@ -263,7 +255,7 @@ export class PonderacionModeloComponent implements OnInit {
     const promediosPorCriterio: { [criterio: string]: number } = {};
     const conteoIndicadoresPorCriterio: { [criterio: string]: number } = {};
 
-    this.dataSource.forEach((indicador: any) => {
+    this.dataSource.data.forEach((indicador: any) => {
       const criterioNombre = indicador.subcriterio.criterio?.nombre;
       if (criterioNombre) {
         if (promediosPorCriterio[criterioNombre]) {
@@ -300,10 +292,10 @@ export class PonderacionModeloComponent implements OnInit {
           {
             label: "Porcentaje de logro",
             data: [
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido <= 25).length,
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
-              this.dataSource.filter((indicador: any) => indicador.porc_obtenido >= 75).length
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido <= 25).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido > 50 && indicador.porc_obtenido < 75).length,
+              this.dataSource.data.filter((indicador: any) => indicador.porc_obtenido >= 75).length
             ],
             backgroundColor: ['red', 'orange', 'yellow', 'green']
           }
@@ -322,7 +314,7 @@ export class PonderacionModeloComponent implements OnInit {
     const promediosPorCriterio: { [criterio: string]: number } = {};
     const conteoIndicadoresPorCriterio: { [criterio: string]: number } = {};
 
-    this.dataSource.forEach((indicador: any) => {
+    this.dataSource.data.forEach((indicador: any) => {
       const criterioNombre = indicador.subcriterio.criterio?.nombre;
       if (criterioNombre) {
         if (promediosPorCriterio[criterioNombre]) {
@@ -340,15 +332,9 @@ export class PonderacionModeloComponent implements OnInit {
       const promedioCriterio = promediosPorCriterio[criterio] / indicadoresCount;
       promediosPorCriterio[criterio] = promedioCriterio;
     });
-    console.log(promediosPorCriterio);
-
-    console.log(conteoIndicadoresPorCriterio);
-    const labels = this.dataSource.map((indicador: any) => indicador.subcriterio.criterio?.nombre);
+    const labels = this.dataSource.data.map((indicador: any) => indicador.subcriterio.criterio?.nombre);
 
     const filteredLabels = labels.filter((label: any, index: any) => labels.indexOf(label) === index).slice(0, 15);
-    console.log(filteredLabels + 'filtro criterios');
-    const salesData = ['467', '576', '572', '79', '92', '574', '573', '576'];
-    const profitData = ['542', '542', '536', '327', '17', '0.00', '538', '541'];
 
     this.chart = new Chart("MyChart", {
       type: 'bar',
@@ -412,7 +398,7 @@ export class PonderacionModeloComponent implements OnInit {
 
   //colores de la celda de la tabla
   coloresTabla() {
-    this.dataSource.forEach((indicador: any) => {
+    this.dataSource.data.forEach((indicador: any) => {
 
       if (indicador.porc_obtenido > 75 && indicador.porc_obtenido <= 100) {
         indicador.color = 'verde'; // Indicador con porcentaje mayor a 50% será de color verde
@@ -432,17 +418,18 @@ export class PonderacionModeloComponent implements OnInit {
 
   //regreso al modelo
   verCriterios() {
-    this.router.navigate(['/sup/modelo/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo'], { state: { modelo: this.model } });
   }
 
   //lista de ponderacion 
 
   listPonderacion() {
     this.servicePonderacion.listarPonderacion().subscribe(data => {
-      this.dataSource = data;
-
+      this.dataSource.data = data;
+      console.log("Holaaaa")
+      console.log(data)
     });
-    
+
   }
 
 
@@ -467,7 +454,7 @@ export class PonderacionModeloComponent implements OnInit {
 
   listarPonderacion() {
     this.servicePonderacion.listarPonderacion().subscribe(data => {
-      this.dataSource = data;
+      this.dataSource.data = data;
     });
   }
 
@@ -476,8 +463,8 @@ export class PonderacionModeloComponent implements OnInit {
 
   getRowCountCriterio(criterio: string, index: number): number {
     let count = 1;
-    for (let i = index + 1; i < this.dataSource.length; i++) {
-      if (this.dataSource[i].subcriterio.criterio.nombre === criterio) {
+    for (let i = index + 1; i < this.dataSource.data.length; i++) {
+      if (this.dataSource.data[i].subcriterio.criterio.nombre === criterio) {
         count++;
       } else {
         break;
@@ -488,8 +475,8 @@ export class PonderacionModeloComponent implements OnInit {
 
   getRowCountSubcriterio(subcriterio: string, index: number): number {
     let count = 1;
-    for (let i = index + 1; i < this.dataSource.length; i++) {
-      if (this.dataSource[i].subcriterio.nombre === subcriterio) {
+    for (let i = index + 1; i < this.dataSource.data.length; i++) {
+      if (this.dataSource.data[i].subcriterio.nombre === subcriterio) {
         count++;
       } else {
         break;
@@ -504,7 +491,7 @@ export class PonderacionModeloComponent implements OnInit {
   sumaTotalPesos: number = 0;
 
   calcularTSumaPesos(): void {
-    this.sumaTotalPesos = this.dataSource.reduce((suma: any, indicador: any) => suma + indicador.peso, 0);
+    this.sumaTotalPesos = this.dataSource.data.reduce((suma: any, indicador: any) => suma + indicador.peso, 0);
     console.log(this.sumaTotalPesos + ' : el total es')
   }
 
@@ -512,13 +499,13 @@ export class PonderacionModeloComponent implements OnInit {
   sumaUtilidad: number = 0;
 
   calcularUtilidad(): void {
-    this.sumaUtilidad = this.dataSource.reduce((suma: any, indicador: any) => suma + indicador.porc_utilida_obtenida, 0);
+    this.sumaUtilidad = this.dataSource.data.reduce((suma: any, indicador: any) => suma + indicador.porc_utilida_obtenida, 0);
     console.log(this.sumaUtilidad + ' : el total es')
   }
 
   getRowSpanCriterio(nombreCriterio: string): number {
     let count = 1;
-    for (const column of this.dataSource) {
+    for (const column of this.dataSource.data) {
       if (column.subcriterio.criterio.nombre === nombreCriterio) {
         count++;
       }
@@ -528,7 +515,7 @@ export class PonderacionModeloComponent implements OnInit {
 
   getRowSpanSubcriterio(nombreSubcriterio: string): number {
     let count = 1;
-    for (const column of this.dataSource) {
+    for (const column of this.dataSource.data) {
       if (column.subcriterio.nombre === nombreSubcriterio) {
         count++;
       }
@@ -541,8 +528,8 @@ export class PonderacionModeloComponent implements OnInit {
       return false;
     }
 
-    const currentSubcriterio = this.dataSource[index].subcriterio;
-    const previousSubcriterio = this.dataSource[index - 1].subcriterio;
+    const currentSubcriterio = this.dataSource.data[index].subcriterio;
+    const previousSubcriterio = this.dataSource.data[index - 1].subcriterio;
 
     return currentSubcriterio.nombre !== previousSubcriterio.nombre ||
       currentSubcriterio.criterio.nombre !== previousSubcriterio.criterio.nombre;
@@ -554,8 +541,8 @@ export class PonderacionModeloComponent implements OnInit {
       return true;
     }
 
-    const currentCriterioNombre = this.dataSource[index].subcriterio.criterio.nombre;
-    const previousCriterioNombre = this.dataSource[index - 1].subcriterio.criterio.nombre;
+    const currentCriterioNombre = this.dataSource.data[index].subcriterio.criterio.nombre;
+    const previousCriterioNombre = this.dataSource.data[index - 1].subcriterio.criterio.nombre;
 
     return currentCriterioNombre !== previousCriterioNombre;
   }
@@ -563,8 +550,8 @@ export class PonderacionModeloComponent implements OnInit {
   getRowCountCriterioName(index: number): number {
     let count = 1;
 
-    for (let i = index + 1; i < this.dataSource.length; i++) {
-      if (this.dataSource[i].subcriterio.criterio.nombre === this.dataSource[index].subcriterio.criterio.nombre) {
+    for (let i = index + 1; i < this.dataSource.data.length; i++) {
+      if (this.dataSource.data[i].subcriterio.criterio.nombre === this.dataSource.data[index].subcriterio.criterio.nombre) {
         count++;
       } else {
         break;
@@ -577,8 +564,8 @@ export class PonderacionModeloComponent implements OnInit {
   getRowCountSubcriterioName(index: number): number {
     let count = 1;
 
-    for (let i = index + 1; i < this.dataSource.length; i++) {
-      if (this.dataSource[i].subcriterio.nombre === this.dataSource[index].subcriterio.nombre) {
+    for (let i = index + 1; i < this.dataSource.data.length; i++) {
+      if (this.dataSource.data[i].subcriterio.nombre === this.dataSource.data[index].subcriterio.nombre) {
         count++;
       } else {
         break;
