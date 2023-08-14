@@ -82,6 +82,7 @@ export class DetalleModeloComponent implements OnInit {
   mostrarPrincipal: number = 0;
   mostrarSecundario: number = 0;
 contador: number = 0;
+idmodelo: number = 0;
   //lista de objetos de f llamada dataSourcePonderacion
   dataSourcePonderacion: any;
   dataSourcePonderacion2: f[] = [];
@@ -123,7 +124,8 @@ contador: number = 0;
   }
   ngOnInit(): void {
     this.model = history.state.modelo;
-    console.log(this.model)
+    this.idmodelo=this.model.id_modelo
+    console.log("Modelo a ver"+this.model.id_modelo)
     this.recibeModelo();
   }
 
@@ -175,7 +177,7 @@ contador: number = 0;
         this.mostrarPrincipal = 0;
         this.mostrarSecundario = 0;
         this.ocultarBoton = false;
-        this.ponderacionService.listarPonderacionPorModelo(this.model.id_modelo).subscribe(
+        this.ponderacionService.listarPonderacionPorModelo(this.idmodelo).subscribe(
           (fechas) => {
             if (fechas.length > 0) {
               this.mostrarSecundario = 1;

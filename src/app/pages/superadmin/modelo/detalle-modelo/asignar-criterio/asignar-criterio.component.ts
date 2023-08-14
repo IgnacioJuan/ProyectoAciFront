@@ -66,16 +66,17 @@ export class AsignarCriterioComponent implements OnInit {
   //objeto Asignacion_Criterios
   asignacion: any
   guardar() {
-    console.log(this.valorSeleccionado);
+    console.log("Valores criterio "+this.data.id+" usuario id"+this.valorSeleccionado+ "modelo "+this.id_modelo);
 
-    this.asignacionCriterio.listarAsignacion_AdminPorUsuarioCriterio(this.data.id, this.valorSeleccionado,this.id_modelo).subscribe(result => {
-      if (result == null) {
+    this.asignacionCriterio.listarAsignacion_AdminPorUsuarioCriterio(this.data.id, this.id_modelo).subscribe(result => {
+      if (result === null) {
+        console.log("Resultado consultado "+JSON.stringify(result));
         this.crearAsignacion();
         return;
       }
 
       this.asignacion = result;
-      console.log(this.asignacion);
+      console.log("Datos antiguos"+this.asignacion);
       this.asignacion.visible = false;
       this.asignacionCriterio.updateAsignacion_Admin(this.asignacion.id_asignacion, this.asignacion).subscribe(data => {
         console.log("actualizo datos"+data);
@@ -97,9 +98,9 @@ export class AsignarCriterioComponent implements OnInit {
     this.asignacion.criterio.id_criterio = this.data.id;
     this.asignacion.visible = true;
     this.asignacion.id_modelo=this.id_modelo
-    console.log("Datos de asignacion recibido: "+this.asignacion);
+    console.log("Datos de asignacion recibido: "+JSON.stringify(this.asignacion));
     this.asignacionCriterio.createAsignacion_Admin(this.asignacion).subscribe(data => {
-      console.log("Datos de asignacion: "+data);
+      console.log("Datos de asignacion: "+JSON.stringify(data));
       this.notificaruser();
       this.dialogRef.close({ data: 'Succes'});
     });
