@@ -129,11 +129,6 @@ idmodelo: number = 0;
     this.recibeModelo();
   }
 
-  pond(element:any) {
-    let fecha=element.fechapo;
-    localStorage.setItem("contador", element.contador);
-    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
-  }
 
   elimin(element: any) {
     Swal.fire({
@@ -231,6 +226,11 @@ idmodelo: number = 0;
   ponderacion(event: Event, element: any) {
     event.stopPropagation();
     this.sharedDataService.agregarIdCriterio(element.id_criterio);
+  }
+  pond(element:any) {
+    let fecha=element.fechapo;
+    localStorage.setItem("contador", element.contador);
+    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { state: { fecha: fecha, conf: 1, modelo: this.model, contador:element.contador } });
   }
 
   irinicio() {
