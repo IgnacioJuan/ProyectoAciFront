@@ -125,11 +125,11 @@ export class DetalleIndicadorComponent implements OnInit {
   }
 
   verCriterios() {
-    this.router.navigate(['/sup/modelo/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo'], { state: { modelo: this.model } });
   }
   goBack() {
     window.history.back();
-    this.router.navigate(['/sup/modelo/detalle-subcriterio']);
+    this.router.navigate(['/sup/modelo/detalle-subcriterio'], { state: { modelo: this.model , data:  history.state.data}});
   }
 
   irinicio() {
