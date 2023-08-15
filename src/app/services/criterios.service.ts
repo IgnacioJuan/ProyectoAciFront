@@ -7,6 +7,7 @@ import { Modelo } from '../models/Modelo';
 import { Observacion } from '../models/Observacion';
 import { Persona2 } from '../models/Persona2';
 import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriteriosProjection';
+import { proyeccionCriterio } from '../pages/admin/aprobar-rechazar-admin/proyecciones-testeo/proyeccionCriterio';
 
 
 @Injectable({
@@ -90,5 +91,9 @@ export class CriteriosService {
 
   getCriterioPorEvidencia(idEvidencia: number): Observable<Criterio[]> {
     return this.http.get<Criterio[]>(`${this.url}/obtenerNombreCriterioPorEvidencia/${idEvidencia}`);
+  }
+
+  getCriterioPorEvidenciaproyeccion(idEvidencia: number): Observable<proyeccionCriterio[]> {
+    return this.http.get<proyeccionCriterio[]>(`${this.url}/obtenerNombreCriterioPorEvidenciaproyeccion/${idEvidencia}`);
   }
 }

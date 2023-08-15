@@ -16,6 +16,8 @@ import { DetalleEvaluacionService } from 'src/app/services/detalle-evaluacion.se
 import { detalleEvaluacion } from 'src/app/models/DetalleEvaluacion';
 import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
+import { proyeccionCriterio } from './proyecciones-testeo/proyeccionCriterio';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-aprobar-rechazar-admin',
@@ -23,7 +25,7 @@ import { NotificacionService } from 'src/app/services/notificacion.service';
   styleUrls: ['./aprobar-rechazar-admin.component.css'],
 })
 export class AprobarRechazarAdminComponent implements OnInit {
-  columnas: string[] = ['id', 'descripcion', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'descripcion', 'actions'];
   columnasDetalle: string[] = [
     'iddetalle',
     'evi',
@@ -39,10 +41,9 @@ export class AprobarRechazarAdminComponent implements OnInit {
   mostrarBoton = false;
   idUsuario: number = 0;
   usuarioResponsable: Usuario2[] = [];
-  criterionombre: Criterio[] = [];
   //idEvidencia: number = Number(localStorage.getItem('idUsuario'));
   idEvidencia: number = 0;
-  nombreCriterio: string = "";
+  idFilter = new FormControl();
   filterPostid = 0;
   idBuscado = '';
   usuarioSeleccionado: Usuario2 = new Usuario2();
@@ -80,9 +81,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
   listadodetalleEval: detalleEvaluacion[] = [];
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
-
-
-
+  
   constructor(
     private evidenciaService: EvidenciaService,
     private router: Router,
@@ -97,6 +96,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
     this.dataSource.paginator = this.paginator || null;
   }
 
+  
   ngOnInit(): void {
     this.listaResponsable();
     this.isLoggedIn = this.login.isLoggedIn();
@@ -105,72 +105,13 @@ export class AprobarRechazarAdminComponent implements OnInit {
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
-     // Llamada al método para obtener las evidencias asignadas al usuario
-     this.evidenciaService.getAsignacionUsuario(this.usuarioSeleccionado.username).subscribe(
-      (evidencias: Evidencia[]) => {
-        if (evidencias && evidencias.length > 0) {
-          // Agrupar las evidencias por id_evidencia usando reduce
-          const groupedEvidencias: Evidencia[] = evidencias.reduce((acc: Evidencia[], current: Evidencia) => {
-            const existingIndex = acc.findIndex((e: Evidencia) => e.id_evidencia === current.id_evidencia);
-            if (existingIndex === -1) {
-              // Si no existe una evidencia con el mismo id_evidencia, agregarla al acumulador (acc)
-              acc.push(current);
-            }
-            return acc;
-          }, []);
-          // Además, actualiza el dataSource para mostrar las evidencias agrupadas en la tabla
-          this.evidencias = groupedEvidencias;
-          this.dataSource.data = this.evidencias;
-          // Llama al método para obtener el nombre del criterio para la evidencia seleccionada
-          this.obtenerNombreCriterioPorEvidencia();
-        } else {
-          // Si el usuario no tiene evidencias asignadas, asigna 0 al idEvidencia
-          this.idEvidencia = 0;
-          this.evidencias = [];
-          this.dataSource.data = this.evidencias;
-          // Reinicia el nombre del criterio si no hay evidencias asignadas
-          this.nombreCriterio = "";
-        }
-      },
-      (error) => {
-        console.error('Error al obtener evidencias asignadas:', error);
-      }
-    );
+    
   }
-
-  /*obtenerNombreCriterioPorEvidencia(idEvidencia: number): void {
-    this.criteriosService.getCriterioPorEvidencia(idEvidencia).subscribe(
-      (criterios: Criterio[]) => {
-        this.criterionombre = criterios;
-      },
-      (error) => {
-        console.error('Error al obtener criterios por evidencia metodo:', error);
-      }
-    );
-  }*/
   
-  obtenerNombreCriterioPorEvidencia(): void {
-    if (this.idEvidencia !== 0) {
-      this.criteriosService.getCriterioPorEvidencia(this.idEvidencia).subscribe(
-        (criterios: Criterio[]) => {
-          this.criterionombre = criterios;
-          // Supongamos que el nombre del criterio está en la primera posición del arreglo
-          if (criterios.length > 0) {
-            this.nombreCriterio = criterios[0].nombre;
-          } else {
-            // Si no se encontraron criterios para la evidencia seleccionada, reinicia el nombre del criterio
-            this.nombreCriterio = "";
-          }
-        },
-        (error) => {
-          console.error('Error al obtener criterios por evidencia:', error);
-        }
-      );
-    } else {
-      // Si no hay evidencia seleccionada (idEvidencia = 0), limpia la lista de criterios
-      this.criterionombre = [];
-      this.nombreCriterio = ""; // Reiniciamos el nombre del criterio si no hay evidencia
-    }
+
+  applyFilter() {
+    const filterValue = this.idFilter.value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   //rechazos
@@ -347,41 +288,6 @@ notificaraprobadmin() {
     this.mostrarBoton = true;
     this.correoEnviar = this.usuarioSeleccionado.persona.correo;
     this.toUser = this.correoEnviar;
-
-    /*this.evidenciaService
-      .geteviasig(this.usuarioSeleccionado.username)
-      .subscribe((data) => {
-        this.evidencias = data;
-        this.dataSource.data = this.evidencias;
-      });*/
-
-    // Llamada al método para obtener las evidencias asignadas al usuario
-this.evidenciaService.geteviasig(this.usuarioSeleccionado.username).subscribe(
-  (evidencias: Evidencia[]) => {
-    if (evidencias && evidencias.length > 0) {
-      // Puedes asignar la primera evidencia del usuario al idEvidencia
-      this.idEvidencia = evidencias[0].id_evidencia;
-
-      // Además, actualiza el dataSource para mostrar las evidencias en la tabla
-      this.evidencias = evidencias;
-      this.dataSource.data = this.evidencias;
-
-      // Llama al método para obtener el nombre del criterio para la evidencia seleccionada
-      this.obtenerNombreCriterioPorEvidencia();
-    } else {
-      // Si el usuario no tiene evidencias asignadas, asigna 0 al idEvidencia
-      this.idEvidencia = 0;
-      this.evidencias = [];
-      this.dataSource.data = this.evidencias;
-
-      // Reinicia el nombre del criterio si no hay evidencias asignadas
-      this.nombreCriterio = "";
-    }
-  },
-  (error) => {
-    console.error('Error al obtener evidencias asignadas:', error);
-  }
-);
   }
 
   listaResponsable() {
