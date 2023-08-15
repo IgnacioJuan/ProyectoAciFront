@@ -6,6 +6,7 @@ import { BuscarUsuarioPipe } from './buscar-usuario.pipe';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { FiltrarEvidenciasPorIDPipe } from 'src/app/pages/admin/aprobar-rechazar-admin/filtro-prueba.pipe';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
@@ -37,7 +38,8 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { ResponsablePipe } from '../pages/admin/asignacion-evidencia/responsable.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
-  declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,ResponsablePipe
+  declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
+    FiltrarEvidenciasPorIDPipe, ResponsablePipe,
   ],
   imports: [
     CommonModule,
@@ -79,6 +81,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ResponsablePipe,
     BuscarUsuarioPipe,
     PageNotFoundComponent,
+    FiltrarEvidenciasPorIDPipe,
     CdkTableModule,
     MatButtonModule,
     MatFormFieldModule,

@@ -7,12 +7,15 @@ import { Modelo } from '../models/Modelo';
 import { Observacion } from '../models/Observacion';
 import { Persona2 } from '../models/Persona2';
 import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriteriosProjection';
+import { proyeccionCriterio } from '../pages/admin/aprobar-rechazar-admin/proyecciones-testeo/proyeccionCriterio';
 import { IndicadorProjection } from '../interface/IndicadorProjection';
+
 @Injectable({
   providedIn: 'root'
 })
 export class CriteriosService {
 
+  private url: string = 'http://localhost:5000/api/criterio';
   constructor(private http: HttpClient) { }
   getCriterioById(id: number): Observable<Criterio> {
 
@@ -86,5 +89,13 @@ export class CriteriosService {
   }
   obtenerDatosCriterios(): Observable<CriterioSubcriteriosProjection[]> {
     return this.http.get<CriterioSubcriteriosProjection[]>(`${baserUrl}/api/criterio/datosCriterios`);
+  }
+
+  getCriterioPorEvidencia(idEvidencia: number): Observable<Criterio[]> {
+    return this.http.get<Criterio[]>(`${this.url}/obtenerNombreCriterioPorEvidencia/${idEvidencia}`);
+  }
+
+  getCriterioPorEvidenciaproyeccion(idEvidencia: number): Observable<proyeccionCriterio[]> {
+    return this.http.get<proyeccionCriterio[]>(`${this.url}/obtenerNombreCriterioPorEvidenciaproyeccion/${idEvidencia}`);
   }
 }
