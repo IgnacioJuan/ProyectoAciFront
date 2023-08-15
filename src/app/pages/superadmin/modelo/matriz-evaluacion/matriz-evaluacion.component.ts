@@ -115,7 +115,7 @@ export class MatrizEvaluacionComponent implements OnInit {
   }
 
   regresar() {
-    this.route.navigate(['/sup/modelo/detallemodelo']);
+    this.route.navigate(['/sup/modelo/detallemodelo'], { state: { modelo: this.idmodelo } });
   }
   irinicio() {
 

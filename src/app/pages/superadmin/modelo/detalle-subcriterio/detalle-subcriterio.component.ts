@@ -104,7 +104,7 @@ export class DetalleSubcriterioComponent {
     this.router.navigate(['/sup/modelo/detalle-indicador'], { state: { data: element.id_subcriterio, modelo: this.model } });
   }
   verCriterios() {
-    this.router.navigate(['/sup/modelo/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo'], { state: { modelo: this.model } });
   }
   irinicio() {
     this.router.navigate(['/sup/modelo/modelo']);

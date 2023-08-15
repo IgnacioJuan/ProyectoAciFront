@@ -139,7 +139,7 @@ export class PonderacionCriterioComponent implements OnInit {
     });
   }
   regresar() {
-    this.router.navigate(['/sup/modelo/detallemodelo']);
+    this.router.navigate(['/sup/modelo/detallemodelo'], { state: { modelo: this.modelo } });
   }
 
   irinicio() {

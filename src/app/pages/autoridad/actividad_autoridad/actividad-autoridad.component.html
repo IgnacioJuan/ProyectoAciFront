@@ -18,22 +18,22 @@
         <mat-table [dataSource]="resActividad" matSort>
           <ng-container matColumnDef="username">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Usuario </mat-header-cell>
-            <mat-cell *matCellDef="let item"> {{ item.idpersona }} </mat-cell>
+            <mat-cell *matCellDef="let item"> {{ item?.ActivProyection?.idpersona }} </mat-cell>
           </ng-container>
         
           <ng-container matColumnDef="primer_nombre">
             <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
-            <mat-cell *matCellDef="let item"> {{  item?.primer_nombre }} </mat-cell>
+            <mat-cell *matCellDef="let item"> {{  item?.ActivProyection?.primer_nombre }} </mat-cell>
           </ng-container>
         
           <ng-container matColumnDef="primer_apellido">
             <mat-header-cell *matHeaderCellDef> Apellido </mat-header-cell>
-            <mat-cell *matCellDef="let item"> {{item?.primer_apellido }} </mat-cell>
+            <mat-cell *matCellDef="let item"> {{item?.ActivProyection?.primer_apellido }} </mat-cell>
           </ng-container>
         
           <ng-container matColumnDef="correo">
             <mat-header-cell *matHeaderCellDef> Correo </mat-header-cell>
-            <mat-cell *matCellDef="let item"> {{ item?.correo  }} </mat-cell>
+            <mat-cell *matCellDef="let item"> {{ item?.ActivProyection?.correo  }} </mat-cell>
           </ng-container>
         
           <ng-container matColumnDef="acciones">
