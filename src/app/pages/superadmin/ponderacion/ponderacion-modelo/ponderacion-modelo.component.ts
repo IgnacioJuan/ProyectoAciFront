@@ -433,7 +433,6 @@ export class PonderacionModeloComponent implements OnInit {
   }
 
 
-  //crear ponderacion
   crearPonderacion(ponderacionClase: Ponderacion) {
     this.servicePonderacion.guardarPonderacion(ponderacionClase)
       .subscribe(
@@ -446,11 +445,12 @@ export class PonderacionModeloComponent implements OnInit {
           this.listarPonderacion();
         },
         (error: any) => {
-          console.error('Error al crear el subcriterio:', error);
+          console.error('Error al crear la ponderación:', error);
         }
       );
     //this.router.navigate(['/sup/ponderacion']);
   }
+  
 
   listarPonderacion() {
     this.servicePonderacion.listarPonderacion().subscribe(data => {

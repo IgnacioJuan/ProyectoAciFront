@@ -26,7 +26,7 @@ export class PonderacionService {
     return this.http
       .get(`${baserUrl}/api/ponderacion/listar`)
       .pipe(map((response) => response as Ponderacion[]));
-  }
+  } 
 
 
   //Listar por Id

@@ -12,7 +12,8 @@ describe('PonderacionModeloComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PonderacionModeloComponent);
+
+    fixture =  TestBed.createComponent(PonderacionModeloComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

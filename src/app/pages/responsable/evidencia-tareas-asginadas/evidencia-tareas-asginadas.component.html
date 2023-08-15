@@ -34,6 +34,13 @@
                 </tr>
               </tbody>
             </table>
+            <mat-paginator
+            #paginator
+              [pageSizeOptions]="[1,10, 20]"
+              showFirstLastButtons
+              aria-label="Seleccione"
+            >
+            </mat-paginator>
           </div>
 
         </div>
