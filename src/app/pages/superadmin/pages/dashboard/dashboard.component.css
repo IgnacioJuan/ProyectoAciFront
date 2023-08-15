@@ -9,7 +9,7 @@
   right: 0;
   top: 100%;
   display: none;
-  background-color: white; 
+  background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 8px;
@@ -26,38 +26,40 @@
   border-bottom-right-radius: 0;
 }
 
-.men{
+.men {
   margin-bottom: 6%;
 }
 
-.cole{
+.cole {
   color: white;
 }
 
 .tab-rech {
   background-color: rgba(255, 0, 0, 0.158);
 }
-.tab-apr{
+
+.tab-apr {
   background-color: rgba(0, 255, 64, 0.158);
 }
-.barra{
+
+.barra {
   display: flex;
   justify-content: center;
   width: 15%;
   height: 15%;
 }
 
-.titu{
-margin-top: 2%;
-margin-left: 2%;
-font-weight: bold;
+.titu {
+  margin-top: 2%;
+  margin-left: 2%;
+  font-weight: bold;
 }
 
 table {
   width: 70%;
 }
 
-.calenda{
+.calenda {
   flex-grow: 1;
   margin-block-end: auto;
   writing-mode: horizontal-tb;
@@ -77,29 +79,35 @@ table {
 }
 
 .calendar-container {
-  width: 80%; 
+  width: 80%;
   height: 60%;
 }
 
 .fc .fc-daygrid-day {
-  font-size: auto; /* Cambiar el valor de fuente*/
-  padding: 0.2rem; /* Ajustar el relleno de las celdas*/
-  height: auto; /* Ajustar la altura de las celdas*/
-  width: auto; /* Ajustar el ancho de las celdas */
+  font-size: auto;
+  /* Cambiar el valor de fuente*/
+  padding: 0.2rem;
+  /* Ajustar el relleno de las celdas*/
+  height: auto;
+  /* Ajustar la altura de las celdas*/
+  width: auto;
+  /* Ajustar el ancho de las celdas */
 }
-    
+
 .fc-day-today {
   background-color: rgb(5, 84, 110);
 }
 
 /* Ajustar el tamaño del título del evento */
 .fc .fc-title {
-  font-size: 12px; /* Cambia el valor de fuente según lo desees */
+  font-size: 12px;
+  /* Cambia el valor de fuente según lo desees */
 }
 
 /* Ajustar el tamaño del botón de cambiar de vista del calendario (mes/semana/día) */
 .fc-button {
-  font-size: 12px; /* Cambia el valor de fuente según lo desees */
+  font-size: 12px;
+  /* Cambia el valor de fuente según lo desees */
 }
 
 .icon-box {
@@ -136,21 +144,21 @@ table {
   transform: translateY(-99%);
   width: 500px;
   height: 250px;
-  align-items:center;
+  align-items: center;
   display: flex;
   justify-content: center;
   bottom: 50%;
-  
+
   /*z-index: 1; /* Asegura que la tarjeta está encima del contenido */
 }
 
 .textTitulo {
   justify-content: center;
-  align-items:center;
+  align-items: center;
   display: flex;
   padding: 20px 0;
   font-size: 20px;
-  
+
 }
 
 .floating-card2 {
@@ -160,7 +168,7 @@ table {
   transform: translateY(10%);
   width: 500px;
   height: 200px;
-  align-items:center;
+  align-items: center;
   display: flex;
   justify-content: center;
   bottom: 50%;
@@ -231,62 +239,90 @@ table {
 
 @media (max-width:1115px) {
   .sidebar {
-      width: 60px;
+    width: 60px;
   }
+
   .main {
-      width: calc(100% - 60px);
-      left: 60px;
+    width: calc(100% - 60px);
+    left: 60px;
   }
 }
 
 @media (max-width:880px) {
+
   /* .topbar {
       grid-template-columns: 1.6fr 6fr 0.4fr 1fr;
   } */
   .fa-bell {
-      justify-self: left;
+    justify-self: left;
   }
+
   .cards {
-      width: 100%;
-      padding: 35px 20px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-gap: 20px;
+    width: 100%;
+    padding: 35px 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
   }
+
   .charts {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
+
   .doughnut-chart {
-      padding: 50px;
+    padding: 50px;
   }
+
   #doughnut {
-      padding: 50px;
+    padding: 50px;
   }
 }
 
 @media (max-width:500px) {
   .topbar {
-      grid-template-columns: 1fr 5fr 0.4fr 1fr;
+    grid-template-columns: 1fr 5fr 0.4fr 1fr;
   }
+
   .logo h2 {
-      font-size: 20px;
+    font-size: 20px;
   }
+
   .search {
-      width: 80%;
+    width: 80%;
   }
+
   .search input {
-      padding: 0 20px;
+    padding: 0 20px;
   }
+
   .fa-bell {
-      margin-right: 5px;
+    margin-right: 5px;
   }
+
   .cards {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
+
   .doughnut-chart {
-      padding: 10px;
+    padding: 10px;
   }
 
   #doughnut {
-      padding: 0px;
-  }}
+    padding: 0px;
+  }
+}
+
+body {
+  font: 1em/1.618 Inter, sans-serif;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 100vh;
+  padding: 30px;
+
+  color: #224;
+  background:
+    url(https://source.unsplash.com/E8Ufcyxz514/2400x1823) center / cover no-repeat fixed;
+}
