@@ -1,19 +1,22 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+
+
+
+import { Indicador } from 'src/app/models/Indicador';
+import { Modelo } from 'src/app/models/Modelo';
+import { Subcriterio } from 'src/app/models/Subcriterio';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { SharedDataService } from 'src/app/services/shared-data.service';
 import { FormBuilder } from '@angular/forms';
-import { Chart } from 'chart.js';
-
-import { Modelo } from 'src/app/models/Modelo';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Criterio } from 'src/app/models/Criterio';
-
-type Archivo = {
-  // Define las propiedades correctas para el tipo Archivo
-};
+import { CriteriosService } from 'src/app/services/criterios.service';
+import { Chart } from 'chart.js';
+import { Archivo } from 'src/app/models/Archivo';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-ponderacion-criterio',
@@ -26,7 +29,9 @@ export class PonderacionCriterioComponent implements OnInit {
   lastPageLabel = 'Última';
   firstPageLabel = 'Primera';
   previousPageLabel = 'Anterior';
-  rango = (page: number, pageSize: number, length: number) => {
+
+  
+  rango: any = (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
       return `0 de ${length}`;
     }
@@ -46,14 +51,18 @@ export class PonderacionCriterioComponent implements OnInit {
   asignacion: any;
   criterio: Criterio = new Criterio();
   modelo: Modelo = new Modelo();
-  color: any;
+  color: any
   chart: any;
   idndicadorseleccionado: number = 0;
 
-  dataSource = new MatTableDataSource<any>();
-  columnasUsuario: string[] = ['id_indicador', 'nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor'];
+  dataSource = new MatTableDataSource<any>;
+
+  //columnasUsuario: string[] = ['id_indicador', 'nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor'];
+  columnasUsuario: string[] = ['id_indicador', 'nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor', 'archivo'];
+
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+  tusDatosService: any;
 
   constructor(
     private indicadorservice: IndicadoresService,
@@ -61,6 +70,8 @@ export class PonderacionCriterioComponent implements OnInit {
     public modeloService: ModeloService, private paginatorIntl: MatPaginatorIntl,
     public asignacionIndicadorService: AsignacionIndicadorService,
     private activatedRoute: ActivatedRoute
+
+    
   ) {
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
@@ -68,42 +79,67 @@ export class PonderacionCriterioComponent implements OnInit {
     this.paginatorIntl.previousPageLabel = this.previousPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
     this.paginatorIntl.getRangeLabel = this.rango;
-  }
-
+    this.dataSource = new MatTableDataSource<any>(); // Inicialización del dataSource
+    }
   ngAfterViewInit() {
+
     this.dataSource.paginator = this.paginator || null;
+    
+
+  }
+  ngOnInit(): void {
+    this.llenar_datasource();
+    const tusDatos = this.tusDatosService.obtenerTusDatos();
+
+    this.dataSource.data = tusDatos; // Asigna los datos al dataSource
+  
   }
 
-  ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-      this.criterio = params['criterio'];
-      this.modelo = params['modelo'];
-
-      this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
-        (data) => {
-          this.dataSource.data = data;
-          this.coloresTabla();
-          this.GraficaPastel();
-        }
-      );
-    });
+  llenar_datasource() {
+    this.criterio = history.state.criterio;
+    this.modelo = history.state.modelo;
+    const id_criterio = 1; // Reemplaza con el ID de criterio correcto
+    const id_modelo = 2; // Reemplaza con el ID de modelo correcto
+    this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
+      (data) => {
+        const mappedData = data.map((indicador: any) => {
+          return {
+            ...indicador,
+            enlace: `http://localhost:5000/archivo/${indicador.id_indicador}.pdf` // Reemplaza 'URL_DEL_BACKEND' con la URL correcta de tu backend
+          };
+        });
+  
+        this.dataSource = new MatTableDataSource(mappedData); // Crear instancia de MatTableDataSource
+  
+        console.log(this.dataSource.data + 'criteriooooooo');
+  
+        this.coloresTabla();
+        this.GraficaPastel();
+      }
+    );
   }
 
   coloresTabla() {
     this.dataSource.data.forEach((indicador: any) => {
+
       if (indicador.porc_obtenido > 75 && indicador.porc_obtenido <= 100) {
-        indicador.color = 'verde';
-      } else if (indicador.porc_obtenido > 50 && indicador.porc_obtenido <= 75) {
-        indicador.color = 'amarillo';
-      } else if (indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50) {
-        indicador.color = 'naranja';
+        indicador.color = 'verde'; // Indicador con porcentaje mayor a 50% será de color verde
+      }
+      else if (indicador.porc_obtenido > 50 && indicador.porc_obtenido <= 75) {
+        indicador.color = 'amarillo'; // Indicador con porcentaje mayor a 50% será de color verde
+      }
+      else if (indicador.porc_obtenido > 25 && indicador.porc_obtenido <= 50) {
+        indicador.color = 'naranja'; // Indicador con porcentaje mayor a 50% será de color verde
       } else if (indicador.porc_obtenido <= 25) {
-        indicador.color = 'rojo';
+        indicador.color = 'rojo'; // Indicador con porcentaje menor a 30% será de color rojo
       } else {
-        indicador.color = '';
+        indicador.color = ''; // No se asigna ningún color a los indicadores que no cumplen las condiciones anteriores
       }
     });
   }
+
+
+  //GRAFICA PASTEL
 
   GraficaPastel() {
     this.chart = new Chart("pastel", {
@@ -128,12 +164,32 @@ export class PonderacionCriterioComponent implements OnInit {
       }
     });
   }
-
   regresar() {
     this.router.navigate(['/sup/modelo/detallemodelo']);
   }
 
   irinicio() {
-    this.router.navigate(['/sup/modelo/modelo']);
+    this.router.navigate(['/sup/modelo/modelo']); 
   }
+
+
+  recoverPdf(id: number) {
+
+    this.indicadorservice.recoverPdfLink(id).subscribe(
+      (data) => {
+        this.recoverPdf;
+        this.idndicadorseleccionado = id;
+
+        this.indicadorservice.getarchivorecoverPdf(id).subscribe(
+          (data) => {
+
+            this.archivos = data;
+            console.log(this.archivos);
+
+          }
+        );
+      });
+
+  }
+
 }
