@@ -82,6 +82,7 @@ export class DetalleModeloComponent implements OnInit {
   mostrarPrincipal: number = 0;
   mostrarSecundario: number = 0;
 contador: number = 0;
+idmodelo: number = 0;
   //lista de objetos de f llamada dataSourcePonderacion
   dataSourcePonderacion: any;
   dataSourcePonderacion2: f[] = [];
@@ -123,15 +124,11 @@ contador: number = 0;
   }
   ngOnInit(): void {
     this.model = history.state.modelo;
-    console.log(this.model)
+    this.idmodelo=this.model.id_modelo
+    console.log("Modelo a ver"+this.model.id_modelo)
     this.recibeModelo();
   }
 
-  pond(element:any) {
-    let fecha=element.fechapo;
-    localStorage.setItem("contador", element.contador);
-    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { queryParams: { fecha: fecha, conf: 1 } });
-  }
 
   elimin(element: any) {
     Swal.fire({
@@ -175,7 +172,7 @@ contador: number = 0;
         this.mostrarPrincipal = 0;
         this.mostrarSecundario = 0;
         this.ocultarBoton = false;
-        this.ponderacionService.listarPonderacionPorModelo(this.model.id_modelo).subscribe(
+        this.ponderacionService.listarPonderacionPorModelo(this.idmodelo).subscribe(
           (fechas) => {
             if (fechas.length > 0) {
               this.mostrarSecundario = 1;
@@ -229,6 +226,11 @@ contador: number = 0;
   ponderacion(event: Event, element: any) {
     event.stopPropagation();
     this.sharedDataService.agregarIdCriterio(element.id_criterio);
+  }
+  pond(element:any) {
+    let fecha=element.fechapo;
+    localStorage.setItem("contador", element.contador);
+    this.router.navigate(['/sup/ponderacion/ponderacion-modelo'], { state: { fecha: fecha, conf: 1, modelo: this.model, contador:element.contador } });
   }
 
   irinicio() {

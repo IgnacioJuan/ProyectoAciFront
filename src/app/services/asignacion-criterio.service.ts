@@ -63,8 +63,8 @@ export class AsignacionCriterioService {
 
 
   //@GetMapping("/listarAsignacion_AdminPorUsuarioCriterio/{id_criterio}/{id_usuario}")
-  public listarAsignacion_AdminPorUsuarioCriterio(id_criterio: any, id_usuario: any,id_modelo:number): Observable<Asignacion_Criterios[]> {
-    return this.httpClient.get<Asignacion_Criterios[]>(`${baserUrl}/api/asignacion_admin/listarAsignacion_AdminPorUsuarioCriterio/${id_criterio}/${id_usuario}/${id_modelo}`);
+  public listarAsignacion_AdminPorUsuarioCriterio(id_criterio: any, id_modelo:number): Observable<Asignacion_Criterios[]> {
+    return this.httpClient.get<Asignacion_Criterios[]>(`${baserUrl}/api/asignacion_admin/listarAsignacion_AdminPorUsuarioCriterio/${id_criterio}/${id_modelo}`);
   }
 
   public updateAsignacion_Admin(id_asignacion: any, asignacion: Asignacion_Criterios): Observable<Asignacion_Criterios> {
