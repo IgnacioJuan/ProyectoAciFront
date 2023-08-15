@@ -164,12 +164,6 @@ export class DialogoCriterioComponent implements OnInit {
   }
 
   guardar() {
-
-    // this.sharedDataService.actualizarEstadoDialogoB(ELEMENT_SELECTED);
-    // this.dialogRef.afterClosed().subscribe(result => {
-    //   this.ngOnInit();
-    // });
-    // this.dialogRef.close();
     this.sharedDataService.agregarDatos(ELEMENT_SELECTED);
     console.log(ELEMENT_SELECTED);
   }

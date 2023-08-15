@@ -244,10 +244,10 @@ idmodelo: number = 0;
   asignar_criterio(event: Event, criterio: any) {
     event.stopPropagation();
     const id_modelo = localStorage.getItem('id');
-    console.log("Id modelo a asignar"+id_modelo+" id criterio "+criterio.id_criterio);
+    console.log("Id modelo a asignar"+id_modelo+" id criterio "+criterio.id_criterio+" nombre "+criterio.nombre);
     const dialogRef = this.dialog.open(AsignarCriterioComponent, {
       width: '45%',
-      data: { id: criterio.id_criterio,modelo:id_modelo }
+      data: { id: criterio.id_criterio,modelo:id_modelo,nombre:criterio.nombre }
     });
 
     dialogRef.afterClosed().subscribe(result => {

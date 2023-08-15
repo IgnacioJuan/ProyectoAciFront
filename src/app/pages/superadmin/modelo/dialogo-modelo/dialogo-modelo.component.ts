@@ -29,7 +29,7 @@ export class DialogoModeloComponent implements OnInit {
   isLoggedIn = false;
   user: any;
 
-
+  idmax!:number;
   modelo: Modelo = new Modelo();
   indicador: Indicador = new Indicador();
   asignacionIndicador: AsignacionIndicador = new AsignacionIndicador();
@@ -59,6 +59,10 @@ export class DialogoModeloComponent implements OnInit {
       }
     );
     console.log(this.user);
+    this.modelo_service.getModeMaximo().subscribe(data => {
+      this.idmax = data.id_modelo;
+      console.log("id maximo traido"+this.idmax);
+    });
   }
 
 
@@ -140,6 +144,56 @@ export class DialogoModeloComponent implements OnInit {
       });
     })
   }
+
+  copiarmodelo() {
+    if (this.modelo.fecha_inicio == null || this.modelo.fecha_fin == null || this.modelo.fecha_final_act == null || this.modelo.nombre == null || this.dataSource.length == 0) {
+      Swal.fire('Error', `Debe llenar todos los campos`, 'error');
+      return;
+    }
+  
+    if (this.modelo.fecha_inicio >= this.modelo.fecha_fin || this.modelo.fecha_inicio >= this.modelo.fecha_final_act || this.modelo.fecha_fin <= this.modelo.fecha_final_act) {
+      Swal.fire('Error', `Las fechas no son correctas por favor revisar`, 'error');
+      return;
+    }
+  
+    this.modelo_service.createModelo(this.modelo).subscribe(
+      nuevoModelo => {
+        console.log("Guardado datos del nuevo modelo: " + JSON.stringify(nuevoModelo));
+  
+        this.asignacionIndicadorService.getasignaindi(this.idmax).subscribe(
+          asignaciones => {
+            console.log('Asignaciones de indicadores del último modelo:', asignaciones);
+  
+            asignaciones.forEach(asignacion => {
+              const nuevaAsignacion: AsignacionIndicador = {
+                id_asignacion_indicador: 0,
+                modelo: nuevoModelo,
+                indicador: asignacion.indicador,
+              };
+  
+              this.asignacionIndicadorService.createAsignacionIndicador(nuevaAsignacion).subscribe(
+                resultado => {
+                  console.log("Nueva asignación creada:", resultado);
+                },
+                error => {
+                  console.error('Error al crear nueva asignación:', error);
+                }
+              );
+            });
+          },
+          error => {
+            console.error('Error al obtener asignaciones de indicadores:', error);
+          }
+        );
+      },
+      error => {
+        console.error("Error al crear el nuevo modelo:", error);
+      }
+    );
+  
+    this.reiniciarIndicador();
+  }
+  
 
   reiniciarIndicador() {
     this.indicadorService.getIndicadores().subscribe(data => {

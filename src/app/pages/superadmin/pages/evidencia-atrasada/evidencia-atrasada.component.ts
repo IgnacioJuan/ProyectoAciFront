@@ -43,7 +43,7 @@ export class EvidenciaAtrasadaComponent implements OnInit {
     this.service.getEvidenciaAtrasFecha().subscribe(
       data => {
         this.actividad = data;
-        console.log(this.actividad);
+        console.log("actividades atrasadas"+JSON.stringify(this.actividad));
       }
     )
   }
