@@ -36,8 +36,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { CdkTableModule } from '@angular/cdk/table';
 import { ResponsablePipe } from '../pages/admin/asignacion-evidencia/responsable.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FiltrarEvidenciasPorIDPipe } from '../pages/admin/aprobar-rechazar-admin/filtro-prueba.pipe';
 @NgModule({
-  declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,ResponsablePipe
+  declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
+    FiltrarEvidenciasPorIDPipe, ResponsablePipe,
   ],
   imports: [
     CommonModule,
@@ -79,6 +81,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ResponsablePipe,
     BuscarUsuarioPipe,
     PageNotFoundComponent,
+    FiltrarEvidenciasPorIDPipe,
     CdkTableModule,
     MatButtonModule,
     MatFormFieldModule,

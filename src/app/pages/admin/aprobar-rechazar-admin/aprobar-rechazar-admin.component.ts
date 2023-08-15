@@ -7,6 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Evidencia } from 'src/app/models/Evidencia';
 import { EmailServiceService } from 'src/app/services/email-service.service';
+import { Criterio } from 'src/app/models/Criterio';
+import { CriteriosService  } from 'src/app/services/criterios.service';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { LoginService } from 'src/app/services/login.service';
 import Swal from 'sweetalert2';
@@ -14,6 +16,8 @@ import { DetalleEvaluacionService } from 'src/app/services/detalle-evaluacion.se
 import { detalleEvaluacion } from 'src/app/models/DetalleEvaluacion';
 import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
+import { proyeccionCriterio } from './proyecciones-testeo/proyeccionCriterio';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-aprobar-rechazar-admin',
@@ -21,7 +25,7 @@ import { NotificacionService } from 'src/app/services/notificacion.service';
   styleUrls: ['./aprobar-rechazar-admin.component.css'],
 })
 export class AprobarRechazarAdminComponent implements OnInit {
-  columnas: string[] = ['id', 'descripcion', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'descripcion', 'actions'];
   columnasDetalle: string[] = [
     'iddetalle',
     'evi',
@@ -37,6 +41,11 @@ export class AprobarRechazarAdminComponent implements OnInit {
   mostrarBoton = false;
   idUsuario: number = 0;
   usuarioResponsable: Usuario2[] = [];
+  //idEvidencia: number = Number(localStorage.getItem('idUsuario'));
+  idEvidencia: number = 0;
+  idFilter = new FormControl();
+  filterPostid = 0;
+  idBuscado = '';
   usuarioSeleccionado: Usuario2 = new Usuario2();
   evidencias!: Evidencia[];
   Evidencia :Evidencia= new Evidencia();
@@ -53,7 +62,6 @@ export class AprobarRechazarAdminComponent implements OnInit {
   isLoggedIn = false;
   user: any = null;
   rol: any = null;
-  //
   noti = new Notificacion();
   idusuario: any = null;
   nombre: any = null;
@@ -73,36 +81,37 @@ export class AprobarRechazarAdminComponent implements OnInit {
   listadodetalleEval: detalleEvaluacion[] = [];
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
-
-
-
+  
   constructor(
     private evidenciaService: EvidenciaService,
     private router: Router,
     private emailService: EmailServiceService,
     public login: LoginService,
     private notificationService: NotificacionService,
-    private detalleEvaluaService: DetalleEvaluacionService
-
+    private detalleEvaluaService: DetalleEvaluacionService,
+    private criteriosService: CriteriosService
   ) {
-  
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator || null;
-
   }
 
-
-
+  
   ngOnInit(): void {
     this.listaResponsable();
-
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
     this.login.loginStatusSubjec.asObservable().subscribe((data) => {
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
+    
+  }
+  
+
+  applyFilter() {
+    const filterValue = this.idFilter.value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   //rechazos
