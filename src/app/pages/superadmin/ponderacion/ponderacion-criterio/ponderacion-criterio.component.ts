@@ -53,7 +53,7 @@ export class PonderacionCriterioComponent implements OnInit {
   chart: any;
 
   dataSource = new MatTableDataSource<any>();
-  columnasUsuario: string[] = ['id_indicador', 'nombre','peso', 'porc_valor', 'porc_utilidad','valor'];
+  columnasUsuario: string[] = ['id_indicador', 'nombre','peso', 'porc_valor', 'porc_utilidad','valor','ar'];
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 

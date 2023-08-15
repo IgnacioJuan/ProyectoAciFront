@@ -18,17 +18,15 @@ body {
 }
 
 /*:::::Pie de Pagina*/
-.pie-pagina{
-    width: 100%;
-    background-color: #ffffff;
-    position: fixed;
-  left: 0;
-  bottom: 0;
+.pie-pagina {
   width: 100%;
-  padding: 20px;
-  text-align: center;
- 
+    background-color: #ffffff;
+    position: sticky;
+    bottom: 0;
+    padding: 20px;
+    text-align: center;
 }
+
 .pie-pagina .grupo-1{
     width: 100%;
     max-width:1500px;

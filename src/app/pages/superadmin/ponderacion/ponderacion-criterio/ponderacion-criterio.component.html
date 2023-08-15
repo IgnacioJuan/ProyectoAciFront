@@ -65,7 +65,12 @@
               {{ elemento.valor_obtenido  }}
             </td>
           </ng-container>
-
+          <ng-container matColumnDef="ar">
+            <th mat-header-cell *matHeaderCellDef>ARCHIVO</th>
+            <td mat-cell *matCellDef="let elemento">
+              {{ elemento.valor_obtenido  }}
+            </td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnasUsuario"></tr>
           <tr mat-row *matRowDef="let fila; columns: columnasUsuario"></tr>
         </table>
