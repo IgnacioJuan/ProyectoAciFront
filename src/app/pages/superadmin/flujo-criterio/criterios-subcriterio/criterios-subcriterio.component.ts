@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { SubcriterioIndicadoresProjection } from 'src/app/interface/SubcriterioIndicadoresProjection';
@@ -17,8 +17,26 @@ import Swal from 'sweetalert2';
 export class CriteriosSubcriterioComponent implements OnInit {
   frmSubcriterio: FormGroup;
   guardadoExitoso: boolean = false;
-
-
+ //tabla
+ itemsPerPageLabel = 'Subcriterios por página';
+ nextPageLabel = 'Siguiente';
+ lastPageLabel = 'Última';
+ firstPageLabel='Primera';
+ previousPageLabel='Anterior';
+ rango:any= (page: number, pageSize: number, length: number) => {
+   if (length == 0 || pageSize == 0) {
+     return `0 de ${length}`;
+   }
+ 
+   length = Math.max(length, 0);
+   const startIndex = page * pageSize;
+   const endIndex =
+     startIndex < length
+       ? Math.min(startIndex + pageSize, length)
+       : startIndex + pageSize;
+   return `${startIndex + 1} - ${endIndex} de ${length}`;
+ };
+ //
   criterio: Criterio = new Criterio();
   subcriterios: any[] = [];
 
@@ -32,15 +50,20 @@ export class CriteriosSubcriterioComponent implements OnInit {
   @ViewChild('datosModalRef') datosModalRef: any;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
 
-
   constructor(
-    private subcriterioservice: SubcriteriosService,
+    private subcriterioservice: SubcriteriosService,private paginatorIntl: MatPaginatorIntl,
     private router: Router, private fb: FormBuilder
   ) {
     this.frmSubcriterio = fb.group({
       nombre: ['', Validators.required],
       descripcion: ['', [Validators.required]]
-    })
+    });
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
   }
 
   ngAfterViewInit() {

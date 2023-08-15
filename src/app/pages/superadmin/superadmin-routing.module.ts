@@ -8,11 +8,9 @@ import { RoleguardGuard } from 'src/app/services/Guards/roleguard.guard';
 import { SubcriteriosComponent } from './pages/subcriterios/subcriterios.component';
 import { IndicadorComponent } from './pages/indicador/indicador.component';
 import { EvidenciasComponent } from './pages/evidencias/evidencias.component';
-import { FormulasComponent } from './pages/formulas/formulas.component';
-import { CuantitativaComponent } from './pages/cuantitativa/cuantitativa.component';
-import { CuanlitativaComponent } from './pages/cuanlitativa/cuanlitativa.component';
 import { EvidenciaAtrasadaComponent } from './pages/evidencia-atrasada/evidencia-atrasada.component';
 import { CriterioReporteComponent } from './pages/criterio-reporte/criterio-reporte.component';
+import { DashboardComponent } from '../admin/dashboard/dashboard.component';
 
 const routes: Routes = [{
   path: 'dashboard',
@@ -57,24 +55,7 @@ const routes: Routes = [{
   pathMatch: 'full',
   canActivate: [SuperGuard]
 },
-{
-  path: 'formula',
-  component: FormulasComponent,
-  pathMatch: 'full',
-  canActivate: [SuperGuard]
-},
-{
-  path: 'cuantitativa',
-  component: CuantitativaComponent,
-  pathMatch: 'full',
-  canActivate: [SuperGuard]
-},
-{
-  path: 'cualitativa',
-  component: CuanlitativaComponent,
-  pathMatch: 'full',
-  canActivate: [SuperGuard]
-},
+
 {
 
   path: 'actividad-rechazada',
@@ -86,12 +67,6 @@ const routes: Routes = [{
 
 }
   ,
-{
-  path: 'formula',
-  component: FormulasComponent,
-  pathMatch: 'full',
-  canActivate: [SuperGuard]
-},
 //Compartidas
 {
   path: 'criterio_reporte',
@@ -100,7 +75,13 @@ const routes: Routes = [{
   canActivate: [RoleguardGuard],
   data: { allowedRoles: ['SUPERADMIN', 'ADMIN', 'AUTORIDAD'] }
 },
-
+{
+  path: 'actividad_responsable',
+  component: DashboardComponent,
+  pathMatch: 'full',
+  canActivate: [RoleguardGuard],
+  data: { allowedRoles: ['SUPERADMIN', 'ADMIN'] }
+},
 {
   path: 'modelo',
   loadChildren: () => import("./modelo/modelo.module").then(m => m.ModeloModule)
@@ -112,6 +93,10 @@ const routes: Routes = [{
 {
   path: 'flujo-criterio',
   loadChildren: () => import("./flujo-criterio/flujo-criterio.module").then(m => m.FlujoCriterioModule)
+},
+{
+  path: 'formula',
+  loadChildren: () => import("./formula/formula.module").then(m => m.FormulaModule)
 },
 ];
 

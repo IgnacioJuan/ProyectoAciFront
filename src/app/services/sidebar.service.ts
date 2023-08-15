@@ -49,7 +49,7 @@ export class SidebarService {
       icono: 'nav-icon fas   fa-newspaper',
       titulo: "Dashboard",
       submenu: [
-        { titulo: 'Actividades', url: 'sup/dashboard', icono: 'fas fa-list-ul ' }
+        { titulo: 'Ver Dashboard', url: 'sup/dashboard', icono: 'fas fa-list-ul ' }
 
       ]
     },
@@ -103,9 +103,9 @@ export class SidebarService {
       icono: 'nav-icon fas fa-superscript',
       titulo: "Fórmula",
       submenu: [
-        { titulo: 'Lista de Fórmula', url: 'sup/formula', icono: 'fas fa-cubes' },
-        { titulo: 'Lista Cuantitativas', url: 'sup/cuantitativa', icono: 'fas fa-cubes' },
-        { titulo: 'Lista Cualitativas', url: 'sup/cualitativa', icono: 'fas fa-cubes' },
+        { titulo: 'Lista de Fórmula', url: 'sup/formula/formula', icono: 'fas fa-cubes' },
+        { titulo: 'Lista Cuantitativas', url: 'sup/formula/cuantitativa', icono: 'fas fa-cubes' },
+        { titulo: 'Lista Cualitativas', url: 'sup/formula/cualitativa', icono: 'fas fa-cubes' },
 
       ]
     },
@@ -113,7 +113,7 @@ export class SidebarService {
       icono: 'nav-icon fas fa-exclamation-circle',
       titulo: "Revisión  ",
       submenu: [
-        { titulo: 'Aprobar o rechazar evidencias', url: 'apruebaAdmin', icono: 'fas fa-times-circle' },
+        { titulo: 'Responsables de actividades', url: 'sup/actividad_responsable', icono: 'fas fa-times-circle' },
         { titulo: 'Actividades Rechazadas', url: 'sup/actividad-rechazada', icono: 'fas fa-cubes' }
 
       ]

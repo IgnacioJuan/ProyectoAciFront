@@ -34,9 +34,12 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatTabsModule } from '@angular/material/tabs';
+import { CdkTableModule } from '@angular/cdk/table';
+import { ResponsablePipe } from '../pages/admin/asignacion-evidencia/responsable.pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
   declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
-    FiltrarEvidenciasPorIDPipe,
+    FiltrarEvidenciasPorIDPipe, ResponsablePipe,
   ],
   imports: [
     CommonModule,
@@ -69,13 +72,17 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatRadioModule,
     NgChartsModule,
     FullCalendarModule,
-    NgxChartsModule
+    NgxChartsModule,
+    CdkTableModule,
+    MatTooltipModule
   ],
   exports: [
     BuscarPipe,
+    ResponsablePipe,
     BuscarUsuarioPipe,
     PageNotFoundComponent,
     FiltrarEvidenciasPorIDPipe,
+    CdkTableModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,

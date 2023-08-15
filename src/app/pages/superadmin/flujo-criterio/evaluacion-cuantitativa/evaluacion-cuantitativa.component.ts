@@ -452,7 +452,7 @@ export class EvaluacionCuantitativaComponent implements OnInit {
     this.router.navigate(['/sup/flujo-criterio/criterioSuper']);
   }
   irCuantitativas() {
-    this.router.navigate(['/sup/cuantitativa']);
+    this.router.navigate(['/sup/formula/cuantitativa']);
   }
 
   aplicarFiltro() {
@@ -475,4 +475,6 @@ export class EvaluacionCuantitativaComponent implements OnInit {
       this.dataSourcemodal.data = this.listaCuantitativa;;
     }
   }
+
+
 }

@@ -1,5 +1,6 @@
 .mi-card {
     max-width: 50%;
+    min-width: 200px;
     margin: 10px;
 }
 
@@ -13,7 +14,26 @@
     flex-wrap: wrap;
     justify-content: flex-start;
   }
+  .mini-table {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
   
+  .mini-table-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .mini-table-header {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .mini-table-value {
+    flex-grow: 1;
+  }
   .mi-card {
     margin: 10px;
     border: 2px solid #ccc; /* Borde predeterminado para todas las tarjetas */
@@ -33,3 +53,20 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease-in-out;
   }
+
+  body {
+    font: 1em/1.618 Inter, sans-serif;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    min-height: 100vh;
+    padding: 30px;
+    
+    color: #224;
+    background:
+      url(https://source.unsplash.com/E8Ufcyxz514/2400x1823)
+      center / cover no-repeat fixed;
+  }
+  

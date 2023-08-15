@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError, tap, throwError } from 'rxjs';
+import { ResponsableProjection } from 'src/app/interface/ResponsableProjection';
 import { Asigna_Evi } from 'src/app/models/Asignacion-Evidencia';
 import { Evidencia } from 'src/app/models/Evidencia';
 import { Fenix } from 'src/app/models/Fenix';
@@ -26,18 +27,38 @@ let ELEMENT_DATA: Fenix[] = [];
   styleUrls: ['./asignacion-evidencia.component.css']
 })
 export class AsignacionEvidenciaComponent implements OnInit {
-  columnas: string[] = ['id', 'nombre', 'usuario', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
   columnasEvidencia: string[] = ['idevi', 'descripcion', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['idasigna', 'usuario', 'descripcion', 'actions'];
-
+  rowspanArray: number[] = [];
+  //Cambiar texto tabla
+  itemsPerPageLabel = 'Datos por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+  //
   usuarioGuardar = new Usuario2();
-  dataSource2 = new MatTableDataSource<Usuario2>();
+  dataSource2 = new MatTableDataSource<ResponsableProjection>();
   dataSource3 = new MatTableDataSource<Evidencia>();
-  dataSource4 = new MatTableDataSource<Asigna_Evi>();
+  dataSource4 = new MatTableDataSource<any>();
   fenix: Fenix = new Fenix();
   listaPersonas: Persona2[] = [];
-  listaUsuarios: Usuario2[] = [];
-  listaUsuariosResponsables: Usuario2[] = [];
+  listaUsuarios: ResponsableProjection[] = [];
+  listaUsuariosResponsables: ResponsableProjection[] = [];
   listaEvidencias: Evidencia[] = [];
 
   listaAsignaEvidencias: Asigna_Evi[] = [];
@@ -87,12 +108,22 @@ export class AsignacionEvidenciaComponent implements OnInit {
     private asignarEvidenciaService: AsignaEvidenciaService,
     private formBuilder: FormBuilder,
     public login: LoginService,
+    //importacion para tabla
+    private paginatorIntl: MatPaginatorIntl,
     private notificationService:NotificacionService
   ) {
     this.formulario = this.formBuilder.group({
       username: { value: '', disabled: true },
       password: ['', Validators.required]
     });
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
+    this.dataSource2.data = this.listaUsuarios;
+    
   }
 
   ngOnInit(): void {
@@ -113,9 +144,32 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.listar();
 
     this.Listado();
-
-
+    this.ListarAsignacion();
   }
+  cacheSpan(key: string, accessor: (data: any) => any): void {
+    let prevValue: any = undefined;
+    let rowspan = 1;
+  
+    this.listaAsignaEvidencias.forEach((row: any, index: number) => {
+      const value = accessor(row);
+      if (index === 0) {
+        prevValue = value;
+      } else if (value === prevValue) {
+        rowspan++;
+      } else {
+        // Set the rowspan and reset the values for the next group of rows.
+        this.dataSource4.data[index - rowspan][key + '-rowspan'] = rowspan;
+        rowspan = 1;
+        prevValue = value;
+      }
+  
+      // Set rowspan for the last group of rows.
+      if (index === this.listaAsignaEvidencias.length - 1) {
+        this.dataSource4.data[index][key + '-rowspan'] = rowspan;
+      }
+    });
+  }
+
 
   notificar() {
     this.noti.fecha = new Date();
@@ -186,6 +240,19 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
 
   //consumir servicio de fenix para obtener datos de la persona por cedula
+  public consultarPorNombreCompleto(){
+    if (this.fenix.primer_nombre == null && this.fenix.primer_apellido == null || this.fenix.primer_nombre == "" && this.fenix.primer_apellido == ""){
+      Swal.fire('Error', 'Debe llenar los campos', 'error');
+      return; 
+    }
+    this.fenix_service.getDocenteByNombresCompletos(this.fenix.primer_nombre,this.fenix.primer_apellido).subscribe(
+      (result) => {
+        this.dataSource = result;
+        console.log(this.dataSource);
+      }
+    )
+  }
+  
   public consultarPorCedula() {
     if (this.fenix.cedula == null || this.fenix.cedula == '') {
       Swal.fire('Error', 'Debe ingresar una cedula', 'error');
@@ -214,12 +281,12 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   //consumir servicio de fenix para obtener datos de la persona por segundo_apellido
-  public consultarPorSegundoApellido() {
-    if (this.fenix.segundo_apellido == null || this.fenix.segundo_apellido == '') {
-      Swal.fire('Error', 'Debe ingresar un apellido', 'error');
+  public consultarPrimerNombre() {
+    if (this.fenix.primer_nombre == null || this.fenix.primer_nombre == '') {
+      Swal.fire('Error', 'Debe ingresar un nombre', 'error');
       return;
     }
-    this.fenix_service.getDocenteBySegundoApellido(this.fenix.segundo_apellido).subscribe(
+    this.fenix_service.getDocenteByPrimerNombre(this.fenix.primer_nombre).subscribe(
       (result) => {
         this.dataSource = result;
       }
@@ -241,35 +308,23 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
   //crear un metodo que una los servicios de cedula, primer_apellido y segundo_apellido
   public consultar() {
-    if (this.fenix.cedula != null && this.fenix.cedula != '') {
+    if (this.fenix.primer_nombre && this.fenix.primer_apellido) {
+      this.consultarPorNombreCompleto();
+    } else if (this.fenix.cedula) {
       this.consultarPorCedula();
-    } else if ((this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') && (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '')) {
-      console.log('si entra');
+    } else if (this.fenix.primer_apellido && this.fenix.segundo_apellido) {
       this.consultarPorPrimerApellidoAndSegundoApellido();
-    } else if (this.fenix.primer_apellido != null && this.fenix.primer_apellido != '') {
+    } else if (this.fenix.primer_apellido) {
       this.consultarPorApellido();
-    } else if (this.fenix.segundo_apellido != null && this.fenix.segundo_apellido != '') {
-      this.consultarPorSegundoApellido();
+    } else if (this.fenix.primer_nombre) {
+      this.consultarPrimerNombre();
     } else {
       Swal.fire('Error', 'Debe ingresar un valor a buscar', 'error');
       return;
     }
   }
+  
 
-
-
-
-  aplicarFiltro() {
-    if (this.filterPost) {
-      const lowerCaseFilter = this.filterPost.toLowerCase();
-      this.dataSource2.data = this.dataSource2.data.filter((item: any) => {
-        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
-      });
-    } else {
-      // Restaurar los datos originales si no hay filtro aplicado
-      this.dataSource2.data = this.listaUsuarios;;
-    }
-  }
 
 
 
@@ -290,16 +345,11 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
 
-
-
-
-  public seleccionarUsuario(element: any) {
-    this.usuarioSele.id = element.id;
-    this.usuarioSele.username = element.username;
-    this.usuarioSele.password = element.password
-    this.usuarioSele.persona.primer_nombre = element.persona.primer_nombre;
-    this.usuarioSele.persona.primer_apellido = element.persona.primer_apellido;
-
+  public seleccionarUsuario(elemento: any) {
+    this.usuarioSele.id = elemento.id;
+    console.log("id traido "+this.usuarioSele.id)
+    this.usuarioSele.username = elemento.usua;
+    this.usuarioSele.persona = elemento.nombres;
   }
 
   public AsignaUsuario(element: any) {
@@ -350,20 +400,39 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
 
-  ListarAsignacion() {
+ ListarAsignacion() {
     this.asignarEvidenciaService.listarAsignarEvi().subscribe(
       listaAsig => {
         this.listaAsignaEvidencias = listaAsig;
         this.dataSource4.data = this.listaAsignaEvidencias;
-
+        this.calculateRowSpan(); // Llamamos a la función para calcular rowspan
       }
     );
-
-
   }
 
+  calculateRowSpan() {
+    this.rowspanArray = [];
+    const rowCount = this.dataSource4.data.length;
+
+    for (let i = 0; i < rowCount; i++) {
+      this.rowspanArray[i] = 1;
+      if (i > 0) {
+        const current = this.dataSource4.data[i].usuario.persona.primer_nombre;
+        const previous = this.dataSource4.data[i - 1].usuario.persona.primer_nombre;
+        if (current === previous) {
+          this.rowspanArray[i] = 0;
+        }
+      }
+    }
+
+    for (let i = rowCount - 1; i >= 0; i--) {
+      if (this.rowspanArray[i] === 0 && i > 0) {
+        this.rowspanArray[i - 1] += 1;
+      }
+    }
+  }
   Listado() {
-    this.responsableService.listarUsuarioAdmin().subscribe(
+    this.responsableService.getResponsables().subscribe(
       listaUsua => {
         this.listaUsuariosResponsables = listaUsua;
         this.dataSource2.data = this.listaUsuariosResponsables;
@@ -534,7 +603,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
       if (result.isConfirmed) {
         this.asignarEvidenciaService.eliminarAsignaLogic(id).subscribe((response) => {
 
-          this.ListarAsignacion()
+          this.ListarAsignacion();
+          this.Listado();
         });
 
         Swal.fire('Eliminado!', 'Registro eliminado.', 'success');

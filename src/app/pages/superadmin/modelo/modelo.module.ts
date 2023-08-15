@@ -17,6 +17,7 @@ import { MatrizEvidenciasComponent } from './matriz-evaluacion/matriz-evidencias
 import { AsignarCriterioComponent } from './detalle-modelo/asignar-criterio/asignar-criterio.component';
 
 import { SharedModule } from 'src/app/shared/shared.module';
+import { DialogoModeloModComponent } from './dialogo-modelo-mod/dialogo-modelo-mod.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     DialogoSubcriterioComponent,
     DetalleModeloComponent,
     DialogoModeloComponent,
+    DialogoModeloModComponent,
     DetalleSubcriterioComponent,
     DetalleIndicadorComponent,
     MatrizEvaluacionComponent,

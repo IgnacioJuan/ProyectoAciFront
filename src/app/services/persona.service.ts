@@ -15,7 +15,9 @@ export class PersonaService {
   personaObj: Persona[] = [];
   constructor(private http: HttpClient) { }
 
-
+  public getUsua(idUsua: number): Observable<Persona2[]> {
+    return this.http.get<Persona2[]>(`${baserUrl}/api/persona/buscarpersonaId/${idUsua}`);
+  }
   //Metodo para listar
   getPersonas(): Observable<Persona2[]> {
     return this.http

@@ -6,6 +6,8 @@ import { Criterio } from '../models/Criterio';
 import { asigna_R } from '../models/Asigna-Responsable';
 import { usuario } from '../models/Usuario';
 import { Usuario2 } from '../models/Usuario2';
+import { ResponsableProjection } from '../interface/ResponsableProjection';
+import { AsignacionProjection } from '../interface/AsignacionProjection';
  
 
 @Injectable({
@@ -20,7 +22,11 @@ export class AsignacionResponsableService {
     return this.httpClient.get(`${baserUrl}/usuarios/listar`).
       pipe(map((response) => response as usuario[]));
   }
-
+ //Listar responsables
+ public getResponsables(): Observable<ResponsableProjection[]> {
+  return this.httpClient.get(`${baserUrl}/usuarios/responsables`).
+    pipe(map((response) => response as ResponsableProjection[]));
+}
 
  //LISTAR RESPONSABLEAdmin
  public listarUsuarioAdmin(): Observable<Usuario2[]> {
@@ -45,7 +51,10 @@ export class AsignacionResponsableService {
     return this.httpClient.get(`${baserUrl}/api/asignacion_admin/listar`).
       pipe(map((response) => response as asigna_R[]));
   }
-
+  public asignaradmin(id_modelo:number,veri:string): Observable<AsignacionProjection[]> {
+    return this.httpClient.get(`${baserUrl}/api/asignacion_admin/asignacionadmin/${id_modelo}/${veri}`).
+      pipe(map((response) => response as AsignacionProjection[]));
+  }
   //EDITAR ASIGNACION
   public updateAsigna(asigna: asigna_R) {
     console.log(asigna.id_asignacion);
