@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DialogoCriterioComponent } from '../dialogo-criterio/dialogo-criterio.component';
@@ -15,6 +15,8 @@ import { DialogoSubcriterioComponent } from '../dialogo-subcriterio/dialogo-subc
 import { Asignacion_Criterios } from 'src/app/models/Asignacion-Criterios';
 import { AsignacionCriterioService } from 'src/app/services/asignacion-criterio.service';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
+import { CriteriosService } from 'src/app/services/criterios.service';
+import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 
 let VALOR: any[] = [];
 
@@ -29,26 +31,42 @@ export class DialogoModeloModComponent implements OnInit {
   isLoggedIn = false;
   user: any;
 
+  dataSource1: any[] = []; // Ajusta el tipo de dato según tu estructura
+  selectedSubcriterios: any[] = []; // Almacena los subcriterios seleccionados
+  formulario: FormGroup;
 
   modelo: Modelo = new Modelo();
   indicador: Indicador = new Indicador();
   asignacionIndicador: AsignacionIndicador = new AsignacionIndicador();
   listaIndicadores: Indicador[] = [];
 
+
   constructor(public login: LoginService, private asignacionIndicadorService: AsignacionIndicadorService, private dialogRef: MatDialogRef<DialogoModeloModComponent>, private _formBuilder: FormBuilder, private dialog: MatDialog, private router: Router, private modelo_service: ModeloService, private sharedDataService: SharedDataService,
-    private asignacionAdminService: AsignacionCriterioService,
+    private asignacionAdminService: AsignacionCriterioService,private criterioService:CriteriosService,
+    private subcriterioService:SubcriteriosService, private formBuilder: FormBuilder,
     private indicadorService: IndicadoresService,
     @Inject(MAT_DIALOG_DATA) public data: any) {
-
+      this.formulario = this.formBuilder.group({
+      subcriterios_undefined_0: new FormControl(''),
+      subcriterios_undefined_1: new FormControl(''),
+      subcriterios_undefined_2: new FormControl(''),
+      subcriterios_undefined_3: new FormControl(''),
+      subcriterios_undefined_4: new FormControl(''),
+      subcriterios_undefined_5: new FormControl(''),
+      subcriterios_undefined_6: new FormControl('')});
   }
 
   ngOnInit(): void {
+    this.criterioService.getDatos().subscribe(criterios => {
+      console.log("Criterios Unidos "+JSON.stringify(criterios));
+    });
     this.modelo = this.data.item;
     console.log(this.modelo)
     // this.sharedDataService.datos$.subscribe(data => {
     //   this.dataSource = VALOR;
     //   this.dataSource = data;
     // });
+    this.listarCriterios();
     this.listarIndicadores();
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
@@ -60,6 +78,58 @@ export class DialogoModeloModComponent implements OnInit {
       }
     );
   }
+
+
+  listarCriterios() {
+    this.criterioService.listarCriterio().subscribe(criterios => {
+      this.dataSource1 = criterios;
+      criterios.forEach(criterio => {
+        this.listarSubcriteriosPorCriterio(criterio.id_criterio);
+      });
+    });
+  }
+
+  listarSubcriteriosPorCriterio(criterioId: any) {
+    this.subcriterioService.listarSubcriterioPorCriterio(criterioId).subscribe(subcriterios => {
+      const subcriteriosArray = this.formulario.get(`subcriterios_${criterioId}`) as FormArray;
+  
+      if (!subcriteriosArray) {
+        this.formulario.addControl(`subcriterios_${criterioId}`, this.formBuilder.array([]));
+      }
+  
+      const existingSubcriteriosArray = this.formulario.get(`subcriterios_${criterioId}`) as FormArray;
+      console.log("subcriteriosArray:", subcriteriosArray);
+      subcriterios.forEach(subcriterio => {
+        existingSubcriteriosArray.push(this.formBuilder.control(false));
+      });
+  
+      const criterio = this.dataSource1.find((c: { id_criterio: any; }) => c.id_criterio === criterioId);
+      if (criterio) {
+        criterio.subcriterios = subcriterios; // Asegúrate de que 'subcriterios' coincide con el nombre que usas en la plantilla
+        console.log("criterio con subcriterios:", criterio);
+      }
+    });
+  }
+   
+
+  onChangeSubcriterio(criterioId: any, subcriterioIndex: number, subcriterioId: any) {
+    console.log("Subcriterio ID:", subcriterioId); 
+    const subcriteriosArray = this.formulario.get(`subcriterios_${criterioId}`) as FormArray;
+    if (subcriteriosArray) {
+      const isChecked = subcriteriosArray.controls[subcriterioIndex].value;
+      
+      if (isChecked) {
+        this.selectedSubcriterios.push(subcriterioId);
+      } else {
+        const indexToRemove = this.selectedSubcriterios.findIndex(selectedId => selectedId === subcriterioId);
+        if (indexToRemove !== -1) {
+          this.selectedSubcriterios.splice(indexToRemove, 1);
+        }
+      }
+    }
+  }
+  
+  
 
   listarIndicadores(): void {
     console.log(this.modelo.id_modelo)
@@ -91,7 +161,7 @@ export class DialogoModeloModComponent implements OnInit {
     Swal.fire({
       title: 'Estas seguro de modificar el registro?',
       showDenyButton: true,
-      confirmButtonText: 'Cacelar',
+      confirmButtonText: 'Cancelar',
       denyButtonText: `Modificar`,
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */

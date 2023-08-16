@@ -85,6 +85,17 @@
     </mat-step>
   </mat-stepper>
 </mat-dialog-content>
+<!-- <div [formGroup]="formulario">
+  <div *ngFor="let criterio of dataSource1">
+    <h3>{{ criterio.nombre }}</h3>
+    <div *ngFor="let subcriterio of criterio.subcriterios; let i = index">
+      <input type="checkbox" [formControlName]="'subcriterios_' + criterio.id + '_' + i" (change)="onChangeSubcriterio(criterio.id, i, subcriterio.id_subcriterio)">
+      {{ subcriterio.nombre }}
+    </div>
+    
+  </div>
+</div> -->
+
 <mat-dialog-actions align="end">
   <button class="btn btn-warning" mat-dialog-close>Cancelar</button>
   <button class="btn btn-primary" cdkFocusInitial (click)="modificarModelo()">
