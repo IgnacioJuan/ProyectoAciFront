@@ -14,10 +14,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Criterio } from 'src/app/models/Criterio';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { Chart } from 'chart.js';
+import { Archivo } from 'src/app/models/Archivo';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-
-
 
 @Component({
   selector: 'app-ponderacion-criterio',
@@ -28,13 +27,15 @@ export class PonderacionCriterioComponent implements OnInit {
   itemsPerPageLabel = 'Criterios por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
-  firstPageLabel='Primera';
-  previousPageLabel='Anterior';
-  rango:any= (page: number, pageSize: number, length: number) => {
+  firstPageLabel = 'Primera';
+  previousPageLabel = 'Anterior';
+
+  
+  rango: any = (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
       return `0 de ${length}`;
     }
-  
+
     length = Math.max(length, 0);
     const startIndex = page * pageSize;
     const endIndex =
@@ -45,53 +46,78 @@ export class PonderacionCriterioComponent implements OnInit {
   };
 
   model: Modelo = new Modelo();
+  archivos: Archivo[] = [];
   critrioClase = new Criterio();
   asignacion: any;
   criterio: Criterio = new Criterio();
   modelo: Modelo = new Modelo();
   color: any
   chart: any;
+  idndicadorseleccionado: number = 0;
 
-  dataSource = new MatTableDataSource<any>();
-  columnasUsuario: string[] = ['id_indicador', 'nombre','peso', 'porc_valor', 'porc_utilidad','valor'];
+  dataSource = new MatTableDataSource<any>;
+
+  //columnasUsuario: string[] = ['id_indicador', 'nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor'];
+  columnasUsuario: string[] = ['id_indicador', 'nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor', 'archivo'];
+
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
+  tusDatosService: any;
 
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router, private fb: FormBuilder,
-    public modeloService: ModeloService,private paginatorIntl: MatPaginatorIntl,
+    public modeloService: ModeloService, private paginatorIntl: MatPaginatorIntl,
     public asignacionIndicadorService: AsignacionIndicadorService,
     private activatedRoute: ActivatedRoute
+
+    
   ) {
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
-    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
-    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.firstPageLabel = this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel = this.previousPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
-    this.paginatorIntl.getRangeLabel=this.rango;
-  }
+    this.paginatorIntl.getRangeLabel = this.rango;
+    this.dataSource = new MatTableDataSource<any>(); // Inicialización del dataSource
+    }
   ngAfterViewInit() {
+
     this.dataSource.paginator = this.paginator || null;
+    
 
   }
   ngOnInit(): void {
     this.llenar_datasource();
+    const tusDatos = this.tusDatosService.obtenerTusDatos();
+
+    this.dataSource.data = tusDatos; // Asigna los datos al dataSource
+  
   }
 
   llenar_datasource() {
     this.criterio = history.state.criterio;
     this.modelo = history.state.modelo;
+    const id_criterio = 1; // Reemplaza con el ID de criterio correcto
+    const id_modelo = 2; // Reemplaza con el ID de modelo correcto
     this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
       (data) => {
-        this.dataSource.data = data;
+        const mappedData = data.map((indicador: any) => {
+          return {
+            ...indicador,
+            enlace: `http://localhost:5000/archivo/${indicador.id_indicador}.pdf` // Reemplaza 'URL_DEL_BACKEND' con la URL correcta de tu backend
+          };
+        });
+  
+        this.dataSource = new MatTableDataSource(mappedData); // Crear instancia de MatTableDataSource
+  
+        console.log(this.dataSource.data + 'criteriooooooo');
+  
         this.coloresTabla();
         this.GraficaPastel();
       }
     );
-
   }
-
 
   coloresTabla() {
     this.dataSource.data.forEach((indicador: any) => {
@@ -143,6 +169,27 @@ export class PonderacionCriterioComponent implements OnInit {
   }
 
   irinicio() {
-    this.router.navigate(['/sup/modelo/modelo']);
+    this.router.navigate(['/sup/modelo/modelo']); 
   }
+
+
+  recoverPdf(id: number) {
+
+    this.indicadorservice.recoverPdfLink(id).subscribe(
+      (data) => {
+        this.recoverPdf;
+        this.idndicadorseleccionado = id;
+
+        this.indicadorservice.getarchivorecoverPdf(id).subscribe(
+          (data) => {
+
+            this.archivos = data;
+            console.log(this.archivos);
+
+          }
+        );
+      });
+
+  }
+
 }

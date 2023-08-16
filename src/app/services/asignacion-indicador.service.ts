@@ -32,4 +32,8 @@ export class AsignacionIndicadorService {
         );
     }
 
+    public getasignaindi(id_modelo: number): Observable<AsignacionIndicador[]> {
+        return this.http.get<AsignacionIndicador[]>(`${baserUrl}/api/asignacion_indicador/listarasig_indi/${id_modelo}`);
+      }
+      
 }

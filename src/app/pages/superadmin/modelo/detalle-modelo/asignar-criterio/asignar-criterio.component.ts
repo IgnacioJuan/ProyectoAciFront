@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 export class AsignarCriterioComponent implements OnInit {
 
   datasource: any;
+  nombrecrit:string='';
   valorSeleccionado: number = 0;
   lista: any[] = [];
   noti = new Notificacion();
@@ -29,6 +30,7 @@ export class AsignarCriterioComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.login.getUser();
     this.id_modelo=this.data.modelo;
+    this.nombrecrit=this.data.nombre;
     console.log("ID modelo recibido: "+this.id_modelo);
     this.usuarioService.listarAdminDatos().subscribe(data => {
       this.datasource = data;
@@ -49,7 +51,7 @@ export class AsignarCriterioComponent implements OnInit {
   notificaruser() {
     this.noti.fecha = new Date();
     this.noti.rol = "";
-    this.noti.mensaje = this.user?.persona?.primer_nombre + " " + this.user?.persona?.primer_apellido + " te ha asignado el criterio " + this.nombre;
+    this.noti.mensaje = this.user?.persona?.primer_nombre + " " + this.user?.persona?.primer_apellido + " te ha asignado el criterio " + this.data.nombre;
     this.noti.visto = false;
     this.noti.usuario = this.idusuario;
     console.log("El nombre es " + this.nombre)
@@ -70,7 +72,6 @@ export class AsignarCriterioComponent implements OnInit {
 
     this.asignacionCriterio.listarAsignacion_AdminPorUsuarioCriterio(this.data.id, this.id_modelo).subscribe(result => {
       if (result === null) {
-        console.log("Resultado consultado "+JSON.stringify(result));
         this.crearAsignacion();
         return;
       }
@@ -88,8 +89,6 @@ export class AsignarCriterioComponent implements OnInit {
     this.idusuario = this.valorSeleccionado;
     this.nombre = this.data.nombre;
     console.log("iduser" + this.idusuario);
-    
-
   }
 
   crearAsignacion() {

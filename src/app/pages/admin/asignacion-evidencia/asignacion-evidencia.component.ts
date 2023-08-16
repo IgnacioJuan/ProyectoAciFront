@@ -405,6 +405,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
       listaAsig => {
         this.listaAsignaEvidencias = listaAsig;
         this.dataSource4.data = this.listaAsignaEvidencias;
+        console.log("Asignaciones"+JSON.stringify(this.dataSource4.data))
         this.calculateRowSpan(); // Llamamos a la función para calcular rowspan
       }
     );
@@ -642,11 +643,12 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   listar() {
+    console.log("usuario a consultar "+this.user.id);
     this.evidenciaService.getEvidenciasAdmin(this.user.id).subscribe(
       listaEvi => {
         this.listaEvidencias = listaEvi; // Asignar la lista directamente
         this.dataSource3.data = this.listaEvidencias;
-        console.log(this.listaEvidencias);
+        console.log("lista evidencias"+this.listaEvidencias);
       }
     );
   }
