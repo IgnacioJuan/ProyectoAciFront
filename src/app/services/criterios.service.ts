@@ -47,6 +47,9 @@ export class CriteriosService {
     return this.http.get<Criterio[]>(`${baserUrl}/api/criterio/listarcriteriosMode`);
   }
 
+  getDatos(): Observable<any> {
+    return this.http.get<any>(`${baserUrl}/api/criterio/datos`);
+  }
   getObtenerCriterio2(id: number): Observable<Criterio[]> {
     return this.http.get<Criterio[]>(`${baserUrl}/api/criterio/listarcriteriosMId/` + id);
   }

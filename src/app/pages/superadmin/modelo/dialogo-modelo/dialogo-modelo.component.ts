@@ -15,6 +15,8 @@ import { DialogoSubcriterioComponent } from '../dialogo-subcriterio/dialogo-subc
 import { Asignacion_Criterios } from 'src/app/models/Asignacion-Criterios';
 import { AsignacionCriterioService } from 'src/app/services/asignacion-criterio.service';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { forkJoin } from 'rxjs';
 
 let VALOR: any[] = [];
 
@@ -25,10 +27,10 @@ let VALOR: any[] = [];
   styleUrls: ['./dialogo-modelo.component.css']
 })
 export class DialogoModeloComponent implements OnInit {
-
+  copiando: boolean = false;
   isLoggedIn = false;
   user: any;
-
+  isIdmaxSet = false;
   idmax!:number;
   modelo: Modelo = new Modelo();
   indicador: Indicador = new Indicador();
@@ -36,7 +38,7 @@ export class DialogoModeloComponent implements OnInit {
   listaIndicadores: Indicador[] = [];
 
   constructor(public login: LoginService, private asignacionIndicadorService: AsignacionIndicadorService, private dialogRef: MatDialogRef<DialogoModeloComponent>, private _formBuilder: FormBuilder, private dialog: MatDialog, private router: Router, private modelo_service: ModeloService, private sharedDataService: SharedDataService,
-    private asignacionAdminService: AsignacionCriterioService,
+    private asignacionAdminService: AsignacionCriterioService,private spinner: NgxSpinnerService,
     private indicadorService: IndicadoresService) {
 
   }
@@ -61,10 +63,12 @@ export class DialogoModeloComponent implements OnInit {
     console.log(this.user);
     this.modelo_service.getModeMaximo().subscribe(data => {
       this.idmax = data.id_modelo;
+      
       console.log("id maximo traido"+this.idmax);
     });
+    
   }
-
+  
 
 
   //metodo para crear un modelo
@@ -144,12 +148,17 @@ export class DialogoModeloComponent implements OnInit {
       });
     })
   }
-
+  
   copiarmodelo() {
-    if (this.modelo.fecha_inicio == null || this.modelo.fecha_fin == null || this.modelo.fecha_final_act == null || this.modelo.nombre == null || this.dataSource.length == 0) {
-      Swal.fire('Error', `Debe llenar todos los campos`, 'error');
-      return;
-    }
+    this.copiando = true;
+    this.spinner.show();
+    this.secondFormGroup.get('secondCtrl')?.clearValidators();
+    this.secondFormGroup.get('secondCtrl')?.updateValueAndValidity();
+    console.log("id copiado "+this.idmax);
+    // if (this.modelo.fecha_inicio == null || this.modelo.fecha_fin == null || this.modelo.fecha_final_act == null || this.modelo.nombre == null || this.dataSource.length == 0) {
+    //   Swal.fire('Error', `Debe llenar todos los campos`, 'error');
+    //   return;
+    // }
   
     if (this.modelo.fecha_inicio >= this.modelo.fecha_fin || this.modelo.fecha_inicio >= this.modelo.fecha_final_act || this.modelo.fecha_fin <= this.modelo.fecha_final_act) {
       Swal.fire('Error', `Las fechas no son correctas por favor revisar`, 'error');
@@ -162,7 +171,74 @@ export class DialogoModeloComponent implements OnInit {
   
         this.asignacionIndicadorService.getasignaindi(this.idmax).subscribe(
           asignaciones => {
-            console.log('Asignaciones de indicadores del último modelo:', asignaciones);
+            console.log('Asignaciones de indicadores del último modelo:', JSON.stringify(asignaciones));
+  
+            const asignacionObservables = asignaciones.map(asignacion => {
+              const nuevaAsignacion: AsignacionIndicador = {
+                id_asignacion_indicador: 0,
+                modelo: nuevoModelo,
+                indicador: asignacion.indicador,
+              };
+              return this.asignacionIndicadorService.createAsignacionIndicador(nuevaAsignacion);
+            });
+  
+            forkJoin(asignacionObservables).subscribe(
+              resultados => {
+                console.log("Todas las asignaciones creadas:", resultados);
+                this.spinner.hide();
+                this.copiando = false;
+                this.dialogRef.close();
+                Swal.fire('Éxito', 'El modelo se ha copiado correctamente', 'success');
+              },
+              error => {
+                console.error('Error al crear las asignaciones:', error);
+                this.spinner.hide();
+                this.copiando = false;
+              }
+            );
+          },
+          error => {
+            console.error('Error al obtener asignaciones de indicadores:', error);
+            this.spinner.hide();
+            this.copiando = false;
+          }
+        );
+      },
+      error => {
+        console.error("Error al crear el nuevo modelo:", error);
+        this.spinner.hide();
+        this.copiando = false;
+      }
+    );
+  
+    this.reiniciarIndicador();
+    this.secondFormGroup.get('secondCtrl')?.setValidators(Validators.required);
+    this.secondFormGroup.get('secondCtrl')?.updateValueAndValidity();
+  }
+  
+  /*copiarmodelo() {
+    this.copiando = true;
+    this.spinner.show();
+    this.secondFormGroup.get('secondCtrl')?.clearValidators();
+    this.secondFormGroup.get('secondCtrl')?.updateValueAndValidity();
+    console.log("id copiado "+this.idmax);
+    // if (this.modelo.fecha_inicio == null || this.modelo.fecha_fin == null || this.modelo.fecha_final_act == null || this.modelo.nombre == null || this.dataSource.length == 0) {
+    //   Swal.fire('Error', `Debe llenar todos los campos`, 'error');
+    //   return;
+    // }
+  
+    if (this.modelo.fecha_inicio >= this.modelo.fecha_fin || this.modelo.fecha_inicio >= this.modelo.fecha_final_act || this.modelo.fecha_fin <= this.modelo.fecha_final_act) {
+      Swal.fire('Error', `Las fechas no son correctas por favor revisar`, 'error');
+      return;
+    }
+  
+    this.modelo_service.createModelo(this.modelo).subscribe(
+      nuevoModelo => {
+        console.log("Guardado datos del nuevo modelo: " + JSON.stringify(nuevoModelo));
+     
+        this.asignacionIndicadorService.getasignaindi(this.idmax).subscribe(
+          asignaciones => {
+            console.log('Asignaciones de indicadores del último modelo:', JSON.stringify(asignaciones));
   
             asignaciones.forEach(asignacion => {
               const nuevaAsignacion: AsignacionIndicador = {
@@ -173,7 +249,7 @@ export class DialogoModeloComponent implements OnInit {
   
               this.asignacionIndicadorService.createAsignacionIndicador(nuevaAsignacion).subscribe(
                 resultado => {
-                  console.log("Nueva asignación creada:", resultado);
+                  console.log("Nueva asignación creada:", JSON.stringify(resultado));
                 },
                 error => {
                   console.error('Error al crear nueva asignación:', error);
@@ -185,6 +261,7 @@ export class DialogoModeloComponent implements OnInit {
             console.error('Error al obtener asignaciones de indicadores:', error);
           }
         );
+        //fin asignaciones
       },
       error => {
         console.error("Error al crear el nuevo modelo:", error);
@@ -192,7 +269,12 @@ export class DialogoModeloComponent implements OnInit {
     );
   
     this.reiniciarIndicador();
-  }
+    this.secondFormGroup.get('secondCtrl')?.setValidators(Validators.required);
+    this.secondFormGroup.get('secondCtrl')?.updateValueAndValidity();
+    this.spinner.hide();
+    this.copiando = false;
+    this.dialogRef.close();
+  }*/
   
 
   reiniciarIndicador() {
