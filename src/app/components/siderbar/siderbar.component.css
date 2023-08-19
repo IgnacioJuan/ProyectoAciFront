@@ -6,7 +6,3 @@
     overflow-y: auto;
     max-height: calc(100vh - 100px); /* Ajusta la altura máxima según tus necesidades */
   }
-  
-  .submenu-active {
-    display: block !important;
-  }
