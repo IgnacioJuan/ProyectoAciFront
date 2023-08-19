@@ -87,13 +87,5 @@ export class SiderbarComponent implements OnInit {
     console.log(this.user);
   }
 
-  toggleSubmenu(index: number) {
-    if (this.activeSubmenuIndex === index) {
-      // Si la opción está activa y se hace clic nuevamente, se cierra la opción.
-      this.activeSubmenuIndex = -1;
-    } else {
-      // Si se abre una nueva opción, se cierra la opción anterior activa (si hay alguna).
-      this.activeSubmenuIndex = index; // Se marca el nuevo submenú como activo.
-    }
-  }
+
 }
