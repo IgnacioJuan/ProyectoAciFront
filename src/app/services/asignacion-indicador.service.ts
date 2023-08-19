@@ -35,5 +35,8 @@ export class AsignacionIndicadorService {
     public getasignaindi(id: number): Observable<AsignacionIndicador[]> {
         return this.http.get<AsignacionIndicador[]>(`${baserUrl}/api/asignacion_indicador/listarasig_indi/${id}`);
       }
-      
+    
+      getEliminaasig(id_modelo: number): Observable<AsignacionIndicador> {
+        return this.http.delete<AsignacionIndicador>(`${baserUrl}/api/asignacion_indicador/eliminarasi/${id_modelo}`);
+      }
 }

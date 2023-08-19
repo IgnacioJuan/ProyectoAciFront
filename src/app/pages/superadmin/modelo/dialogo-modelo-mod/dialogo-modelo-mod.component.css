@@ -1,3 +1,15 @@
+.negrita{
+    font-weight: bold;
+  }
+
+.small-cell {
+    max-width: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    background-color: transparent;
+    color:white;
+  }
+  
 .example-form {
     min-width: 150px;
     width: 100%;

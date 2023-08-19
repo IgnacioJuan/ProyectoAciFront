@@ -426,8 +426,6 @@ export class PonderacionModeloComponent implements OnInit {
   listPonderacion() {
     this.servicePonderacion.listarPonderacion().subscribe(data => {
       this.dataSource.data = data;
-      console.log("Holaaaa")
-      console.log(data)
     });
 
   }

@@ -71,6 +71,8 @@ export class DashboardComponent2 implements OnInit {
   itemsPerPageLabel = 'Actividades por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
   rango:any= (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
       return `0 de ${length}`;
@@ -158,6 +160,8 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
    }
 

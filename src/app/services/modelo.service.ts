@@ -4,6 +4,7 @@ import { map, Observable, catchError } from "rxjs";
 import { Modelo } from "../models/Modelo";
 import baserUrl from "./helper";
 import { ModeloVistaProjection } from "../interface/ModeloVistaProjection";
+import { ModelIndiProjection } from "../interface/ModelIndiProjection";
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class ModeloService {
       .get(`${baserUrl}/api/modelo/listar`)
       .pipe(map((response) => response as Modelo[]));
   }
+
   
   getModeloById(id_modelo: number): Observable<Modelo> {
 
@@ -55,4 +57,9 @@ export class ModeloService {
   getModelosVista(): Observable<ModeloVistaProjection[]> {
     return this.http.get<ModeloVistaProjection[]>(`${baserUrl}/api/modelo/datosModelo`)
   }
+
+  getlistmodelindi(id_modelo:number): Observable<ModelIndiProjection[]> {
+    return this.http.get<ModelIndiProjection[]>(`${baserUrl}/api/modelo/listmodelindi/${id_modelo}`)
+  }
+
 }

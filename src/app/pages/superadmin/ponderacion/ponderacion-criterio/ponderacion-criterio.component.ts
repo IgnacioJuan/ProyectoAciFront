@@ -17,6 +17,7 @@ import { Chart } from 'chart.js';
 import { Archivo } from 'src/app/models/Archivo';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import baserUrl from 'src/app/services/helper';
 
 @Component({
   selector: 'app-ponderacion-criterio',
@@ -105,7 +106,7 @@ export class PonderacionCriterioComponent implements OnInit {
         const mappedData = data.map((indicador: any) => {
           return {
             ...indicador,
-            enlace: `http://localhost:5000/archivo/${indicador.id_indicador}.pdf` // Reemplaza 'URL_DEL_BACKEND' con la URL correcta de tu backend
+            enlace: `${baserUrl}/archivo/${indicador.id_indicador}.pdf` // Reemplaza 'URL_DEL_BACKEND' con la URL correcta de tu backend
           };
         });
   
