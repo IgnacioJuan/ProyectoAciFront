@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
       location.replace('/use/user-dashboard');
     }
   }
-
+  
   formSubmit() {
     if (this.loginData.username.trim() == '' || this.loginData.username.trim() == null) {
       // this._snack.open('El username de usuario es requerido !!', 'Aceptar')
