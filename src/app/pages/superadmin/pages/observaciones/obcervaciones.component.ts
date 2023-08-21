@@ -24,6 +24,8 @@ export class ObcervacionesComponent implements OnInit {
   itemsPerPageLabel = 'Archivos por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
+  firstPageLabel='Primera';
+  previousPageLabel='Anterior';
   rango:any= (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
       return `0 de ${length}`;
@@ -59,6 +61,8 @@ export class ObcervacionesComponent implements OnInit {
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
   }
   //Contador para combinar celdas

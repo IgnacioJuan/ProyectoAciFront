@@ -23,6 +23,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { forkJoin } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 let VALOR: any[] = [];
 
@@ -55,6 +56,7 @@ export class DialogoModeloModComponent implements OnInit {
   previousPageLabel='Anterior';
   selectedIds: number[] = [];
   id_mode!: number;
+  mensaje:string='';
   vertabla= false;
   rango:any= (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
@@ -227,7 +229,7 @@ export class DialogoModeloModComponent implements OnInit {
           await this.modelo_service.modificar(this.modelo).toPromise();
           await this.eliminarYGuardarAsignaciones();
           this.dialogRef.close();
-          Swal.fire('Modificado con exito!', '', 'success');
+          Swal.fire('Modificado con exito! '+this.mensaje, '', 'success');
         } catch (error) {
           console.error('Error al modificar el registro:', error);
           Swal.fire('Error', 'Ocurrió un error al modificar el modelo.', 'error');
@@ -239,10 +241,33 @@ export class DialogoModeloModComponent implements OnInit {
   async eliminarYGuardarAsignaciones() {
     if (this.vertabla) {
       try {
-        await this.asignacionIndicadorService.getEliminaasig(this.id_mode).toPromise();
+      //  await this.asignacionIndicadorService.getEliminaasig(this.id_mode).toPromise();
+         // Obtener los IDs de asignaciones en la base de datos para el modelo actual
+      const asignacionesEnBase = await this.modelo_service?.getlistmodelindi(this.id_mode).toPromise();
+      const idsEnBase = asignacionesEnBase?.map((asig => asig.id_indi));
+
+      // Encontrar IDs que se deben eliminar
+      const idsAEliminar = idsEnBase?.filter((id: number) => !this.getSelectedIds().includes(id));
+
+      // Eliminar las asignaciones que ya no están presentes
+      if (idsAEliminar) {
+        for (const idAEliminar of idsAEliminar) {
+          try {
+            const response = await this.asignacionIndicadorService.getEliminaasig(this.id_mode, idAEliminar).toPromise();
+          
+          } catch (error) {
+            console.error('Error al eliminar asignación:', error);
+            if (error instanceof HttpErrorResponse) {
+              this.mensaje=(error.error+" ").toString();
+              console.log('Mensaje del backend:', error.error); 
+              
+            }
+          }
+        }
+      }
+      
+        //
         const selectedIds = this.getSelectedIds();
-        
-  
         const observables = selectedIds.map(id => {
           const asignacionIndicador = new AsignacionIndicador();
           asignacionIndicador.indicador = {
@@ -281,37 +306,7 @@ export class DialogoModeloModComponent implements OnInit {
     }
   }
 
-  guardarasig(){
-    if(this.vertabla){
-      this.asignacionIndicadorService.getEliminaasig(this.modelo.id_modelo).subscribe(
-        () => {
-          console.log('Registro eliminado exitosamente.');
-        },
-        (error) => {
-          console.error('Error al eliminar el registro:', error);
-        }
-      );//fin eliminar
-    
-    const selectedIds = this.getSelectedIds();
-    const asignacionIndicador = new AsignacionIndicador();
-
-  for (const id of selectedIds) {
-  asignacionIndicador.id_asignacion_indicador = id;
-  asignacionIndicador.modelo.id_modelo=this.modelo.id_modelo;
-
-  this.asignacionIndicadorService.createAsignacionIndicador(asignacionIndicador).subscribe(
-    (result) => {
-      console.log(`Asignación creada para el ID ${id}:`, result);
-      },
-      (error) => {
-      console.error(`Error al crear asignación para el ID ${id}:`, error);
-       }
-     );
-    }
-  }
-  }
-
-
+ 
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
   });
