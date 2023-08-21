@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { LoginService } from './services/login.service';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
