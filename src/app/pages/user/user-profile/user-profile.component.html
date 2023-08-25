@@ -58,6 +58,7 @@
                   data-bs-toggle="modal"
                   data-bs-target="#exampleModal3"
                 >
+<<<<<<< Updated upstream
                   <mat-icon>vpn_key</mat-icon>Cambiar Contraseña
                 </button>
                 <button
@@ -70,6 +71,69 @@
                 >
                   <mat-icon>edit</mat-icon>Actualizar Datos
                 </button>
+=======
+                  <img
+                    src="./assets/profile.png"
+                    alt="Avatar"
+                    class="img-fluid my-5"
+                    style="width: 80px"
+                  />
+                  <h5>
+                    {{ user?.persona?.primer_apellido }}
+                    {{ user?.persona?.primer_nombre }}
+                  </h5>
+                  <p>{{ rol }}</p>
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body p-4">
+                    <h1>Información</h1>
+                    <hr class="mt-0 mb-4" />
+                    <div class="row pt-1">
+                      <div class="col-6 mb-3">
+                        <h3>Email</h3>
+                        <p class="text-muted">{{ user?.persona?.correo }}</p>
+                      </div>
+                      <div class="col-6 mb-3">
+                        <h3>Celular</h3>
+                        <p class="text-muted">{{ user?.persona?.celular }}</p>
+                      </div>
+                    </div>
+                    <div class="row pt-1">
+                      <div class="col-6 mb-3">
+                        <h3>Username</h3>
+                        <p class="text-muted">{{ user?.username }}</p>
+                      </div>
+                      <div class="col-6 mb-3">
+                        <h3>Direccion</h3>
+                        <p class="text-muted">{{ user?.persona?.direccion }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="button-group w-60 d-flex justify-content-center"
+                    style="margin: 1%; align-items: center"
+                  >
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal3"
+                    >
+                      <mat-icon>vpn_key</mat-icon>Cambiar Contraseña
+                    </button>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      data-bs-toggle="modal"
+                      style="margin-left: 3%"
+                      data-bs-target="#exampleModal4"
+                      (click)="edit()"
+                    >
+                      <mat-icon>edit</mat-icon>Actualizar Datos
+                    </button>
+                  </div>
+                </div>
+>>>>>>> Stashed changes
               </div>
             </div>
           </div>
@@ -96,6 +160,7 @@
             class="modal-title font-weight-bold"
             style="font-family: Arial, sans-serif; color: white"
           >
+<<<<<<< Updated upstream
             Cambiar Contraseña
           </h1>
         </strong>
@@ -147,6 +212,66 @@
               Las contraseñas no coinciden.
             </mat-error>
           </mat-form-field>
+=======
+            <strong>
+              <h1
+                class="modal-title font-weight-bold"
+                style="font-family: Arial, sans-serif; color: white"
+              >
+                Actualizar Datos
+              </h1>
+            </strong>
+            
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Nombre de usuario</mat-label>
+              <input
+                disabled
+                required
+                name="username"
+                matInput
+                [value]="user.username"
+              />
+            </mat-form-field>
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>ID usuario</mat-label>
+              <input
+                disabled
+                required
+                name="id_usuario"
+                matInput
+                [value]="user.id"
+              />
+            </mat-form-field>
+            <form
+              [formGroup]="usuarioForm"
+              (ngSubmit)="Actualizardatos(usuariosEditGuar)"
+            >
+              <mat-label>Email</mat-label>
+              <input
+                class="form-control"
+                formControlName="correo"
+                matInput
+                placeholder="Digite su correo"
+              />
+              <mat-error
+                class="alert alert-danger"
+                style="color: black;"
+                *ngIf="
+                  usuarioForm.controls['correo'].invalid &&
+                  usuarioForm.controls['correo'].touched
+                "
+              >
+                El correo electrónico es inválido.
+              </mat-error>
+>>>>>>> Stashed changes
 
           <div class="container text-center">
             <button

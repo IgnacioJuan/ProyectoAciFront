@@ -16,6 +16,8 @@ export class UserProfileComponent implements OnInit {
   isLoggedIn = false;
   user: any = null;
   rol: any = null;
+  idprueba: any;
+  idpruebapersona: any;
 //
   usuariosEditGuar = new Usuario2();
   usuarioForm: FormGroup;
@@ -89,27 +91,30 @@ export class UserProfileComponent implements OnInit {
         Swal.fire('Se ha cancelado la operación', '', 'info')
       }
     })
-
-
   }
 
 
   edit(): void {
     this.usuariosEditGuar.persona = this.user.persona;
     this.usuarioForm = new FormGroup({
-      correo: new FormControl(this.user.persona.correo, [Validators.required, Validators.email]),
-      celular: new FormControl(this.user.persona.celular, [Validators.required, Validators.pattern(/^\d{10}$/)]),
-      direccion: new FormControl(this.user.persona.direccion, [Validators.required]),
-      primer_nombre: new FormControl(this.user.persona.primer_nombre, [Validators.required]),
-      primer_apellido: new FormControl(this.user.persona.primer_apellido, [Validators.required])
+      id_usuario: new FormControl(this.user.id), // Campo de solo lectura
+      id_persona: new FormControl(this.user?.persona?.id_persona), // Campo de solo lectura
+      correo: new FormControl(this.user?.persona?.correo, [Validators.required, Validators.email]),
+      celular: new FormControl(this.user?.persona?.celular, [Validators.required, Validators.pattern(/^\d{10}$/)]),
+      direccion: new FormControl(this.user?.persona?.direccion, [Validators.required]),
+      primer_nombre: new FormControl(this.user?.persona?.primer_nombre, [Validators.required]),
+      primer_apellido: new FormControl(this.user?.persona?.primer_apellido, [Validators.required])
   });
-
-
+  this.idprueba = this.user.id;
+  this.idpruebapersona = this.user?.persona?.id_persona;
   }
+
   Actualizardatos(usuariosdit: Usuario2) {
     const persona: Persona2 = this.usuarioForm.value;
-    persona.id_persona=usuariosdit.persona.id_persona;
-    console.log(persona)
+    console.log(persona);
+    persona.id_persona = usuariosdit?.persona?.id_persona;
+    console.log(persona.id_persona);
+    console.log(this.idprueba);
     Swal.fire({
       title: 'Esta seguro de modificar sus datos?',
       showCancelButton: true,
@@ -118,9 +123,43 @@ export class UserProfileComponent implements OnInit {
       icon: 'info',
     }).then((result) => {
       if (result.isConfirmed) {
-
-        this.personaService.actualizar(persona.id_persona, persona)
+        this.personaService.existencia(this.idprueba).subscribe((existencia: boolean) => {
+          if (existencia == true) {
+            // La persona no existe, realizar la creación
+            this.personaService.createPersona(persona).subscribe((response: any) => {
+              console.log(response);
+              this.login.getCurrentUser().subscribe((user: any) => {
+                Swal.fire(
+                  'Operación exitosa!',
+                  'La persona ha sido creada con éxito',
+                  'success'
+                );
+                this.login.setUser(user);
+                this.user = this.login.getUser();
+              });
+            });
+            this.personaService.actualizarPersonaIdEnUsuario(this.idprueba, this.idpruebapersona).subscribe((usuarioResponse: any) => {
+              console.log(usuarioResponse);
+            });
+          } else {
+            // La persona ya existe, realizar la actualización
+            this.personaService.actualizar(persona.id_persona, persona).subscribe((response: any) => {
+              console.log(response);
+              this.login.getCurrentUser().subscribe((user: any) => {
+                Swal.fire(
+                  'Operación exitosa!',
+                  'Los datos han sido modificados con éxito',
+                  'success'
+                );
+                this.login.setUser(user);
+                this.user = this.login.getUser();
+              });
+            });
+          }
+        });
+        /*this.personaService.actualizar(persona.id_persona, persona)
           .subscribe((response: any) => {
+            console.log(response);
             this.login.getCurrentUser().subscribe((user: any) => {
               Swal.fire(
                 'Operación exitosa!',
@@ -130,7 +169,7 @@ export class UserProfileComponent implements OnInit {
               this.login.setUser(user);
               this.user = this.login.getUser();
             });
-          })
+          })*/
       } else {
         Swal.fire('Se ha cancelado la operación', '', 'info')
       }

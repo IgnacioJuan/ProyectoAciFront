@@ -58,8 +58,18 @@ export class PersonaService {
     return this.http.get<Persona2>(url);
   }
 
+  existencia(id: any): Observable<any> {
+    return this.http.get(`${baserUrl}/usuarios/listausuariosprueba/${id}`);
+  }
+  // Método para actualizar el campo persona_id_persona en la entidad de usuario
+  actualizarPersonaIdEnUsuario(usuarioId: number, crite: any): Observable<any> {
+    return this.http.put(`${baserUrl}/usuarios/actualizarPersonaIdEnUsuario/${usuarioId}`, crite);
+  }
+
   actualizar(id: any, crite: any): Observable<any> {
     return this.http.put(`${baserUrl}/api/persona/actualizar/${id}`, crite);
   }
+
+  
 
 }
