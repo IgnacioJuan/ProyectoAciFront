@@ -63,9 +63,10 @@ export class ModeloService {
     return this.http.get<ModelIndiProjection[]>(`${baserUrl}/api/modelo/listmodelindi/${id_modelo}`)
   }
 
-  getlisdescrite(id_modelo:number): Observable<criteriosdesprojection[]> {
-    return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/listcritedes/${id_modelo}`)
+  getlisdescrite(id_modelo:number,nombre:string): Observable<criteriosdesprojection[]> {
+    return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/listcritedes/${id_modelo}/${nombre}`)
   }
+
   getliscriteno(id_modelo: number, nombre: string): Observable<criteriosdesprojection[]> {
     const url = `${baserUrl}/api/modelo/listcritedesNOM/${id_modelo}/${nombre}`;
     return this.http.get<criteriosdesprojection[]>(url);

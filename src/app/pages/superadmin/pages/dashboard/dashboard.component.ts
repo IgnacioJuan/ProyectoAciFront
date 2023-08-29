@@ -83,8 +83,9 @@ export class DashboardComponent2 implements OnInit {
   notificaciones: Notificacion[] = [];
   numNotificacionesSinLeer: number = 0;
   selectedColor: string="";
+  titulocriterio: string="";
   abrir: boolean = false;
-  itemsPerPageLabel = 'Actividades por página';
+  itemsPerPageLabel = 'Items por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
   firstPageLabel='Primera';
@@ -107,13 +108,16 @@ export class DashboardComponent2 implements OnInit {
   titulo2= 'Avance de las Actividades';
   titulo3= 'Responsables';
   @Input() color: ThemePalette= "primary";
-
+  //Seleccionar check
+  seleccionados: { [key: string]: boolean } = {};
+  todosSeleccionados=false;
+  //
 displayedColumns1: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
 spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];
 spans3: any[] = [];
-
+coloresTarjetas: string[] = [];
 dataSource1: ActivAprobadaProjection[] = [];
 datacrite: criteriosdesprojection[] = [];
 datacre: criteriosdesprojection= new criteriosdesprojection();
@@ -316,6 +320,25 @@ constructor(private services: ActividadService,private modelservices: ModeloServ
     }
     this.obtenerActividades();
   }
+
+  seleccionTodo(checked: boolean) {
+    this.todosSeleccionados = checked;
+    this.datacrite.forEach(item => {
+      this.seleccionados[item.criterionomj] = checked;
+    });
+  }
+  
+
+  toggleSeleccion(nombre: string) {
+    this.seleccionados[nombre] = !this.seleccionados[nombre];
+    this.actualizarSeleccionGeneral();
+  }
+  
+  actualizarSeleccionGeneral() {
+    this.todosSeleccionados = this.datacrite.every(item => this.seleccionados[item.criterionomj]);
+  }
+  
+  
   //
   cacheSpan(key: string, accessor: (d: any) => any) {
     for (let i = 0; i < this.dataSource1.length;) {
@@ -650,7 +673,7 @@ getColor(item: any): string {
       this.idmodel = data.id_modelo;
       console.log("ID Modelo:", this.idmodel);
 
-      this.fetchAndProcessData();
+     // this.fetchAndProcessData();
     });
   }
   colores(color: string): string {
@@ -704,11 +727,15 @@ getColor(item: any): string {
       this.barChartData = { ...this.barChartData };
     });
   }
-  fetchAndProcessData() {
-    this.modelservices.getlisdescrite(this.idmodel).subscribe((data: criteriosdesprojection[]) => {
+  fetchAndProcessData(nombre:string) {
+    this.titulocriterio=nombre;
+    this.modelservices.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
       this.datacrite = data;
-      console.log("Data Criterios:", this.datacrite);
-
+      this.datacrite.forEach(item => {
+        if (typeof this.seleccionados[item.criterionomj] === 'undefined') {
+          this.seleccionados[item.criterionomj] = false; // Inicializar a no seleccionado si aún no existe
+        }
+      });
       // Generar la jerarquía de celdas
       this.cacheSpan3('Criterio', (d) => d.criterionomj);
       this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
@@ -769,6 +796,11 @@ getColor(item: any): string {
           name: item.nombre,
         value: item.total*100
         }));
+       
+        this.listaIndicadores.forEach(() => {
+          this.coloresTarjetas.push(this.getRandomColor());
+        });
+
         },
         (error) => {
           console.error('Error al obtener los datos:', error);
@@ -805,9 +837,8 @@ getPersonaActividad(objeto:Actividad){
 }
 
 
-
 async descargarArchivosSeleccionados() {
-  const archivosSeleccionados = this.datacrite.filter(element => element.isSelected);
+  const archivosSeleccionados = this.datacrite.filter(item => this.seleccionados[item.criterionomj]);
 
   if (archivosSeleccionados.length === 0) {
     // Mostrar alerta si no hay archivos seleccionados
@@ -815,24 +846,25 @@ async descargarArchivosSeleccionados() {
     return;
   }
 
-  const downloadPromises = archivosSeleccionados.map(element => {
-    return this.descargarArchivo(element.archivo_enlace, this.obtenerNombreArchivo2(element.archivo_enlace));
+  const downloadPromises = archivosSeleccionados.map(item => {
+    return this.descargarArchivo(item.archivo_enlace, this.obtenerNombreArchivo2(item.archivo_enlace));
   });
 
   try {
     await Promise.all(downloadPromises);
     
-    // Quitar los checks de selección
-    archivosSeleccionados.forEach(element => {
-      element.isSelected = false;
+    // Quitar las selecciones
+    archivosSeleccionados.forEach(item => {
+      this.seleccionados[item.criterionomj] = false;
     });
     
-    await Swal.fire('Descarga confirmacion', 'Tiene que confirmar la descarga.', 'success');
+    await Swal.fire('Descarga confirmación', 'Tiene que confirmar la descarga.', 'success');
   } catch (error) {
     console.error('Error en las descargas:', error);
     await Swal.fire('Error', 'Hubo un error durante las descargas.', 'error');
   }
 }
+
 
 
 
