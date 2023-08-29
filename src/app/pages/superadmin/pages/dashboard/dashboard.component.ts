@@ -323,13 +323,7 @@ constructor(private services: ActividadService,private modelservices: ModeloServ
     this.obtenerActividades();
   }
 
-  seleccionTodo(checked: boolean) {
-    this.todosSeleccionados = checked;
-    this.datacrite.forEach(item => {
-      this.seleccionados[item.criterionomj] = checked;
-    });
-  }
-
+  
   showCriterio(){
     this.verCriterio = !this.verCriterio;
   }
@@ -853,9 +847,8 @@ getPersonaActividad(objeto:Actividad){
   )
 }
 
-
 async descargarArchivosSeleccionados() {
-  const archivosSeleccionados = this.datacrite.filter(item => this.seleccionados[item.criterionomj]);
+  const archivosSeleccionados = this.datacrite.filter(element => element.isSelected);
 
   if (archivosSeleccionados.length === 0) {
     // Mostrar alerta si no hay archivos seleccionados
@@ -863,25 +856,24 @@ async descargarArchivosSeleccionados() {
     return;
   }
 
-  const downloadPromises = archivosSeleccionados.map(item => {
-    return this.descargarArchivo(item.archivo_enlace, this.obtenerNombreArchivo2(item.archivo_enlace));
+  const downloadPromises = archivosSeleccionados.map(element => {
+    return this.descargarArchivo(element.archivo_enlace, this.obtenerNombreArchivo2(element.archivo_enlace));
   });
 
   try {
     await Promise.all(downloadPromises);
     
-    // Quitar las selecciones
-    archivosSeleccionados.forEach(item => {
-      this.seleccionados[item.criterionomj] = false;
+    // Quitar los checks de selección
+    archivosSeleccionados.forEach(element => {
+      element.isSelected = false;
     });
     
-    await Swal.fire('Descarga confirmación', 'Tiene que confirmar la descarga.', 'success');
+    await Swal.fire('Descarga confirmacion', 'Tiene que confirmar la descarga.', 'success');
   } catch (error) {
     console.error('Error en las descargas:', error);
     await Swal.fire('Error', 'Hubo un error durante las descargas.', 'error');
   }
 }
-
 
 
 
@@ -901,6 +893,13 @@ async descargarArchivo(enlace: string, nombre: string) {
   } catch (error) {
     throw new Error('No se pudo descargar el archivo: ' + nombre);
   }
-}
 
+}
+seleccionarTodosArchivos() {
+  // Cambia el estado de selección de todos los archivos
+  for (const element of this.datacrite) {
+    element.isSelected = this.todosSeleccionados;
+  }
+
+}
 }
