@@ -7,14 +7,14 @@ import { ConsultaActividadComponent } from './consulta-actividad/consulta-activi
 import { ActividadAutoridadComponent } from './actividad_autoridad/actividad-autoridad.component';
 import { GraficosComponent } from './graficos/graficos.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { BuscarPipe } from '../admin/buscar.pipe';
+
+
 @NgModule({
   declarations: [
     ReportesComponent,
     ConsultaActividadComponent,
     ActividadAutoridadComponent,
     GraficosComponent,
-  BuscarPipe,
   ],
   imports: [
     CommonModule,
