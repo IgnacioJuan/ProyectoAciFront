@@ -52,12 +52,13 @@ export class MatrizEvaluacionComponent implements OnInit {
     nombre: 'Nombre del Indicador',
     descripcion: 'Descripción del Indicador',
     tipo: 'Tipo',
-    valor_obtenido: 'Valor Obtenido'
+    valor_obtenido: 'Valor Obtenido',
+    archivo:'Archivo'
   };
 
   dataSource = new MatTableDataSource<any>();
 
-  columnsToDisplay = ['nombre', 'descripcion', 'tipo', 'valor_obtenido'];
+  columnsToDisplay = ['nombre', 'descripcion', 'tipo', 'valor_obtenido','archivo'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'evaluar'];
   expandedElement: any;
   idcriterio: Criterio = new Criterio();
