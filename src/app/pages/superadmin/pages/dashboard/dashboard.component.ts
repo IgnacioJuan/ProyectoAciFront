@@ -163,7 +163,9 @@ avances: any[] = [];
   porc:number=0;
   datosUsuarios: any[] = [];
   filterPost = '';
-  
+  verIndicador=true;
+  verSubcriterio=true;
+  verCriterio=false;
 //
 @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 
@@ -327,8 +329,19 @@ constructor(private services: ActividadService,private modelservices: ModeloServ
       this.seleccionados[item.criterionomj] = checked;
     });
   }
-  
 
+  showCriterio(){
+    this.verCriterio = !this.verCriterio;
+  }
+
+  showSubcriterio(){
+    this.verSubcriterio = !this.verSubcriterio;
+  }
+
+  showIndicador() {
+    this.verIndicador = !this.verIndicador;
+  }
+  
   toggleSeleccion(nombre: string) {
     this.seleccionados[nombre] = !this.seleccionados[nombre];
     this.actualizarSeleccionGeneral();
@@ -729,11 +742,15 @@ getColor(item: any): string {
   }
   fetchAndProcessData(nombre:string) {
     this.titulocriterio=nombre;
+    if(this.titulocriterio===""){
+      this.titulocriterio="ORGANIZACIÓN";
+      nombre="ORGANIZACIÓN";
+    }
     this.modelservices.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
       this.datacrite = data;
       this.datacrite.forEach(item => {
         if (typeof this.seleccionados[item.criterionomj] === 'undefined') {
-          this.seleccionados[item.criterionomj] = false; // Inicializar a no seleccionado si aún no existe
+          this.seleccionados[item.criterionomj] = false;
         }
       });
       // Generar la jerarquía de celdas
