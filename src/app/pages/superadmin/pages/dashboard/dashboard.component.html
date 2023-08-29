@@ -17,9 +17,46 @@
         <option value="#151a30">Tema 2</option>
         <option value="#131a22">Tema 3</option>
       </select>
-
+     
+      <div class="pie-grid" *ngIf="listaIndicadores">
+        <div class="card" *ngFor="let item of listaIndicadores" [style.background-color]="getRandomColor()"
+        [style.border]="getBorderColor(item.total)">
+          <div class="card-content">
+            <div class="card-content">{{ item.total * 100 }}%</div>
+            <div class="card-name" style="color: black;">{{ item.nombre }}</div>
+            <div class="card-tot">Total: {{ item.total}}</div>
+          </div>
+        </div>
+      </div>
+      
+      
+      
       <!-- Chart -->
       <div style="display: flex; border-bottom: thick double #32a1ce" id="fig">
+        <div
+          style="flex-basis: 70%; border-right: thick double #32a1ce"
+          id="fig2"
+        >
+
+    <canvas baseChart class="chart"
+      [data]="barChartData"
+      [options]="barChartOptions"
+      [plugins]="barChartPlugins"
+      [type]="barChartType" (chartClick)="chartClicked($event)">
+    </canvas>
+<button mat-button mat-raised-button color="primary" (click)="randomize()">
+  Update
+</button>
+<!-- fin canvas -->
+
+          <!-- <ngx-charts-pie-grid
+            [view]="view"
+            [scheme]="colorScheme"
+            [results]="datos"
+            [designatedTotal]="1"
+            [customColors]="colorScheme"
+            (select)="onSelect($event)"
+          >
         <div style="flex-basis: 70%; border-right: thick double #32a1ce" (click)="detalle()" id="fig2">
           <ngx-charts-pie-grid [view]="view" [scheme]="colorScheme" [results]="datos" [designatedTotal]="1"
             [customColors]="colorScheme" (select)="onSelect($event)">
@@ -30,7 +67,10 @@
                 <span>{{ model.value | percent }}</span>
               </div>
             </ng-template>
-          </ngx-charts-pie-grid>
+          </ngx-charts-pie-grid> -->
+          
+         
+        <!--   fin div de tabla indicadores-->
         </div>
 
         <div class="barra" style="flex-basis: 30%; margin-top: 5%" (click)="detalle()"
@@ -47,6 +87,27 @@
             </ng-template>
           </ngx-charts-bar-horizontal>
         </div>
+      </div>
+
+      <div style="width: 450px; margin-top: 2%;">
+        <table mat-table [dataSource]="tabla" class="mat-elevation-z8">
+          <ng-container matColumnDef="indicadores">
+            <th mat-header-cell *matHeaderCellDef style="background-color: gray;"> Indicadores </th>
+            <td mat-cell *matCellDef="let element" [style.background-color]="colores(element.color)"> {{element.color}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="nindi">
+            <th mat-header-cell *matHeaderCellDef style="background-color: gray; text-align: center;"> N° indi </th>
+            <td mat-cell *matCellDef="let element" style=" text-align: center;"> {{element.indica}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="porcentaje">
+            <th mat-header-cell *matHeaderCellDef style="background-color: gray;text-align: center;"> % </th>
+            <td mat-cell *matCellDef="let element" style=" text-align: center;"> {{element.porcentaje}}% </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns4"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns4;"></tr>
+        </table>
       </div>
       <!-- calendario  -->
       <div style="display: flex; margin-bottom: 2%" id="not">
@@ -308,4 +369,6 @@
       <!--fin-->
     </div>
   </div>
+
+  
 </body>

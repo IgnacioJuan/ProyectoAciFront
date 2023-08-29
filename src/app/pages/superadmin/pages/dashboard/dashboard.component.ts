@@ -1,9 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ChartConfiguration, ChartOptions } from 'chart.js';
-import { forkJoin } from 'rxjs';
 import { Actividad } from 'src/app/models/Actividad';
-import { AutoIndicador } from 'src/app/models/AutoridadIndicador';
-import { Criterio } from 'src/app/models/Criterio';
 import { Persona2 } from 'src/app/models/Persona2';
 import { ActividadService } from 'src/app/services/actividad.service';
 import { Actividades } from 'src/app/models/actividades';
@@ -31,6 +27,16 @@ import { ActividadesProjection } from 'src/app/interface/ActividadesProjection';
 import { IndicadorProjection } from 'src/app/interface/IndicadorProjection';
 import { ActivAprobadaProjection } from 'src/app/interface/ActivAprobadaProjection';
 import { criteriosdesprojection } from 'src/app/interface/criteriosdesprojection';
+//
+
+import { CategoryScale, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import DataLabelsPlugin from 'chartjs-plugin-datalabels';
+import { ValoresProjection } from 'src/app/interface/ValoresProjection';
+import { IndicadoresService } from 'src/app/services/indicadores.service';
+import { IndiColProjection } from 'src/app/interface/IndiColProjection';
+import { MatTableDataSource } from '@angular/material/table';
+
 // Color aleatorio
 function cambiarColor(str: string): string {
   let hash = 0;
@@ -68,6 +74,7 @@ function colorCalendario(): string {
 
 export class DashboardComponent2 implements OnInit {
   displayedColumns: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
+  displayedColumns4: string[] = ['indicadores', 'nindi', 'porcentaje'];
   dataSource : ActivAprobadaProjection[] = [];
   isLoggedIn = false;
   user: any = null;
@@ -116,6 +123,7 @@ displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Archivos'
   criteri: any;
   valores: number[] = [10,0];
   listaCriterios: any[] = [];
+  valoresp:ValoresProjection[] = [];
   modeloMaximo:any;
   listaIndicadores: IndicadorProjection[] = [];
   persona:Persona2 = new Persona2();
@@ -136,11 +144,14 @@ items: any[] = [];
 eventos: any[] = [];
 crite: any[] = [];
 avances: any[] = [];
+
   //FIN DE VISTA
   public actividad = new Actividades();
   Actividades: Actividad[] = [];
   listact: ActividadesProjection[] = [];
   listind:IndicadorProjection[] = [];
+  indicol:IndiColProjection[] = [];
+  tabla!: MatTableDataSource<any>;
   numac: Actividades[] = [];
   Evidencias: any[] = [];
   totalAct: number = 0;
@@ -149,12 +160,88 @@ avances: any[] = [];
   datosUsuarios: any[] = [];
   filterPost = '';
   
-    @ViewChild('chart') chart: any;
+//
+@ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+
+public barChartOptions: ChartConfiguration['options'] = {
+  responsive: true,
+  scales: {
+    x: {
+      type: 'category',
+      ticks: {
+       
+        autoSkip: false, // Evita que las etiquetas se salten automáticamente
+        maxRotation: 45, // Cambia el ángulo de rotación aquí
+        minRotation: 45, // Cambia el ángulo de rotación aquí
+        color: 'black',
+      },
+    },
+    y: {
+      
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+    },
+    datalabels: {
+      anchor: 'end',
+      align: 'end',
+      color: 'black',
+    },
+  },
+};
+public barChartType: ChartType = 'bar';
+public barChartPlugins = [DataLabelsPlugin];
+
+public barChartData: ChartData<'bar'> = {
+  labels: [],
+    datasets: [
+      { data: [], label: 'V/Obtenido', backgroundColor: 'rgba(56,116,188,255)'  },
+      { data: [], label: 'V/por obtener', backgroundColor: 'rgba(184,54,51,255)' },
+    ],
+};
+
+// events
+public chartClicked({
+  event,
+  active,
+}: {
+  event?: ChartEvent;
+  active?: object[];
+}): void {
+  console.log(event, active);
+}
+
+public chartHovered({
+  event,
+  active,
+}: {
+  event?: ChartEvent;
+  active?: object[];
+}): void {
+  console.log(event, active);
+}
+
+public randomize(): void {
+  // Only Change 3 values
+  this.barChartData.datasets[0].data = [
+    Math.round(Math.random() * 100),
+    59,
+    80,
+    Math.round(Math.random() * 100),
+    56,
+    Math.round(Math.random() * 100),
+    40,
+  ];
+
+  this.chart?.update();
+}
 //
 constructor(private services: ActividadService,private modelservices: ModeloService,private paginatorIntl: MatPaginatorIntl,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
   public login: LoginService, private notificationService: NotificacionService,
-  private httpCriterios: CriteriosService) {
+  private httpCriterios: CriteriosService,private indi:IndicadoresService) {
     this.colorScheme = {
       domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
     };
@@ -182,6 +269,7 @@ constructor(private services: ActividadService,private modelservices: ModeloServ
     this.paginatorIntl.previousPageLabel=this.previousPageLabel;
     this.paginatorIntl.firstPageLabel=this.firstPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
+    
    }
 
    abrirOpcn() {
@@ -556,6 +644,9 @@ getColor(item: any): string {
   modeloMax() {
     this.httpCriterios.getModeMaximo().subscribe((data) => {
       this.modeloMaximo = data;
+      this.idmodel =data.id_modelo;
+      this.valorespr();
+      this.coloresPro();
       this.idmodel = data.id_modelo;
       console.log("ID Modelo:", this.idmodel);
 
@@ -589,10 +680,33 @@ getColor(item: any): string {
     })
   }
 
+  getRandomColor(): string {
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+    const alpha = 0.3; // Transparencia
 
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  }
+
+  getColorA(): string {
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+    const alpha = 0.6; // Transparencia
+
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  }
+
+  getBorderColor(total: number): string {
+    const borderWidth = `${total*100}px`;
+    const borderColor = this.getColorA();
+    return `${borderWidth} solid ${borderColor}`;
+  }
   //LISTAR Y MOSTRAR LOS GRAFICOS
   cargarDatos(): void {
-    this.httpCriterios.getIndicador().subscribe(
+    console.log("Id modelo a verificar "+this.idmodel);
+    this.httpCriterios.getIndicador(this.idmodel).subscribe(
         (data: IndicadorProjection[]) => {
           this.listaIndicadores = data;
           this.datos = this.listaIndicadores.map(item => ({
@@ -603,7 +717,7 @@ getColor(item: any): string {
           this.listaIndicadores.sort((a, b) => b.total - a.total);
           this.crite = this.listaIndicadores.map(item => ({
           name: item.nombre,
-        value: item.total
+        value: item.total*100
         }));
         },
         (error) => {
