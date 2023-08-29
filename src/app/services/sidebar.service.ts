@@ -31,7 +31,13 @@ export class SidebarService {
         { titulo: 'Reporte de Criterios', url: 'sup/criterio_reporte', icono: 'fas fa-cubes' }
       ]
     },
-
+    {
+      icono: 'nav-icon fas fa-solid fa-check-square',
+      titulo: "Notificaciones",
+      submenu: [
+        { titulo: 'Historial ', url: 'adm/historialnotif', icono: 'fas fa-cubes' }
+      ]
+    },
     {
       icono: 'nav-icon fas fa-exclamation-circle',
       titulo: "Revisión  ",

@@ -5,6 +5,7 @@ import { Modelo } from "../models/Modelo";
 import baserUrl from "./helper";
 import { ModeloVistaProjection } from "../interface/ModeloVistaProjection";
 import { ModelIndiProjection } from "../interface/ModelIndiProjection";
+import { criteriosdesprojection } from "../interface/criteriosdesprojection";
 
 @Injectable({
   providedIn: 'root'
@@ -62,4 +63,11 @@ export class ModeloService {
     return this.http.get<ModelIndiProjection[]>(`${baserUrl}/api/modelo/listmodelindi/${id_modelo}`)
   }
 
+  getlisdescrite(id_modelo:number): Observable<criteriosdesprojection[]> {
+    return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/listcritedes/${id_modelo}`)
+  }
+  getliscriteno(id_modelo: number, nombre: string): Observable<criteriosdesprojection[]> {
+    const url = `${baserUrl}/api/modelo/listcritedesNOM/${id_modelo}/${nombre}`;
+    return this.http.get<criteriosdesprojection[]>(url);
+  }
 }

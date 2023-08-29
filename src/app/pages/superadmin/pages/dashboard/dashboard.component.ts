@@ -7,8 +7,14 @@ import { Criterio } from 'src/app/models/Criterio';
 import { Persona2 } from 'src/app/models/Persona2';
 import { ActividadService } from 'src/app/services/actividad.service';
 import { Actividades } from 'src/app/models/actividades';
+import { MatSelectionListChange } from '@angular/material/list';
+import Swal from 'sweetalert2';  
+
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
+import { ModeloService } from 'src/app/services/modelo.service';
+import { Modelo } from 'src/app/models/Modelo';
+
 //Funciones
 import { CalendarOptions } from '@fullcalendar/core';;
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -24,6 +30,7 @@ import { PersonaService } from 'src/app/services/persona.service';
 import { ActividadesProjection } from 'src/app/interface/ActividadesProjection';
 import { IndicadorProjection } from 'src/app/interface/IndicadorProjection';
 import { ActivAprobadaProjection } from 'src/app/interface/ActivAprobadaProjection';
+import { criteriosdesprojection } from 'src/app/interface/criteriosdesprojection';
 // Color aleatorio
 function cambiarColor(str: string): string {
   let hash = 0;
@@ -51,12 +58,14 @@ function colorCalendario(): string {
 }
 
 
+
 @Component({
   selector: 'app-dashboard2',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   
 })
+
 export class DashboardComponent2 implements OnInit {
   displayedColumns: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
   dataSource : ActivAprobadaProjection[] = [];
@@ -73,6 +82,7 @@ export class DashboardComponent2 implements OnInit {
   lastPageLabel = 'Última';
   firstPageLabel='Primera';
   previousPageLabel='Anterior';
+  
   rango:any= (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
       return `0 de ${length}`;
@@ -95,7 +105,12 @@ displayedColumns1: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlac
 spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];
+spans3: any[] = [];
+
 dataSource1: ActivAprobadaProjection[] = [];
+datacrite: criteriosdesprojection[] = [];
+datacre: criteriosdesprojection= new criteriosdesprojection();
+displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Archivos' ];
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
@@ -116,6 +131,7 @@ gradient = false;
 //prueba
 view: [number, number] = [700, 400]; // Tamaño del gráfico (ancho x alto)
 Utilidad!: number;
+idmodel!:number;
 items: any[] = [];
 eventos: any[] = [];
 crite: any[] = [];
@@ -131,9 +147,11 @@ avances: any[] = [];
   actApro: number = 0;
   porc:number=0;
   datosUsuarios: any[] = [];
+  filterPost = '';
+  
     @ViewChild('chart') chart: any;
 //
-constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
+constructor(private services: ActividadService,private modelservices: ModeloService,private paginatorIntl: MatPaginatorIntl,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
   public login: LoginService, private notificationService: NotificacionService,
   private httpCriterios: CriteriosService) {
@@ -156,6 +174,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
       this.cacheSpan2('fin', (y) => y.actividades + y.inicio + y.fin);
       this.cacheSpan2('encargado', (y) => y.actividades + y.inicio + y.fin + y.encargado);
     });
+
     this.rol = this.login.getUserRole();
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
@@ -259,10 +278,37 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     }
   }
   
-  
   getRowSpan2(col: any, index: any) {
     return this.spans2[index] && this.spans2[index][col];
   }
+
+  
+  cacheSpan3(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.datacrite.length;) {
+      let currentValue = accessor(this.datacrite[i]);
+      let count = 1;
+
+      for (let j = i + 1; j < this.datacrite.length; j++) {
+        if (currentValue !== accessor(this.datacrite[j])) {
+          break;
+        }
+        count++;
+      }
+  
+      if (!this.spans3[i]) {
+        this.spans3[i] = {};
+      }
+  
+      this.spans3[i][key] = count;
+      i += count;
+    }
+  }
+  
+  
+  getRowSpan3(col: any, index: any) {
+    return this.spans3[index] && this.spans3[index][col];
+  }
+
   
  //listar archivos
  obtenerNombreArchivo(url: string): string {
@@ -507,17 +553,35 @@ getColor(item: any): string {
     return cambiarColor(item.nombre);
   }
   //
-  modeloMax(){
-    this.httpCriterios.getModeMaximo().subscribe(data =>{
+  modeloMax() {
+    this.httpCriterios.getModeMaximo().subscribe((data) => {
       this.modeloMaximo = data;
-    })
+      this.idmodel = data.id_modelo;
+      console.log("ID Modelo:", this.idmodel);
+
+      this.fetchAndProcessData();
+    });
   }
 
+  fetchAndProcessData() {
+    this.modelservices.getlisdescrite(this.idmodel).subscribe((data: criteriosdesprojection[]) => {
+      this.datacrite = data;
+      console.log("Data Criterios:", this.datacrite);
+
+      // Generar la jerarquía de celdas
+      this.cacheSpan3('Criterio', (d) => d.criterionomj);
+      this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
+      this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
+      this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej + d.archivo_enlace);
+    });
+  }
   listarActividad() {
     this.httpCriterios.getActividadAtrasada().subscribe(data => {
       this.Actividades = data;
     })
   }
+
+
 
   listarEvidencias() {
     this.eviden.getEvidencias().subscribe(data => {
@@ -574,6 +638,56 @@ getPersonaActividad(objeto:Actividad){
       console.log(this.persona);
     }
   )
+}
+
+
+
+async descargarArchivosSeleccionados() {
+  const archivosSeleccionados = this.datacrite.filter(element => element.isSelected);
+
+  if (archivosSeleccionados.length === 0) {
+    // Mostrar alerta si no hay archivos seleccionados
+    await Swal.fire('Error', 'Por favor, seleccione al menos un archivo para descargar.', 'error');
+    return;
+  }
+
+  const downloadPromises = archivosSeleccionados.map(element => {
+    return this.descargarArchivo(element.archivo_enlace, this.obtenerNombreArchivo2(element.archivo_enlace));
+  });
+
+  try {
+    await Promise.all(downloadPromises);
+    
+    // Quitar los checks de selección
+    archivosSeleccionados.forEach(element => {
+      element.isSelected = false;
+    });
+    
+    await Swal.fire('Descarga confirmacion', 'Tiene que confirmar la descarga.', 'success');
+  } catch (error) {
+    console.error('Error en las descargas:', error);
+    await Swal.fire('Error', 'Hubo un error durante las descargas.', 'error');
+  }
+}
+
+
+
+async descargarArchivo(enlace: string, nombre: string) {
+  try {
+    const response = await fetch(enlace);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = nombre;
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    throw new Error('No se pudo descargar el archivo: ' + nombre);
+  }
 }
 
 }
