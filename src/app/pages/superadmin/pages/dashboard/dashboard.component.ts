@@ -653,7 +653,57 @@ getColor(item: any): string {
       this.fetchAndProcessData();
     });
   }
+  colores(color: string): string {
+    switch (color) {
+      case 'verde':
+        return 'green';
+      case 'amarillo':
+        return 'yellow';
+      case 'naranja':
+        return 'orange';
+      case 'rojo':
+        return 'red';
+      case 'Total':
+        return 'gray';
+      default:
+        return 'transparent'; // O cualquier otro color por defecto
+    }
+  }
+  
+  coloresPro(){
+    this.indi.getIndicadorColProjection(this.idmodel).subscribe((data: IndiColProjection[]) => {
+      this.indicol = data; // Calcula los totales
+      const totalIndicadores = this.indicol.reduce((total, element) => total + element.indica, 0);
+      const totalPorcentaje = this.indicol.reduce((total, element) => total + element.porcentaje, 0);
+      const total=Math.round(totalPorcentaje);
 
+      // Agrega la fila de totales al final del arreglo
+      this.indicol.push({
+        color: 'Total',
+        indica: totalIndicadores,
+        porcentaje: total,
+      });
+      
+      this.indicol.sort((a, b) => {
+        const orden = ['verde', 'amarillo', 'naranja', 'rojo','Total'];
+        return orden.indexOf(a.color) - orden.indexOf(b.color);
+      });
+      // Asigna el arreglo de datos actualizado al dataSource
+      this.tabla = new MatTableDataSource(this.indicol);
+    });
+  }
+
+  valorespr(){
+    this.httpCriterios.getvalores(this.idmodel).subscribe((valores: ValoresProjection[]) => {
+      this.valoresp = valores;
+      console.log("Valores de tabla"+JSON.stringify(this.valoresp))
+      this.barChartData.labels = this.valoresp.map(val => val.nomcriterio);
+      this.barChartData.datasets[0].data = this.valoresp.map(val => val.vlObtenido);
+      this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);
+  
+      this.barChartData = { ...this.barChartData };
+    });
+  }
   fetchAndProcessData() {
     this.modelservices.getlisdescrite(this.idmodel).subscribe((data: criteriosdesprojection[]) => {
       this.datacrite = data;
