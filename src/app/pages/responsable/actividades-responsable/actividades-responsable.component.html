@@ -6,7 +6,14 @@
   <div class="card">
     <div class="card-body">
       <div role="search" id="buscar">
-        <input class="form-control" type="text" placeholder="Buscar" aria-label="Search" [(ngModel)]="searchText" />
+        <input
+        type="text"
+        class="form-control"
+        name="filterPost3"
+        placeholder="Buscar..."
+        [(ngModel)]="filterPost"
+        (input)="aplicarFiltro()"
+      />
       </div>
       <br />
       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#materiaModal">
@@ -14,49 +21,71 @@
       </button>
       <br />
       <br />
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>NOMBRE</th>
-            <th>DESCRIPCIÓN</th>
-            <th>FECHA DE INICIO</th>
-            <th>FECHA FINALIZACION</th>
-            <th>Subir evidencia</th>
-            <th>ACCIÓN</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let acti of Actividades | buscar : searchText">
-            <td>{{ acti.id_actividad }}</td>
-            <td>{{ acti.nombre }}</td>
-            <td>{{ acti.descripcion }}</td>
-            <td>{{ acti.fecha_inicio | date:'dd/MM/yyyy' }}</td>
-
-            <td>{{ acti.fecha_fin | date:'dd/MM/yyyy' }}</td>
-            <td><button class="btn btn-primary" role="button" (click)="verDetalles(acti)">
-
-                <div class="d-flex">
-                  <span class="badge"></span>
-                  <i class="fa fa-folder-open"></i>
-                </div>
-              </button></td>
-
-            <td>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary" style="margin-right: 5%" data-bs-toggle="modal"
-                  data-bs-target="#materiaModal" (click)="editDatos(acti)">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-danger" style="background-color: red; margin-right: 5%" role="button"
-                  (click)="eliminar(acti)">
-                  <i class="fa fa-trash"></i>
-                </button>
+      <table  mat-table [dataSource]="dataSource | buscar : filterPost" class="mat-elevation-z8">
+        <!-- Encabezados de la tabla -->
+        <ng-container matColumnDef="ID">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let acti">{{ acti.id_actividad }}</td>
+        </ng-container>
+      
+        <ng-container matColumnDef="NOMBRE">
+          <th mat-header-cell *matHeaderCellDef>NOMBRE</th>
+          <td mat-cell *matCellDef="let acti">{{ acti.nombre }}</td>
+        </ng-container>
+      
+        <ng-container matColumnDef="DESCRIPCIÓN">
+          <th mat-header-cell *matHeaderCellDef>DESCRIPCIÓN</th>
+          <td mat-cell *matCellDef="let acti">{{ acti.descripcion }}</td>
+        </ng-container>
+      
+        <ng-container matColumnDef="FECHA DE INICIO">
+          <th mat-header-cell *matHeaderCellDef>FECHA DE INICIO</th>
+          <td mat-cell *matCellDef="let acti">{{ acti.fecha_inicio | date:'dd/MM/yyyy' }}</td>
+        </ng-container>
+      
+        <ng-container matColumnDef="FECHA FINALIZACION">
+          <th mat-header-cell *matHeaderCellDef>FECHA FINALIZACION</th>
+          <td mat-cell *matCellDef="let acti">{{ acti.fecha_fin | date:'dd/MM/yyyy' }}</td>
+        </ng-container>
+      
+        <ng-container matColumnDef="Subir evidencia">
+          <th mat-header-cell *matHeaderCellDef>Subir evidencia</th>
+          <td mat-cell *matCellDef="let acti">
+            <button class="btn btn-primary" role="button" (click)="verDetalles(acti)" >
+              <div class="d-flex">
+                <span class="badge">
+                </span>
+                <i class="fa fa-folder-open"></i>
               </div>
-            </td>
-          </tr>
-        </tbody>
+            </button>
+          </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="ACCIÓN">
+          <th mat-header-cell *matHeaderCellDef>ACCIÓN</th>
+          <td mat-cell *matCellDef="let acti">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-primary" style="margin-right: 5%" data-bs-toggle="modal"
+              data-bs-target="#materiaModal" (click)="editDatos(acti)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-danger" style="background-color: red; margin-right: 5%" role="button"
+              (click)="eliminar(acti)">
+              <i class="fa fa-trash"></i>
+            </button>
+            </div>
+          </td>
+        </ng-container>
+
+      
+        <!-- Fila de encabezado -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        
+        <!-- Filas de datos -->
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
 
       <div class="modal fade" id="materiaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
         (hidden.bs.modal)="limpiarFormulario()">

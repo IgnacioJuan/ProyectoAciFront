@@ -8,45 +8,58 @@
       <div class="card-body">
         <div class="input-group mb-3">
           <input
-            type="text"
-            class="form-control"
-            placeholder="Buscar..."
-            [(ngModel)]="searchTerm"
+          type="text"
+          class="form-control"
+          name="filterPost3"
+          placeholder="Buscar..."
+          [(ngModel)]="filterPost"
+          (input)="aplicarFiltro()"
+        />
+      </div>
+        <table mat-table [dataSource]="dataSource| buscar : filterPost" class="mat-elevation-z8">
+          <ng-container matColumnDef="Usuario">
+            <mat-header-cell *matHeaderCellDef>Usuario</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{ item.username }}</mat-cell>
+          </ng-container>
         
-          />
-        </div>
-        <table class="table table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>Usuario</th>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Correo</th>
-              <th>Actividades</th>
-              
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of responsable | buscar : searchTerm">
-              <td>{{ item.username }}</td>
-              <td>{{ item.persona.primer_nombre }} </td>
-              <td>{{ item.persona.primer_apellido }} </td>
-              <td>{{ item.persona.correo }} </td>
-
-              <td>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#staticBackdrop"
-                  (click)="listaAct(item)"
-                >
-                  Ver
-                </button>
-              </td>
-            </tr>
-          </tbody>
+          <ng-container matColumnDef="Nombre">
+            <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{ item?.persona?.primer_nombre }}</mat-cell>
+          </ng-container>
+        
+          <ng-container matColumnDef="Apellido">
+            <mat-header-cell *matHeaderCellDef>Apellido</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{ item?.persona?.primer_apellido }}</mat-cell>
+          </ng-container>
+        
+          <ng-container matColumnDef="Correo">
+            <mat-header-cell *matHeaderCellDef>Correo</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{ item?.persona?.correo }}</mat-cell>
+          </ng-container>
+        
+          <ng-container matColumnDef="Actividades">
+            <mat-header-cell *matHeaderCellDef>Actividades</mat-header-cell>
+            <mat-cell *matCellDef="let item">
+              <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop"
+              (click)="listaAct(item)"
+            >
+              Ver
+            </button>
+            </mat-cell>
+          </ng-container>
+        
+          <!-- Fila de encabezado -->
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          
+          <!-- Filas de datos -->
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        
       </div>
     </div>
   </div>
@@ -75,41 +88,36 @@
 
         <div class="card">
           <div class="card-body">
-
-
-            <div role="search" id="buscar">
-
-                  <input class="form-control" type="text" placeholder="Buscar" aria-label="Search"
-                      [(ngModel)]="searchText" />
-
-              </div>
               <br />
+              <table mat-table [dataSource]="dataSource2" class="mat-elevation-z8">
+                <ng-container matColumnDef="Código">
+                  <mat-header-cell *matHeaderCellDef class="text-center">Código</mat-header-cell>
+                  <mat-cell *matCellDef="let item" class="text-center">{{ item.id_actividad }}</mat-cell>
+                </ng-container>
               
-              <br />
-              <br />
-              <table class="table table-hover">
-                  <thead>
-                      <tr>
-                          <th class="text-center">Código</th>
-                          <th class="text-center">Nombre</th>
-                          <th class="text-center">Fecha Inicio</th>
-                          <th class="text-center">Fecha Fin</th>
-
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr class="text-center text-start" *ngFor="let item of actividades | buscar : searchText">
-                          <td>{{item.id_actividad}}</td>
-                          <td>{{item.nombre}}</td>
-                          <td>{{item.fecha_inicio}}</td>
-                          <td>{{item.fecha_fin}}</td>
-
-
-
-                      </tr>
-                  </tbody>
+                <ng-container matColumnDef="Nombre">
+                  <mat-header-cell *matHeaderCellDef class="text-center">Nombre</mat-header-cell>
+                  <mat-cell *matCellDef="let item" class="text-center">{{ item.nombre }}</mat-cell>
+                </ng-container>
+              
+                <ng-container matColumnDef="Fecha Inicio">
+                  <mat-header-cell *matHeaderCellDef class="text-center">Fecha Inicio</mat-header-cell>
+                  <mat-cell *matCellDef="let item" class="text-center">{{ item.fecha_inicio }}</mat-cell>
+                </ng-container>
+              
+                <ng-container matColumnDef="Fecha Fin">
+                  <mat-header-cell *matHeaderCellDef class="text-center">Fecha Fin</mat-header-cell>
+                  <mat-cell *matCellDef="let item" class="text-center">{{ item.fecha_fin }}</mat-cell>
+                </ng-container>
+              
+                <!-- Fila de encabezado -->
+                <mat-header-row *matHeaderRowDef="displayedColumns2"></mat-header-row>
+                
+                <!-- Filas de datos -->
+                <mat-row *matRowDef="let row; columns: displayedColumns2;"></mat-row>
               </table>
-
+              <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+              
           </div>
       </div>
 

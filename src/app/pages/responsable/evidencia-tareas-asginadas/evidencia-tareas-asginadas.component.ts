@@ -20,9 +20,11 @@ export class EvidenciaTareasAsginadasComponent {
   evidencias: Evidencia[] = []; // Declaración de la propiedad
   isLoggedIn: boolean;
   user: any;
-  dataSource: any;
+ 
   botonDeshabilitado: boolean | undefined;
-
+  dataSource = new MatTableDataSource<Evidencia>();
+  displayedColumns: string[] = ['ID', 'Descripción', 'Actividad'];
+  
   constructor(
     private asignaService: AsignaEvidenciaService,
     private login: LoginService,
@@ -33,6 +35,15 @@ export class EvidenciaTareasAsginadasComponent {
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
   }
+  ngAfterViewInit() {
+    console.log('Paginator:', this.paginator);
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+  
 
   verDetalles(evidencia: any) {
     this.router.navigate(['/res/ActividadesResponsable'], { state: { data: evidencia } });
@@ -49,6 +60,7 @@ export class EvidenciaTareasAsginadasComponent {
     console.log(this.user.username);
     this.evidenciaService.geteviasig(this.user.username).subscribe(data => {
       this.evidencias = data;
+      this.dataSource.data = data;
       this.dataSource.data = this.evidencias; // Actualizar el dataSource
     });
 

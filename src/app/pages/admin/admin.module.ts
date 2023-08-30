@@ -31,7 +31,7 @@ Historial_notifiComponent
   imports: [
     CommonModule,
     AdminRoutingModule,
-   
+
     SharedModule
   ]
 })

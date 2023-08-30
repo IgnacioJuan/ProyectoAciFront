@@ -11,6 +11,8 @@ import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { Modelo } from 'src/app/models/Modelo';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-actividades-responsable',
@@ -31,7 +33,27 @@ export class ActividadesResponsableComponent implements OnInit {
   nombre: any = null;
   nombreact: any = null;
   isLoggedIn = false;
+   // Crear una fuente de datos para la tabla
+   dataSource = new MatTableDataSource<Actividades>();
 
+   ngAfterViewInit() {
+    console.log('Paginator:', this.paginator);
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+ // Encabezados de la tabla
+  displayedColumns: string[] = [
+    'ID',
+    'NOMBRE',
+    'DESCRIPCIÓN',
+    'FECHA DE INICIO',
+    'FECHA FINALIZACION',
+    'Subir evidencia',
+    'ACCIÓN'
+  ];
   constructor(
     private services: ActividadService,
     private fb: FormBuilder,
@@ -170,6 +192,7 @@ export class ActividadesResponsableComponent implements OnInit {
     const fechaActual = new Date();
     this.services.geteviasig(this.user.username).subscribe(data => {
       this.Actividades = data.filter(actividad => actividad.evidencia?.id_evidencia === this.evi.id_evidencia);
+      this.dataSource.data = data.filter(actividad => actividad.evidencia?.id_evidencia === this.evi.id_evidencia);
     });
   }
 
@@ -291,4 +314,19 @@ export class ActividadesResponsableComponent implements OnInit {
 
     });
   }
+  filterPost = '';
+
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+ 
+      // Restaurar los datos originales si no hay filtro aplicado
+      this.listar();
+      }
+  }
+  
 }
