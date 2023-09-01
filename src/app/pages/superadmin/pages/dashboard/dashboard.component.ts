@@ -29,6 +29,7 @@ import { ValoresProjection } from 'src/app/interface/ValoresProjection';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { IndiColProjection } from 'src/app/interface/IndiColProjection';
 import { MatTableDataSource } from '@angular/material/table';
+import { ModeloService } from 'src/app/services/modelo.service';
 
 // Color aleatorio
 function cambiarColor(str: string): string {
@@ -57,8 +58,6 @@ function colorCalendario(): string {
   return color;
 }
 
-<<<<<<< Updated upstream
-=======
 const colors: { [key: string]: string } = {
   verde: '#00FF00', // Por ejemplo, 'verde' se asocia con el color verde en hexadecimal
   naranja: '#FFA500', // 'naranja' se asocia con el color naranja en hexadecimal
@@ -66,7 +65,6 @@ const colors: { [key: string]: string } = {
   amarillo: '#f8f32b',
   // ... Agrega más colores si es necesario
 };
->>>>>>> Stashed changes
 
 @Component({
   selector: 'app-dashboard2',
@@ -81,6 +79,7 @@ export class DashboardComponent2 implements OnInit {
   isLoggedIn = false;
   user: any = null;
   id_criterio!:number;
+  titulocriterio!: string;
   rol: any = null;
   noti = new Notificacion();
   notificaciones: Notificacion[] = [];
@@ -115,12 +114,9 @@ spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];
 dataSource1: ActivAprobadaProjection[] = [];
-<<<<<<< Updated upstream
-=======
 datacrite: criteriosdesprojection[] = [];
 datacre: criteriosdesprojection= new criteriosdesprojection();
 displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Archivos', 'Calificar'];
->>>>>>> Stashed changes
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
@@ -160,14 +156,11 @@ idmodel!:number;
   actApro: number = 0;
   porc:number=0;
   datosUsuarios: any[] = [];
-<<<<<<< Updated upstream
-=======
   filterPost = '';
   verIndicador=true;
   verSubcriterio=true;
   verCriterio=false;
   coloresAsignados: { [key: string]: string } = {}; 
->>>>>>> Stashed changes
 //
 @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 public barChartOptions: ChartConfiguration['options'] = {
@@ -248,6 +241,10 @@ public pieChartData: ChartData<'pie', number[], string | string[]> = {
 };
 public pieChartType: ChartType = 'pie';
 public pieChartPlugins = [DataLabelsPlugin];
+  todosSeleccionados!: boolean;
+  seleccionados: any;
+
+
 // events
 public chartClicked({
   event,
@@ -271,6 +268,7 @@ public chartHovered({
 
 //
 constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
+  modelservice:ModeloService,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
   public login: LoginService, private notificationService: NotificacionService,
   private httpCriterios: CriteriosService,private indi:IndicadoresService) {
@@ -344,8 +342,6 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     }
     this.obtenerActividades();
   }
-<<<<<<< Updated upstream
-=======
 
   seleccionTodo(checked: boolean) {
     this.todosSeleccionados = checked;
@@ -387,7 +383,6 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     return this.coloresAsignados[elementName];
   }
   
->>>>>>> Stashed changes
   //
   cacheSpan(key: string, accessor: (d: any) => any) {
     for (let i = 0; i < this.dataSource1.length;) {
@@ -734,9 +729,6 @@ getColor(item: any): string {
       this.idmodel =data.id_modelo;
       this.valorespr();
       this.coloresPro();
-<<<<<<< Updated upstream
-    })
-=======
       this.idmodel = data.id_modelo;
       console.log("ID Modelo:", this.idmodel);
       this.httpCriterios.getCriterios().subscribe(data => {
@@ -745,7 +737,6 @@ getColor(item: any): string {
       });
      // this.fetchAndProcessData();
     });
->>>>>>> Stashed changes
   }
   
   colores(color: string): string {
@@ -820,9 +811,6 @@ getColor(item: any): string {
       this.barChartData = { ...this.barChartData };
     });
   }
-<<<<<<< Updated upstream
-
-=======
   fetchAndProcessData(nombre:string) {
     this.titulocriterio=nombre;
     if(this.titulocriterio===""){
@@ -833,7 +821,7 @@ getColor(item: any): string {
       this.id_criterio = data.id_criterio;
       console.log("id crti: "+this.id_criterio);
     });
-    this.modelservices.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
+    this.modelservice.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
       this.datacrite = data;
       this.datacrite.forEach(item => {
         if (typeof this.seleccionados[item.criterionomj] === 'undefined') {
@@ -847,7 +835,9 @@ getColor(item: any): string {
       this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej + d.archivo_enlace);
     });
   }
->>>>>>> Stashed changes
+  cacheSpan3(arg0: string, arg1: (d: any) => any) {
+    throw new Error('Method not implemented.');
+  }
   listarActividad() {
     this.httpCriterios.getActividadAtrasada().subscribe(data => {
       this.Actividades = data;
