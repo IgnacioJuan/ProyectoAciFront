@@ -24,6 +24,7 @@ export class AsignarCriterioComponent implements OnInit {
   user: any = null;
   idusuario: any = null;
   nombre: any = null;
+  nombreadmin!:string;
   id_modelo!:number;
   constructor(public login: LoginService, private notificationService: NotificacionService, private usuarioService: UsuarioService, private asignacionCriterio: AsignacionCriterioService, public dialogRef: MatDialogRef<DetalleModeloComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
@@ -37,6 +38,14 @@ export class AsignarCriterioComponent implements OnInit {
       console.log(this.datasource);
     });
     console.log("id criterio"+this.data.id);
+    this.asignacionCriterio.nombre_Admin(this.id_modelo,this.data.id).subscribe(result => {
+      if(result==undefined){
+        this.nombreadmin="Sin asignacion";
+      }else{
+        this.nombreadmin="Asignado a: "+result.nombreaa;
+      }
+      
+    });
     this.asignacionCriterio.listarAsignacion_AdminPorUsuario(this.data.id,this.id_modelo).subscribe(result => {
       if (result == null) {
         return;

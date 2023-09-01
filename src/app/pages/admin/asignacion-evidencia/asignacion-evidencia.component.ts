@@ -350,9 +350,11 @@ export class AsignacionEvidenciaComponent implements OnInit {
     console.log("id traido "+this.usuarioSele.id)
     this.usuarioSele.username = elemento.usua;
     this.usuarioSele.persona = elemento.nombres;
+    this.nombre=elemento.nombres;
   }
 
   public AsignaUsuario(element: any) {
+  
     this.asignacion.evidencia.id_evidencia = element.id_evidencia;
     this.nombreasignado=element.descripcion;
     this.asignacion.usuario.id = this.usuarioSele.id
@@ -364,7 +366,6 @@ export class AsignacionEvidenciaComponent implements OnInit {
           this.listar();
           this.Listado();
           
-          this.nombre=this.usuarioSele.persona.primer_nombre+" "+this.usuarioSele.persona.primer_apellido;
           this.idusuario=this.usuarioSele.id;
           console.log("Nombre asignado "+this.nombreasignado+ " Nombre "+this.nombre+" id: "+this.idusuario);
           this.notificar();
@@ -385,9 +386,6 @@ export class AsignacionEvidenciaComponent implements OnInit {
           )
         }
       );
-
-
-
   }
 
 
@@ -606,6 +604,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
           this.ListarAsignacion();
           this.Listado();
+          this.notificarelimadmin();
+          this.notificarelsupern();
         });
 
         Swal.fire('Eliminado!', 'Registro eliminado.', 'success');
@@ -613,6 +613,43 @@ export class AsignacionEvidenciaComponent implements OnInit {
     });
   }
 
+  notificarelimadmin() {
+    this.noti.fecha = new Date();
+    this.noti.rol = "ADMIN";
+    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha eliminado la asignacion de la evidencia " + this.nombreasignado
+    +" a "+this.nombre;
+    this.noti.visto = false;
+    this.noti.usuario =  0;
+
+    this.notificationService.crear(this.noti).subscribe(
+      (data: Notificacion) => {
+        this.noti = data;
+        console.log('Notificacion guardada');
+      },
+      (error: any) => {
+        console.error('No se pudo guardar la notificación', error);
+      }
+    );
+  }
+  notificarelsupern() {
+    this.noti.fecha = new Date();
+    this.noti.rol = "SUPERADMIN";
+    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha eliminado la asignacion de la evidencia " + this.nombreasignado
+    +" a "+this.nombre;
+    this.noti.visto = false;
+    this.noti.usuario =  0;
+
+    this.notificationService.crear(this.noti).subscribe(
+      (data: Notificacion) => {
+        this.noti = data;
+        console.log('Notificacion guardada');
+      },
+      (error: any) => {
+        console.error('No se pudo guardar la notificación', error);
+      }
+    );
+  }
+  
   Actualizar(usuariosdit: Usuario2) {
     usuariosdit.id=this.usuariosEdit.id;
     Swal.fire({

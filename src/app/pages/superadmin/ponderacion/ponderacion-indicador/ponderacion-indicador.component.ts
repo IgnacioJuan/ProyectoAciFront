@@ -11,6 +11,7 @@ import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicado
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { Indicador } from 'src/app/models/Indicador';
 import { Chart } from 'chart.js';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-ponderacion-indicador',
@@ -26,11 +27,31 @@ export class PonderacionIndicadorComponent implements OnInit{
   asignacion: any;
   indicadorClase: Indicador=new Indicador();
   chart:any;
+//trad
+itemsPerPageLabel = 'Items por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel = 'Primera';
+  previousPageLabel = 'Anterior';
 
+  
+  rango: any = (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
 
   constructor(
     private servicePonderacion:PonderacionService,
-    public fb:FormBuilder,
+    public fb:FormBuilder, private paginatorIntl: MatPaginatorIntl,
     private router: Router,
     private sharedDataService: SharedDataService,
     private modeloService:ModeloService,
@@ -38,6 +59,12 @@ export class PonderacionIndicadorComponent implements OnInit{
     private indicadorservice: IndicadoresService
   ){
     this.myForm = fb.group({});
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel = this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel = this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel = this.rango;
    }
   
   ngOnInit(): void {

@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SharedDataService } from 'src/app/services/shared-data.service';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 
 
 type ColumnNames = {
@@ -29,6 +29,25 @@ type ColumnNames = {
   ],
 })
 export class ActividadCriterioDetalle implements OnInit {
+//tabla
+  itemsPerPageLabel = 'Items por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel = 'Primera';
+  previousPageLabel = 'Anterior';
+  rango: any = (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
 
   public columnNames: ColumnNames = {
     nombre: 'Nombre del Criterio',
@@ -47,20 +66,27 @@ export class ActividadCriterioDetalle implements OnInit {
   model: Modelo = new Modelo();
 
   constructor(
-    private route: ActivatedRoute,
+    private route: ActivatedRoute,private paginatorIntl: MatPaginatorIntl,
     public modeloService: ModeloService,
     public criterioService: CriteriosService,
     public subcriterioService: SubcriteriosService,
     public indicadorService: IndicadoresService,
     private asignacionIndicadorService: AsignacionIndicadorService,
     private sharedDataService: SharedDataService,
-    private router: Router) { }
+    private router: Router) {
+      this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+    this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+    this.paginatorIntl.getRangeLabel=this.rango;
+     }
 
   ngOnInit(): void {
     this.recibeModelo();
-    this.dataSource.paginator = this.paginator;
-
-
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+    }
   }
   id = localStorage.getItem("id");
   recibeModelo() {

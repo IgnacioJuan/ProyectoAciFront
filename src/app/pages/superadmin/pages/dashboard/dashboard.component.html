@@ -1,5 +1,5 @@
-<body>
-  <div class="container bg-light border border-start-0 rounded-4">
+
+  <div class=" border border-start-0 rounded-4" id="body">
     <div id="fondo" class="container-fluid">
       <section class="content-header" id="enc">
         <div class="container-fluid" style="border: 1px; border-radius: 2%">
@@ -28,9 +28,15 @@
         <option value="#131a22">Tema 3</option>
       </select>
      
+<<<<<<< Updated upstream
       <div class="pie-grid" *ngIf="listaIndicadores">
         <div class="card" *ngFor="let item of listaIndicadores" [style.background-color]="getRandomColor()"
         [style.border]="getBorderColor(item.total)">
+=======
+      <div class="pie-grid" *ngIf="listaIndicadores" id="indic">
+        <div class="card" *ngFor="let item of listaIndicadores; let i = index" [style.background-color]="coloresTarjetas[i]"
+        [style.border]="getBorderColor(item.total)" (click)="fetchAndProcessData(item.nombre)" title="Haga clic para para seleccionar un criterio">
+>>>>>>> Stashed changes
           <div class="card-content">
             <div class="card-content">{{ item.total * 100 }}%</div>
             <div class="card-name" style="color: black;">{{ item.nombre }}</div>
@@ -39,8 +45,146 @@
         </div>
       </div>
       
+<<<<<<< Updated upstream
       
       
+=======
+      <div style="display: flex; border-bottom: thick double #32a1ce;border-top: thick double #32a1ce;" id="fig6">
+        <div
+          style="flex-basis: 70%; border-right: thick double #32a1ce"
+          id="fig7">
+<!-- Primer div -->
+<div id="tit"><h3><span style="font-weight: bold;">Criterio Seleccionado:</span> {{titulocriterio}}</h3>
+  <div class="btn-tabs">
+    <button mat-button class="btn-tab" [ngClass]="verCriterio ? 'selected' : ''" (click)="showCriterio()">
+      Criterio
+    </button>
+  
+    <button mat-button class="btn-tab" [ngClass]="verSubcriterio ? 'selected' : ''" (click)="showSubcriterio()">
+      Subcriterio
+    </button>
+  
+    <button mat-button class="btn-tab" [ngClass]="verIndicador ? 'selected' : ''" (click)="showIndicador()">
+      Indicador
+    </button>
+  </div>
+  
+</div> 
+       <div style="display: flex; margin-bottom: 2%;">
+      
+         <div class="mat-elevation-z8">
+           <table mat-table [dataSource]="datacrite">
+             <ng-container matColumnDef="Criterio">
+               <th mat-header-cell *matHeaderCellDef [style.display]="verCriterio ? '' : 'none'">Criterio</th>
+               <td mat-cell style="padding: 4px;  font-size: 12px; " *matCellDef="let element; let i = index"
+                 [attr.rowspan]="getRowSpan3('Criterio', i)" [style.display]="verCriterio && 
+                       getRowSpan3('Criterio', i) ? '' : 'none'"
+                       [style.background-color]="getColorcelda('Criterio', 0.3)">
+                 {{ element.criterionomj }}
+               </td>
+             </ng-container>
+             <ng-container matColumnDef="Subcriterio">
+               <th mat-header-cell *matHeaderCellDef [style.display]="verSubcriterio ? '' : 'none'">Subcriterio</th>
+               <td mat-cell style="padding: 4px; font-size: 12px;" *matCellDef="let element; let i = index"
+                 [attr.rowspan]="getRowSpan3('Subcriterio', i)"
+                 [style.background-color]="getColorcelda('Subcriterio', 0.3)"
+                 [style.display]="verSubcriterio && getRowSpan3('Subcriterio', i) ? '' : 'none'">
+                 {{ element.subcrierioj }}
+               </td>
+             </ng-container>
+             <ng-container matColumnDef="Indicador">
+               <th mat-header-cell *matHeaderCellDef [style.display]="verIndicador ? '' : 'none'">Indicador</th>
+               <td mat-cell style="padding: 4px; font-size: 12px;" *matCellDef="let element; let i = index"
+                 [attr.rowspan]="getRowSpan3('Indicador', i)"
+                 [style.background-color]="getColorcelda('Indicador', 0.3)"
+                 [style.display]="verIndicador && getRowSpan3('Indicador', i) ? '' : 'none'">
+                 {{ element.ind_nombrej }}
+               </td>
+             </ng-container>
+             <ng-container matColumnDef="Archivos">
+               <th mat-header-cell *matHeaderCellDef>
+                 <div style="display: flex; justify-content: space-between; align-items: center;">
+                   <span>Archivos</span>
+                   <mat-checkbox [checked]="todosSeleccionados" (change)="seleccionTodo($event.checked)"></mat-checkbox>
+                   <button class="btn btn-download"
+                     style="background-color: rgb(10, 7, 161); color: white; border: none; padding: 10px 20px; cursor: pointer;"
+                     (click)="descargarArchivosSeleccionados()">
+                     <i class="fas fa-download"></i>
+                   </button>
+                 </div>
+               </th>
+               <td mat-cell style="padding: 4px; font-size: 14px;" *matCellDef="let element">
+                <mat-checkbox [(ngModel)]="seleccionados[element.criterionomj]" (change)="toggleSeleccion(element.criterionomj)"></mat-checkbox>
+                {{ element.archivo_nombre }}
+                
+              </td>
+              
+             </ng-container>
+             <ng-container matColumnDef="Calificar">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                aria-label="row actions"
+              >
+                Calificar
+              </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="calificar(element)" class="boton">
+                
+                  <mat-icon class="iconoB">open_in_new</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+             <tr mat-header-row *matHeaderRowDef="displayedColumns3"></tr>
+             <tr mat-row *matRowDef="let row; columns: displayedColumns3"></tr>
+           </table>
+         </div>
+       </div>
+       <!--fin-->
+
+      </div>
+
+      <div class="cent">
+<!-- segundo div -->
+<div style="width: 80%;height: 40%; ">
+  <div id="tit2"><h3 style="font-weight: bold;">Estado de los indicadores</h3></div>
+  <table mat-table [dataSource]="tabla" class="mat-elevation-z8">
+    <ng-container matColumnDef="indicadores">
+      <th mat-header-cell *matHeaderCellDef style="background-color: gray;"> Indicadores </th>
+      <td mat-cell *matCellDef="let element" [style.background-color]="colores(element.color)"> {{element.color.toUpperCase()}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="nindi">
+      <th mat-header-cell *matHeaderCellDef style="background-color: gray; text-align: center;"> N° indi </th>
+      <td mat-cell *matCellDef="let element" style=" text-align: center;"> {{element.indica}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="porcentaje">
+      <th mat-header-cell *matHeaderCellDef style="background-color: gray;text-align: center;"> % </th>
+      <td mat-cell *matCellDef="let element" style=" text-align: center;"> {{element.porcentaje}}% </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns4"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns4;"></tr>
+  </table>
+</div>
+<!-- Grafico pie -->
+<div style="width: 100%;height: 90%;margin-top: 10%;">
+  <h3 style="font-weight: bold;margin-left: 10%;">Grafica de Indicadores</h3>
+  <canvas
+baseChart
+class="chart"
+[data]="pieChartData"
+[type]="pieChartType"
+[options]="pieChartOptions"
+[plugins]="pieChartPlugins"
+>
+</canvas>
+</div>
+      </div>
+      
+    </div><!-- Fin div division -->
+
+>>>>>>> Stashed changes
       <!-- Chart -->
       <div style="display: flex; border-bottom: thick double #32a1ce" id="fig">
         <div
@@ -54,9 +198,13 @@
       [plugins]="barChartPlugins"
       [type]="barChartType" (chartClick)="chartClicked($event)">
     </canvas>
+<<<<<<< Updated upstream
 <button mat-button mat-raised-button color="primary" (click)="randomize()">
   Update
 </button>
+=======
+    
+>>>>>>> Stashed changes
 <!-- fin canvas -->
 
           <!-- <ngx-charts-pie-grid
@@ -402,7 +550,11 @@
         </div>
       </div>
     </div>
+<<<<<<< Updated upstream
   </div>
 
   
 </body>
+=======
+  </div>
+>>>>>>> Stashed changes

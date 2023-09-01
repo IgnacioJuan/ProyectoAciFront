@@ -27,6 +27,29 @@
           <th mat-header-cell *matHeaderCellDef>{{ columnNames[column] }}</th>
           <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
         </ng-container>
+
+        <ng-container matColumnDef="archivo">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            aria-label="row actions"
+            class="center-encabezado"
+          >
+            Archivos
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <ng-container *ngIf="element.enlaces">
+              <ng-container *ngFor="let enlace of element.enlaces; let i = index">
+                <a
+                  [href]="enlace"
+                  [download]="getFileName(enlace)"
+                  style="display: block; margin-bottom: 5px;"
+                >{{ getFileName(enlace) }}</a>
+              </ng-container>
+            </ng-container>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="evaluar">
           <th
             mat-header-cell

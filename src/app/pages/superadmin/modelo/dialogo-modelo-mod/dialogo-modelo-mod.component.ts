@@ -241,11 +241,8 @@ export class DialogoModeloModComponent implements OnInit {
   async eliminarYGuardarAsignaciones() {
     if (this.vertabla) {
       try {
-      //  await this.asignacionIndicadorService.getEliminaasig(this.id_mode).toPromise();
-         // Obtener los IDs de asignaciones en la base de datos para el modelo actual
       const asignacionesEnBase = await this.modelo_service?.getlistmodelindi(this.id_mode).toPromise();
       const idsEnBase = asignacionesEnBase?.map((asig => asig.id_indi));
-
       // Encontrar IDs que se deben eliminar
       const idsAEliminar = idsEnBase?.filter((id: number) => !this.getSelectedIds().includes(id));
 

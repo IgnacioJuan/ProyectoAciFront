@@ -208,6 +208,9 @@ export class AsignaComponent implements OnInit {
               background: "#63B68B",
             })
             this.listaAsignaciones();
+            this.notificar();
+            this.notificaradmin();
+            this.notificaruser();
             //alert("Se Actualiazo");
             //this.router.navigate(['admin/crudProduc'])
           });

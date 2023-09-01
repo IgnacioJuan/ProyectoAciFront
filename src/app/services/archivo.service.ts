@@ -39,6 +39,10 @@ get():Observable<Archivo[]>{
   return this.http.get<Archivo[]>(`${baserUrl}/archivo/listarv`);
 }
 
+getarchivoindi(id_criterio:number,id_modelo:number,id_indicador:number):Observable<Archivo[]>{
+  return this.http.get<Archivo[]>(`${baserUrl}/archivo/archivoindi/${id_criterio}/${id_modelo}/${id_indicador}`);
+}
+
 getDatos():Observable<ArchivoProjection[]>{
   return this.http.get<ArchivoProjection[]>(`${baserUrl}/archivo/listararchi`);
 }

@@ -39,6 +39,7 @@ function cambiarColor(str: string): string {
   const color = "#" + ((hash & 0x00FFFFFF) | 0x99000000).toString(16).slice(1);
   return color;
 }
+
 //Color calendario
 function colorCalendario(): string {
   const letras = '0123456789ABCDEF';
@@ -56,6 +57,16 @@ function colorCalendario(): string {
   return color;
 }
 
+<<<<<<< Updated upstream
+=======
+const colors: { [key: string]: string } = {
+  verde: '#00FF00', // Por ejemplo, 'verde' se asocia con el color verde en hexadecimal
+  naranja: '#FFA500', // 'naranja' se asocia con el color naranja en hexadecimal
+  rojo: '#FF0000', // 'rojo' se asocia con el color rojo en hexadecimal
+  amarillo: '#f8f32b',
+  // ... Agrega más colores si es necesario
+};
+>>>>>>> Stashed changes
 
 @Component({
   selector: 'app-dashboard2',
@@ -69,6 +80,7 @@ export class DashboardComponent2 implements OnInit {
   dataSource : ActivAprobadaProjection[] = [];
   isLoggedIn = false;
   user: any = null;
+  id_criterio!:number;
   rol: any = null;
   noti = new Notificacion();
   notificaciones: Notificacion[] = [];
@@ -103,6 +115,12 @@ spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];
 dataSource1: ActivAprobadaProjection[] = [];
+<<<<<<< Updated upstream
+=======
+datacrite: criteriosdesprojection[] = [];
+datacre: criteriosdesprojection= new criteriosdesprojection();
+displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Archivos', 'Calificar'];
+>>>>>>> Stashed changes
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
@@ -142,9 +160,16 @@ idmodel!:number;
   actApro: number = 0;
   porc:number=0;
   datosUsuarios: any[] = [];
+<<<<<<< Updated upstream
+=======
+  filterPost = '';
+  verIndicador=true;
+  verSubcriterio=true;
+  verCriterio=false;
+  coloresAsignados: { [key: string]: string } = {}; 
+>>>>>>> Stashed changes
 //
 @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
-
 public barChartOptions: ChartConfiguration['options'] = {
   responsive: true,
   scales: {
@@ -183,7 +208,46 @@ public barChartData: ChartData<'bar'> = {
       { data: [], label: 'V/por obtener', backgroundColor: 'rgba(184,54,51,255)' },
     ],
 };
-
+//pie grafica
+// Pie
+public pieChartOptions: ChartConfiguration['options'] = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: true,
+      position: 'top',
+    },
+    datalabels: {
+      formatter: (value: any, ctx: any) => {
+        if (ctx.chart.data.labels) {
+          return ctx.chart.data.labels[ctx.dataIndex];
+        }
+      },
+    },
+    tooltip: {
+      callbacks: {
+        label: (context: any) => {
+          const value = context.raw;
+          return `${value}%`;
+        }
+      }
+    }
+  },
+  elements: {
+    arc: {
+      backgroundColor: [],
+    },}
+};
+public pieChartData: ChartData<'pie', number[], string | string[]> = {
+  labels: [],
+  datasets: [
+    {
+      data: [],
+    },
+  ],
+};
+public pieChartType: ChartType = 'pie';
+public pieChartPlugins = [DataLabelsPlugin];
 // events
 public chartClicked({
   event,
@@ -205,20 +269,6 @@ public chartHovered({
   console.log(event, active);
 }
 
-public randomize(): void {
-  // Only Change 3 values
-  this.barChartData.datasets[0].data = [
-    Math.round(Math.random() * 100),
-    59,
-    80,
-    Math.round(Math.random() * 100),
-    56,
-    Math.round(Math.random() * 100),
-    40,
-  ];
-
-  this.chart?.update();
-}
 //
 constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
@@ -274,10 +324,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
       }));
       this.calendarOptions.events = this.eventos;
     });
-  this.httpCriterios.getCriterios().subscribe(data => {
-      this.listaCriterios = data;
-      this.cargarDatos();
-    });
+  
     //Notificaciones
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
@@ -297,6 +344,50 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     }
     this.obtenerActividades();
   }
+<<<<<<< Updated upstream
+=======
+
+  seleccionTodo(checked: boolean) {
+    this.todosSeleccionados = checked;
+    this.datacrite.forEach(item => {
+      this.seleccionados[item.criterionomj] = checked;
+    });
+  }
+
+  showCriterio(){
+    this.verCriterio = !this.verCriterio;
+  }
+
+  showSubcriterio(){
+    this.verSubcriterio = !this.verSubcriterio;
+  }
+
+  showIndicador() {
+    this.verIndicador = !this.verIndicador;
+  }
+  
+  toggleSeleccion(nombre: string) {
+    this.seleccionados[nombre] = !this.seleccionados[nombre];
+    this.actualizarSeleccionGeneral();
+  }
+  
+  actualizarSeleccionGeneral() {
+    this.todosSeleccionados = this.datacrite.every(item => this.seleccionados[item.criterionomj]);
+  }
+  
+  getColorcelda(elementName: string, opacity: number): string {
+    if (!this.coloresAsignados[elementName]) {
+      const red = Math.floor(Math.random() * 256);
+      const green = Math.floor(Math.random() * 256);
+      const blue = Math.floor(Math.random() * 256);
+      
+      this.coloresAsignados[elementName] = `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+    }
+  
+    return this.coloresAsignados[elementName];
+  }
+  
+>>>>>>> Stashed changes
   //
   cacheSpan(key: string, accessor: (d: any) => any) {
     for (let i = 0; i < this.dataSource1.length;) {
@@ -401,12 +492,15 @@ obtenerActividades() {
     const let1 = document.getElementById("letra");
     const let2 = document.getElementById("letra2");
     const cal = document.getElementById("cal");
+    const tit = document.getElementById("tit");
+    const tit2 = document.getElementById("tit2");
     const fig = document.getElementById("fig");
     const fig5 = document.getElementById("fig5");
     const menu = document.getElementById("menu");
     const notif = document.getElementById("notif");
     const txt = document.getElementById("txt");
     const graf = document.getElementById("graf");
+    const indic = document.getElementById("indic");
     if (body) {
       body.style.backgroundColor = color;
     }
@@ -420,6 +514,16 @@ obtenerActividades() {
       let1.style.color = "black";
       let1.style.backgroundColor="#eeeee4";
       let1.style.boxShadow = "";
+    }
+    if (tit) {
+      tit.style.color = "black";
+      
+      tit.style.boxShadow = "";
+    }
+    if (tit2) {
+      tit2.style.color = "black";
+     
+      tit2.style.boxShadow = "";
     }
     if (let2) {
       let2.style.color = "black";
@@ -438,6 +542,9 @@ obtenerActividades() {
     if(fig5){
       fig5.style.backgroundColor = "white";
     }
+    if(indic){
+      indic.style.backgroundColor = "white";
+    }
     if(menu){
       menu.style.backgroundColor = "#b0bec5";
     }
@@ -455,6 +562,16 @@ obtenerActividades() {
       let1.style.color = "white";
       let1.style.backgroundColor="#222b45";
       let1.style.boxShadow = "";
+    }
+    if (tit) {
+      tit.style.color = "white";
+     
+      tit.style.boxShadow = "";
+    }
+    if (tit2) {
+      tit2.style.color = "white";
+     
+      tit2.style.boxShadow = "";
     }
     if (let2) {
       let2.style.color = "white";
@@ -476,6 +593,9 @@ obtenerActividades() {
     if(fig5){
       fig5.style.backgroundColor = "#BEC8DC80";
     }
+    if(indic){
+      indic.style.backgroundColor = "#BEC8DC80";
+    }
     if(cal){
       cal.style.color = "white";
     }
@@ -493,6 +613,16 @@ obtenerActividades() {
       let1.style.backgroundColor="rgba(2, 27, 32, 0.25)";
       let1.style.boxShadow = "0 0 10px #00b2d6, 0 0 20px #00b2d6, 0 0 40px #00b2d6, 0 0 80px #00b2d6";
     }
+    if (tit) {
+      tit.style.color = "white";
+      
+      tit.style.boxShadow = "0 0 10px #00b2d6, 0 0 20px #00b2d6, 0 0 40px #00b2d6, 0 0 80px #00b2d6";
+    }
+    if (tit2) {
+      tit2.style.color = "white";
+      
+      tit2.style.boxShadow = "0 0 10px #00b2d6, 0 0 20px #00b2d6, 0 0 40px #00b2d6, 0 0 80px #00b2d6";
+    }
     if (let2) {
       let2.style.color = "white";
     }
@@ -509,6 +639,9 @@ obtenerActividades() {
     }
     if(fig5){
       fig5.style.backgroundColor = "rgb(0,247,255, 0.25)";
+    }
+    if(indic){
+      indic.style.backgroundColor = "rgb(0,247,255, 0.25)";
     }
     if(menu){
       menu.style.backgroundColor = "radial-gradient(circle, #013b3f, ##01060a)";
@@ -601,7 +734,18 @@ getColor(item: any): string {
       this.idmodel =data.id_modelo;
       this.valorespr();
       this.coloresPro();
+<<<<<<< Updated upstream
     })
+=======
+      this.idmodel = data.id_modelo;
+      console.log("ID Modelo:", this.idmodel);
+      this.httpCriterios.getCriterios().subscribe(data => {
+        this.listaCriterios = data;
+        this.cargarDatos();
+      });
+     // this.fetchAndProcessData();
+    });
+>>>>>>> Stashed changes
   }
   
   colores(color: string): string {
@@ -624,6 +768,26 @@ getColor(item: any): string {
   coloresPro(){
     this.indi.getIndicadorColProjection(this.idmodel).subscribe((data: IndiColProjection[]) => {
       this.indicol = data; // Calcula los totales
+      this.pieChartData.datasets[0].data = this.indicol.map(val => val.porcentaje);
+      const estadoColores: { [key: string]: string } = {
+        'rojo': '>=0 o <=25',
+        'naranja':'>25 o <=50',
+        'amarillo':'>50 o <=75',
+        'verde':'>75',
+      };
+
+      const estadosIndicadores = data.map(indicador => indicador.color);
+      
+      // Asigna colores a los elementos del gráfico según los estados
+      this.pieChartData.labels = estadosIndicadores.map(estado=> estadoColores[estado]);
+
+     // this.pieChartData.labels = data.map(indicador => indicador.color);
+
+      if(this.pieChartOptions?.elements?.arc?.backgroundColor !=undefined){
+      this.pieChartOptions.elements.arc.backgroundColor = this.indicol.map(
+        indicador => colors[indicador.color]
+      );}
+      this.pieChartData = { ...this.pieChartData };
       const totalIndicadores = this.indicol.reduce((total, element) => total + element.indica, 0);
       const totalPorcentaje = this.indicol.reduce((total, element) => total + element.porcentaje, 0);
       const total=Math.round(totalPorcentaje);
@@ -644,6 +808,7 @@ getColor(item: any): string {
     });
   }
 
+//
   valorespr(){
     this.httpCriterios.getvalores(this.idmodel).subscribe((valores: ValoresProjection[]) => {
       this.valoresp = valores;
@@ -655,7 +820,34 @@ getColor(item: any): string {
       this.barChartData = { ...this.barChartData };
     });
   }
+<<<<<<< Updated upstream
 
+=======
+  fetchAndProcessData(nombre:string) {
+    this.titulocriterio=nombre;
+    if(this.titulocriterio===""){
+      this.titulocriterio="ORGANIZACIÓN";
+      nombre="ORGANIZACIÓN";
+    }
+    this.httpCriterios.getIdCriterio(nombre).subscribe(data => {
+      this.id_criterio = data.id_criterio;
+      console.log("id crti: "+this.id_criterio);
+    });
+    this.modelservices.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
+      this.datacrite = data;
+      this.datacrite.forEach(item => {
+        if (typeof this.seleccionados[item.criterionomj] === 'undefined') {
+          this.seleccionados[item.criterionomj] = false;
+        }
+      });
+      // Generar la jerarquía de celdas
+      this.cacheSpan3('Criterio', (d) => d.criterionomj);
+      this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
+      this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
+      this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej + d.archivo_enlace);
+    });
+  }
+>>>>>>> Stashed changes
   listarActividad() {
     this.httpCriterios.getActividadAtrasada().subscribe(data => {
       this.Actividades = data;
@@ -714,7 +906,18 @@ getColor(item: any): string {
       );
   }
 
-  //valor porcentaje
+  //ir modelo
+  calificar(element: any) {
+    console.log("MODELO: "+this.idmodel+" idcriterio :"+this.id_criterio+"Criterio pres: "+element.criterionomj);
+    const datos = {
+      idCriterio: this.id_criterio,
+      modelo: this.idmodel
+    };
+  
+    localStorage.setItem('datopasado', JSON.stringify(datos));
+  
+    this.router.navigate(['/sup/modelo/matriz-evaluacion']);
+   }
   
   //color de barra
   getColorp(value: number): string {

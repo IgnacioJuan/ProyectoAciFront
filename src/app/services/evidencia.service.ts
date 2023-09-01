@@ -37,7 +37,9 @@ getEvidenciasAdmin(id: number): Observable<Evidencia[]> {
   return this.http.get<Evidencia[]>(`${baserUrl}/api/evidencia/listarvAsigna/${id}`);
 }
 
-
+getEvidenciaCrite(idcriterio: number): Observable<Evidencia[]> {
+  return this.http.get<Evidencia[]>(`${baserUrl}/api/evidencia/evicriterio/${idcriterio}`);
+}
 
   eliminarEvidencia(evi: any): Observable<any> {
     return this.http.put(`${baserUrl}/api/evidencia/eliminarlogic/${evi.id_evidencia}`, evi);

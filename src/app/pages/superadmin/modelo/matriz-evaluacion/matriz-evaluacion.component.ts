@@ -11,6 +11,8 @@ import { Criterio } from 'src/app/models/Criterio';
 import { Modelo } from 'src/app/models/Modelo';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { ArchivoService } from 'src/app/services/archivo.service';
+import { Archivo } from 'src/app/models/Archivo';
 
 type Columnname = {
   [key: string]: string;
@@ -52,14 +54,14 @@ export class MatrizEvaluacionComponent implements OnInit {
     nombre: 'Nombre del Indicador',
     descripcion: 'Descripción del Indicador',
     tipo: 'Tipo',
-    valor_obtenido: 'Valor Obtenido',
-    archivo:'Archivo'
+    valor_obtenido: 'Valor Obtenido'
   };
 
   dataSource = new MatTableDataSource<any>();
+  archivosPorIndicador: { [idIndicador: number]: Archivo[] } = {};
 
-  columnsToDisplay = ['nombre', 'descripcion', 'tipo', 'valor_obtenido','archivo'];
-  columnsToDisplayWithExpand = [...this.columnsToDisplay, 'evaluar'];
+  columnsToDisplay = ['nombre', 'descripcion', 'tipo', 'valor_obtenido'];
+  columnsToDisplayWithExpand = [...this.columnsToDisplay,'archivo', 'evaluar'];
   expandedElement: any;
   idcriterio: Criterio = new Criterio();
   idmodelo: Modelo = new Modelo();
@@ -69,7 +71,7 @@ export class MatrizEvaluacionComponent implements OnInit {
   constructor(
     private route: Router,private paginatorIntl: MatPaginatorIntl,
     private indicadorService: IndicadoresService,
-    private activatedRoute: ActivatedRoute, 
+    private archi: ArchivoService, 
     private dialog: MatDialog) 
   { 
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
@@ -88,14 +90,64 @@ export class MatrizEvaluacionComponent implements OnInit {
   }
 
   llenar_datasource() {
+    const datosString = localStorage.getItem('datopasado');
+    if (datosString) {
+      const datos = JSON.parse(datosString);
+      let idmodelo = datos.modelo;
+      let idcriterio = datos.idCriterio;
+      this.indicadorService.listarIndicadorPorCriterioModelo(idcriterio, idmodelo).subscribe(data => {
+        this.dataSource.data = data;
+        if (data.length > 0) {
+          data.forEach(indicador => {
+            this.archi.getarchivoindi(idcriterio, idmodelo, indicador.id_indicador).subscribe(
+              arch => {
+                console.log("Archivos: " + JSON.stringify(arch));
+                const enlaces = arch.map(archivo => archivo.enlace); // Obtener solo los enlaces
+            
+            // Asociar los enlaces a los elementos correspondientes en dataSource.data
+            this.dataSource.data = this.dataSource.data.map(item => {
+              if (item.id_indicador === indicador.id_indicador) {
+                return { ...item, enlaces: enlaces };
+              }
+              return item;
+            });
+              }
+            );
+          });
+        }
+      });
+      localStorage.removeItem('datopasado');
+    }else{
     this.idcriterio = history.state.criterio;
     this.idmodelo = history.state.modelo;
 
     this.indicadorService.listarIndicadorPorCriterioModelo(this.idcriterio.id_criterio, this.idmodelo.id_modelo).subscribe(data => {
       this.dataSource.data = data;
-    });
+      if (data.length > 0) {
+        data.forEach(indicador => {
+          this.archi.getarchivoindi(this.idcriterio.id_criterio, this.idmodelo.id_modelo, indicador.id_indicador).subscribe(
+            arch => {
+              console.log("Archivos: " + JSON.stringify(arch));
+              const enlaces = arch.map(archivo => archivo.enlace); // Obtener solo los enlaces
+          
+          // Asociar los enlaces a los elementos correspondientes en dataSource.data
+          this.dataSource.data = this.dataSource.data.map(item => {
+            if (item.id_indicador === indicador.id_indicador) {
+              return { ...item, enlaces: enlaces };
+            }
+            return item;
+          });
+            }
+          );
+        });
+      }
+    });}
   }
-
+  getFileName(url: string): string {
+    const parts = url.split('/');
+    return parts[parts.length - 1];
+  }
+  
   abrirDialogo(valor: any, id: any, peso: any): void {
     const dialogRef = this.dialog.open(CalificacionComponent, {
       data: { valor, id, peso },

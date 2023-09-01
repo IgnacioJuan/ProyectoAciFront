@@ -83,7 +83,7 @@ export class InicioModeloComponent implements OnInit {
     Swal.fire({
       title: 'Estas seguro de eliminar el registro?',
       showDenyButton: true,
-      confirmButtonText: 'Cacelar',
+      confirmButtonText: 'Cancelar',
       denyButtonText: `Eliminar`,
     }).then((result) => {
       /* Read more about isConfirmed, isDenied below */

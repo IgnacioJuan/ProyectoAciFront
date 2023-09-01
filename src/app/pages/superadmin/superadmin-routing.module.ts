@@ -11,6 +11,7 @@ import { EvidenciasComponent } from './pages/evidencias/evidencias.component';
 import { EvidenciaAtrasadaComponent } from './pages/evidencia-atrasada/evidencia-atrasada.component';
 import { CriterioReporteComponent } from './pages/criterio-reporte/criterio-reporte.component';
 import { DashboardComponent } from '../admin/dashboard/dashboard.component';
+import { EvalucionComponent } from '../admin/evalucion/evalucion.component';
 
 const routes: Routes = [{
   path: 'dashboard',
@@ -81,6 +82,13 @@ const routes: Routes = [{
   pathMatch: 'full',
   canActivate: [RoleguardGuard],
   data: { allowedRoles: ['SUPERADMIN', 'ADMIN'] }
+},
+{
+  path: 'responsables',
+  component: EvalucionComponent,
+  pathMatch: 'full',
+  canActivate: [RoleguardGuard],
+  data: { allowedRoles: ['SUPERADMIN'] }
 },
 {
   path: 'modelo',

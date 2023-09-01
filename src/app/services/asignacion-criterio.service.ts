@@ -5,6 +5,7 @@ import { Observable, map } from 'rxjs';
 import { Criterio } from '../models/Criterio';
 import { Asignacion_Criterios } from '../models/Asignacion-Criterios';
 import { usuario } from '../models/Usuario';
+import { NombreAsigProjection } from '../interface/NombreAsigProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -74,5 +75,9 @@ export class AsignacionCriterioService {
   //@PutMapping("/eliminarlogic/{id}")
   public deleteAsignacion_Admin(id: any): Observable<Asignacion_Criterios> {
     return this.httpClient.put<Asignacion_Criterios>(`${baserUrl}/api/asignacion_admin/eliminarlogic/${id}`, id);
+  }
+
+  public nombre_Admin(id_modelo:number,id_criterio:number): Observable<NombreAsigProjection> {
+    return this.httpClient.get<NombreAsigProjection>(`${baserUrl}/api/asignacion_admin/listarnombre_admin/${id_modelo}/${id_criterio}`);
   }
 }

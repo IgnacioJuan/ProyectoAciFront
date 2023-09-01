@@ -25,6 +25,7 @@ export class ActividadesResponsableComponent implements OnInit {
   Actividades: any[] = [];
   guardadoExitoso: boolean = false;
   frmActividades: FormGroup;
+  nombreacti!:string;
   noti = new Notificacion();
   user: any = null;
   idusuario: any = null;
@@ -76,7 +77,7 @@ export class ActividadesResponsableComponent implements OnInit {
   notificar() {
     this.noti.fecha = new Date();
     this.noti.rol = "SUPERADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.frmActividades.value.nombre;
+    this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.nombreacti;
     this.noti.visto = false;
     this.noti.usuario = 0;
 
@@ -94,7 +95,7 @@ export class ActividadesResponsableComponent implements OnInit {
   notificaradmin() {
     this.noti.fecha = new Date();
     this.noti.rol = "ADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.frmActividades.value.nombre;
+    this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.nombreacti;
     this.noti.visto = false;
     this.noti.usuario = 0;
 
@@ -127,6 +128,8 @@ export class ActividadesResponsableComponent implements OnInit {
 
   guardar() {
     this.actividad = this.frmActividades.value;
+    console.log("Nombre actividad: "+this.actividad.nombre);
+    this.nombreacti=this.actividad.nombre;
     this.actividad.evidencia = this.evi;
     this.actividad.usuario = this.user.id;
     this.actividad.estado = "pendiente"

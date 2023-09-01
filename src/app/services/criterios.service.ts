@@ -10,13 +10,13 @@ import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriterio
 import { proyeccionCriterio } from '../pages/admin/aprobar-rechazar-admin/proyecciones-testeo/proyeccionCriterio';
 import { IndicadorProjection } from '../interface/IndicadorProjection';
 import { ValoresProjection } from '../interface/ValoresProjection';
+import { IdCriterioProjection } from '../interface/IdCriterioProjection';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CriteriosService {
 
-  private url: string = 'http://localhost:5000/api/criterio';
   constructor(private http: HttpClient) { }
   getCriterioById(id: number): Observable<Criterio> {
 
@@ -97,14 +97,18 @@ export class CriteriosService {
   }
 
   getCriterioPorEvidencia(idEvidencia: number): Observable<Criterio[]> {
-    return this.http.get<Criterio[]>(`${this.url}/obtenerNombreCriterioPorEvidencia/${idEvidencia}`);
+    return this.http.get<Criterio[]>(`${baserUrl}/api/criterio/obtenerNombreCriterioPorEvidencia/${idEvidencia}`);
   }
 
   getCriterioPorEvidenciaproyeccion(idEvidencia: number): Observable<proyeccionCriterio[]> {
-    return this.http.get<proyeccionCriterio[]>(`${this.url}/obtenerNombreCriterioPorEvidenciaproyeccion/${idEvidencia}`);
+    return this.http.get<proyeccionCriterio[]>(`${baserUrl}/api/criterio/obtenerNombreCriterioPorEvidenciaproyeccion/${idEvidencia}`);
   }
 
   getvalores(id_modelo: number): Observable<ValoresProjection[]> {
     return this.http.get<ValoresProjection[]>(`${baserUrl}/api/criterio/listarvalores/${id_modelo}`);
+  }
+
+  getIdCriterio(nombre: string): Observable<IdCriterioProjection> {
+    return this.http.get<IdCriterioProjection>(`${baserUrl}/api/criterio/idcriterio/${nombre}`);
   }
 }

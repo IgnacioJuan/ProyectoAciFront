@@ -93,6 +93,9 @@
   background-color: rgba(0, 255, 64, 0.158);
 }
 
+.cent{
+  flex-basis: 30%; margin-top: 2%;align-items: center;display: flex; flex-direction: column;justify-content: center;
+}
 .barra {
   display: flex;
   justify-content: center;
@@ -374,6 +377,37 @@ body {
   padding: 30px;
 
   color: #224;
+<<<<<<< Updated upstream
   background:
     url(https://source.unsplash.com/E8Ufcyxz514/2400x1823) center / cover no-repeat fixed;
+=======
+  
+}
+
+.mat-table th, .mat-table td {
+  border: 10px solid #0c0c0c;
+  padding: 8px;
+}
+
+.btn-tabs {
+  display: flex;
+}
+
+.btn-tab {
+  padding: 10px 20px;
+  border: none;
+  background-color: #dca500;
+  color: black;
+  font-weight: bold;
+  transform-origin: top right;
+  transform: skewX(-20deg);
+  margin-right: -10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.btn-tab.selected {
+  background-color: #044c9b;
+  color: white;
+>>>>>>> Stashed changes
 }

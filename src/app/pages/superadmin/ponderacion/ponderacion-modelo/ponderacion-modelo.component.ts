@@ -2,21 +2,18 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Modelo } from 'src/app/models/Modelo';
 import { AsignacionIndicadorService } from 'src/app/services/asignacion-indicador.service';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { ModeloService } from 'src/app/services/modelo.service';
-import { Chart, ChartOptions } from 'chart.js';
+import { Chart } from 'chart.js';
 import { Indicador } from 'src/app/models/Indicador';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Ponderacion } from 'src/app/models/Ponderacion';
 import Swal from 'sweetalert2';
 import { PonderacionService } from 'src/app/services/ponderacion.service';
-import { HttpClient } from '@angular/common/http';
-import { isEmpty } from 'rxjs';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 
 
 
@@ -58,21 +55,42 @@ export class PonderacionModeloComponent implements OnInit {
   dataSource = new MatTableDataSource<any>();
   filterPost = '';
   columnasUsuario: string[] = ['criterio_nombre', 'subcriterio_nombre', 'indicador_nombre', 'peso', 'porc_valor', 'porc_utilidad', 'valor_obt'];
+  itemsPerPageLabel = 'Items por página';
+  nextPageLabel = 'Siguiente';
+  lastPageLabel = 'Última';
+  firstPageLabel = 'Primera';
+  previousPageLabel = 'Anterior';
 
+  
+  rango: any = (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
 
   @ViewChild('miTabla', { static: true }) miTabla!: ElementRef;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   constructor(
     private indicadorservice: IndicadoresService,
     private router: Router, private fb: FormBuilder,
-    public modeloService: ModeloService,
+    public modeloService: ModeloService, private paginatorIntl: MatPaginatorIntl,
     public asignacionIndicadorService: AsignacionIndicadorService,
-    private servicePonderacion: PonderacionService,
-    private http: HttpClient,
-    private activatedRoute: ActivatedRoute
-
-
+    private servicePonderacion: PonderacionService
   ) {
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+    this.paginatorIntl.firstPageLabel = this.firstPageLabel;
+    this.paginatorIntl.previousPageLabel = this.previousPageLabel;
+    this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+    this.paginatorIntl.getRangeLabel = this.rango;
   }
 
 
@@ -119,11 +137,14 @@ export class PonderacionModeloComponent implements OnInit {
   }
 
 
+//
 
   recibeIndicador() {
     // Capturar el ID del indicador del modelo
     this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.model.id_modelo)).subscribe(info => {
       let cont = history.state.contador;
+      let fecha=history.state.fecha;
+      
       this.indicadorservice.getIndicadors().subscribe(result => {
         this.dataSource.data = [];
         this.asignacion = info;
@@ -135,7 +156,7 @@ export class PonderacionModeloComponent implements OnInit {
             });
 
           });
-          this.servicePonderacion.listarPonderacionPorFecha(this.fechaSeleccionada, Number(cont)).subscribe(data => {
+          this.servicePonderacion.listarPonderacionPorFecha(fecha, Number(cont)).subscribe(data => {
             this.dataSource.data.forEach((indicador: any) => {
               data.forEach((ponderacion: any) => {
                 if (indicador.id_indicador == ponderacion.indicador.id_indicador) {
@@ -144,8 +165,6 @@ export class PonderacionModeloComponent implements OnInit {
                   indicador.porc_obtenido = ponderacion.porc_obtenido;
                   indicador.porc_utilida_obtenida = ponderacion.porc_utilida_obtenida;
                   indicador.valor_obtenido = ponderacion.valor_obtenido;
-
-
                 }
 
               });
@@ -155,8 +174,7 @@ export class PonderacionModeloComponent implements OnInit {
             this.coloresTabla();
 
           });
-          console.log("hola")
-          console.log(this.dataSource.data);
+          console.log("Data source: 1"+JSON.stringify(this.dataSource.data));
           this.createChart();
 
           this.GraficaPastel();
@@ -191,9 +209,6 @@ export class PonderacionModeloComponent implements OnInit {
     let idModelo = localStorage.getItem("id");
     this.dataSource.data.forEach((column: any) => {
       const indicadorEncontrado = this.indicadores.find((indicador: any) => indicador.nombre === column.nombre);
-      if (indicadorEncontrado) {
-      } else {
-      }
       const fila: Ponderacion = {
 
         indicador: {
