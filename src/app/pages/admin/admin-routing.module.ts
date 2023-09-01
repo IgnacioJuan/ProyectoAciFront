@@ -11,7 +11,7 @@ import { AprobarRechazarAdminComponent } from './aprobar-rechazar-admin/aprobar-
 import { RoleguardGuard } from 'src/app/services/Guards/roleguard.guard';
 import { AsignacionEvidenciaComponent } from './asignacion-evidencia/asignacion-evidencia.component';
 import { AprobarRechazarDetalleAdminComponent } from './aprobar-rechazar-detalle-admin/aprobar-rechazar-detalle-admin.component';
-
+import { Historial_notifiComponent } from './historial_notifi/historial_notifi.component';
 const routes: Routes = [
   {
     path: 'admin',
@@ -26,6 +26,13 @@ const routes: Routes = [
     canActivate: [AdminGuard]
   }
   ,
+  {
+    path: 'historialnotif',
+    component: Historial_notifiComponent,
+    pathMatch: 'full',
+    canActivate: [AdminGuard]
+  },
+
 
   {
     path: 'subcriterios',

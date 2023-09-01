@@ -1,14 +1,16 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ChartConfiguration, ChartOptions } from 'chart.js';
-import { forkJoin } from 'rxjs';
 import { Actividad } from 'src/app/models/Actividad';
-import { AutoIndicador } from 'src/app/models/AutoridadIndicador';
-import { Criterio } from 'src/app/models/Criterio';
 import { Persona2 } from 'src/app/models/Persona2';
 import { ActividadService } from 'src/app/services/actividad.service';
 import { Actividades } from 'src/app/models/actividades';
+import { MatSelectionListChange } from '@angular/material/list';
+import Swal from 'sweetalert2';  
+
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
+import { ModeloService } from 'src/app/services/modelo.service';
+import { Modelo } from 'src/app/models/Modelo';
+
 //Funciones
 import { CalendarOptions } from '@fullcalendar/core';;
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -24,6 +26,17 @@ import { PersonaService } from 'src/app/services/persona.service';
 import { ActividadesProjection } from 'src/app/interface/ActividadesProjection';
 import { IndicadorProjection } from 'src/app/interface/IndicadorProjection';
 import { ActivAprobadaProjection } from 'src/app/interface/ActivAprobadaProjection';
+import { criteriosdesprojection } from 'src/app/interface/criteriosdesprojection';
+//
+
+import { CategoryScale, ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import DataLabelsPlugin from 'chartjs-plugin-datalabels';
+import { ValoresProjection } from 'src/app/interface/ValoresProjection';
+import { IndicadoresService } from 'src/app/services/indicadores.service';
+import { IndiColProjection } from 'src/app/interface/IndiColProjection';
+import { MatTableDataSource } from '@angular/material/table';
+
 // Color aleatorio
 function cambiarColor(str: string): string {
   let hash = 0;
@@ -51,14 +64,17 @@ function colorCalendario(): string {
 }
 
 
+
 @Component({
   selector: 'app-dashboard2',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   
 })
+
 export class DashboardComponent2 implements OnInit {
   displayedColumns: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
+  displayedColumns4: string[] = ['indicadores', 'nindi', 'porcentaje'];
   dataSource : ActivAprobadaProjection[] = [];
   isLoggedIn = false;
   user: any = null;
@@ -67,12 +83,14 @@ export class DashboardComponent2 implements OnInit {
   notificaciones: Notificacion[] = [];
   numNotificacionesSinLeer: number = 0;
   selectedColor: string="";
+  titulocriterio: string="";
   abrir: boolean = false;
-  itemsPerPageLabel = 'Actividades por página';
+  itemsPerPageLabel = 'Items por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
   firstPageLabel='Primera';
   previousPageLabel='Anterior';
+  
   rango:any= (page: number, pageSize: number, length: number) => {
     if (length == 0 || pageSize == 0) {
       return `0 de ${length}`;
@@ -90,17 +108,26 @@ export class DashboardComponent2 implements OnInit {
   titulo2= 'Avance de las Actividades';
   titulo3= 'Responsables';
   @Input() color: ThemePalette= "primary";
-
+  //Seleccionar check
+  seleccionados: { [key: string]: boolean } = {};
+  todosSeleccionados=false;
+  //
 displayedColumns1: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
 spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];
+spans3: any[] = [];
+coloresTarjetas: string[] = [];
 dataSource1: ActivAprobadaProjection[] = [];
+datacrite: criteriosdesprojection[] = [];
+datacre: criteriosdesprojection= new criteriosdesprojection();
+displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Archivos' ];
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
   valores: number[] = [10,0];
   listaCriterios: any[] = [];
+  valoresp:ValoresProjection[] = [];
   modeloMaximo:any;
   listaIndicadores: IndicadorProjection[] = [];
   persona:Persona2 = new Persona2();
@@ -116,27 +143,111 @@ gradient = false;
 //prueba
 view: [number, number] = [700, 400]; // Tamaño del gráfico (ancho x alto)
 Utilidad!: number;
+idmodel!:number;
 items: any[] = [];
 eventos: any[] = [];
 crite: any[] = [];
 avances: any[] = [];
+
   //FIN DE VISTA
   public actividad = new Actividades();
   Actividades: Actividad[] = [];
   listact: ActividadesProjection[] = [];
   listind:IndicadorProjection[] = [];
+  indicol:IndiColProjection[] = [];
+  tabla!: MatTableDataSource<any>;
   numac: Actividades[] = [];
   Evidencias: any[] = [];
   totalAct: number = 0;
   actApro: number = 0;
   porc:number=0;
   datosUsuarios: any[] = [];
-    @ViewChild('chart') chart: any;
+  filterPost = '';
+  verIndicador=true;
+  verSubcriterio=true;
+  verCriterio=false;
 //
-constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
+@ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
+
+public barChartOptions: ChartConfiguration['options'] = {
+  responsive: true,
+  scales: {
+    x: {
+      type: 'category',
+      ticks: {
+       
+        autoSkip: false, // Evita que las etiquetas se salten automáticamente
+        maxRotation: 45, // Cambia el ángulo de rotación aquí
+        minRotation: 45, // Cambia el ángulo de rotación aquí
+        color: 'black',
+      },
+    },
+    y: {
+      
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+    },
+    datalabels: {
+      anchor: 'end',
+      align: 'end',
+      color: 'black',
+    },
+  },
+};
+public barChartType: ChartType = 'bar';
+public barChartPlugins = [DataLabelsPlugin];
+
+public barChartData: ChartData<'bar'> = {
+  labels: [],
+    datasets: [
+      { data: [], label: 'V/Obtenido', backgroundColor: 'rgba(56,116,188,255)'  },
+      { data: [], label: 'V/por obtener', backgroundColor: 'rgba(184,54,51,255)' },
+    ],
+};
+
+// events
+public chartClicked({
+  event,
+  active,
+}: {
+  event?: ChartEvent;
+  active?: object[];
+}): void {
+  console.log(event, active);
+}
+
+public chartHovered({
+  event,
+  active,
+}: {
+  event?: ChartEvent;
+  active?: object[];
+}): void {
+  console.log(event, active);
+}
+
+public randomize(): void {
+  // Only Change 3 values
+  this.barChartData.datasets[0].data = [
+    Math.round(Math.random() * 100),
+    59,
+    80,
+    Math.round(Math.random() * 100),
+    56,
+    Math.round(Math.random() * 100),
+    40,
+  ];
+
+  this.chart?.update();
+}
+//
+constructor(private services: ActividadService,private modelservices: ModeloService,private paginatorIntl: MatPaginatorIntl,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
   public login: LoginService, private notificationService: NotificacionService,
-  private httpCriterios: CriteriosService) {
+  private httpCriterios: CriteriosService,private indi:IndicadoresService) {
     this.colorScheme = {
       domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
     };
@@ -156,6 +267,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
       this.cacheSpan2('fin', (y) => y.actividades + y.inicio + y.fin);
       this.cacheSpan2('encargado', (y) => y.actividades + y.inicio + y.fin + y.encargado);
     });
+
     this.rol = this.login.getUserRole();
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
@@ -163,6 +275,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.paginatorIntl.previousPageLabel=this.previousPageLabel;
     this.paginatorIntl.firstPageLabel=this.firstPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
+    
    }
 
    abrirOpcn() {
@@ -209,6 +322,30 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     }
     this.obtenerActividades();
   }
+
+  
+  showCriterio(){
+    this.verCriterio = !this.verCriterio;
+  }
+
+  showSubcriterio(){
+    this.verSubcriterio = !this.verSubcriterio;
+  }
+
+  showIndicador() {
+    this.verIndicador = !this.verIndicador;
+  }
+  
+  toggleSeleccion(nombre: string) {
+    this.seleccionados[nombre] = !this.seleccionados[nombre];
+    this.actualizarSeleccionGeneral();
+  }
+  
+  actualizarSeleccionGeneral() {
+    this.todosSeleccionados = this.datacrite.every(item => this.seleccionados[item.criterionomj]);
+  }
+  
+  
   //
   cacheSpan(key: string, accessor: (d: any) => any) {
     for (let i = 0; i < this.dataSource1.length;) {
@@ -259,10 +396,37 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     }
   }
   
-  
   getRowSpan2(col: any, index: any) {
     return this.spans2[index] && this.spans2[index][col];
   }
+
+  
+  cacheSpan3(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.datacrite.length;) {
+      let currentValue = accessor(this.datacrite[i]);
+      let count = 1;
+
+      for (let j = i + 1; j < this.datacrite.length; j++) {
+        if (currentValue !== accessor(this.datacrite[j])) {
+          break;
+        }
+        count++;
+      }
+  
+      if (!this.spans3[i]) {
+        this.spans3[i] = {};
+      }
+  
+      this.spans3[i][key] = count;
+      i += count;
+    }
+  }
+  
+  
+  getRowSpan3(col: any, index: any) {
+    return this.spans3[index] && this.spans3[index][col];
+  }
+
   
  //listar archivos
  obtenerNombreArchivo(url: string): string {
@@ -507,17 +671,96 @@ getColor(item: any): string {
     return cambiarColor(item.nombre);
   }
   //
-  modeloMax(){
-    this.httpCriterios.getModeMaximo().subscribe(data =>{
+  modeloMax() {
+    this.httpCriterios.getModeMaximo().subscribe((data) => {
       this.modeloMaximo = data;
-    })
+      this.idmodel =data.id_modelo;
+      this.valorespr();
+      this.coloresPro();
+      this.idmodel = data.id_modelo;
+      console.log("ID Modelo:", this.idmodel);
+
+     // this.fetchAndProcessData();
+    });
+  }
+  colores(color: string): string {
+    switch (color) {
+      case 'verde':
+        return 'green';
+      case 'amarillo':
+        return 'yellow';
+      case 'naranja':
+        return 'orange';
+      case 'rojo':
+        return 'red';
+      case 'Total':
+        return 'gray';
+      default:
+        return 'transparent'; // O cualquier otro color por defecto
+    }
+  }
+  
+  coloresPro(){
+    this.indi.getIndicadorColProjection(this.idmodel).subscribe((data: IndiColProjection[]) => {
+      this.indicol = data; // Calcula los totales
+      const totalIndicadores = this.indicol.reduce((total, element) => total + element.indica, 0);
+      const totalPorcentaje = this.indicol.reduce((total, element) => total + element.porcentaje, 0);
+      const total=Math.round(totalPorcentaje);
+
+      // Agrega la fila de totales al final del arreglo
+      this.indicol.push({
+        color: 'Total',
+        indica: totalIndicadores,
+        porcentaje: total,
+      });
+      
+      this.indicol.sort((a, b) => {
+        const orden = ['verde', 'amarillo', 'naranja', 'rojo','Total'];
+        return orden.indexOf(a.color) - orden.indexOf(b.color);
+      });
+      // Asigna el arreglo de datos actualizado al dataSource
+      this.tabla = new MatTableDataSource(this.indicol);
+    });
   }
 
+  valorespr(){
+    this.httpCriterios.getvalores(this.idmodel).subscribe((valores: ValoresProjection[]) => {
+      this.valoresp = valores;
+      console.log("Valores de tabla"+JSON.stringify(this.valoresp))
+      this.barChartData.labels = this.valoresp.map(val => val.nomcriterio);
+      this.barChartData.datasets[0].data = this.valoresp.map(val => val.vlObtenido);
+      this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);
+  
+      this.barChartData = { ...this.barChartData };
+    });
+  }
+  fetchAndProcessData(nombre:string) {
+    this.titulocriterio=nombre;
+    if(this.titulocriterio===""){
+      this.titulocriterio="ORGANIZACIÓN";
+      nombre="ORGANIZACIÓN";
+    }
+    this.modelservices.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
+      this.datacrite = data;
+      this.datacrite.forEach(item => {
+        if (typeof this.seleccionados[item.criterionomj] === 'undefined') {
+          this.seleccionados[item.criterionomj] = false;
+        }
+      });
+      // Generar la jerarquía de celdas
+      this.cacheSpan3('Criterio', (d) => d.criterionomj);
+      this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
+      this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
+      this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej + d.archivo_enlace);
+    });
+  }
   listarActividad() {
     this.httpCriterios.getActividadAtrasada().subscribe(data => {
       this.Actividades = data;
     })
   }
+
+
 
   listarEvidencias() {
     this.eviden.getEvidencias().subscribe(data => {
@@ -525,10 +768,33 @@ getColor(item: any): string {
     })
   }
 
+  getRandomColor(): string {
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+    const alpha = 0.3; // Transparencia
 
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  }
+
+  getColorA(): string {
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+    const alpha = 0.6; // Transparencia
+
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  }
+
+  getBorderColor(total: number): string {
+    const borderWidth = `${total*100}px`;
+    const borderColor = this.getColorA();
+    return `${borderWidth} solid ${borderColor}`;
+  }
   //LISTAR Y MOSTRAR LOS GRAFICOS
   cargarDatos(): void {
-    this.httpCriterios.getIndicador().subscribe(
+    console.log("Id modelo a verificar "+this.idmodel);
+    this.httpCriterios.getIndicador(this.idmodel).subscribe(
         (data: IndicadorProjection[]) => {
           this.listaIndicadores = data;
           this.datos = this.listaIndicadores.map(item => ({
@@ -539,8 +805,13 @@ getColor(item: any): string {
           this.listaIndicadores.sort((a, b) => b.total - a.total);
           this.crite = this.listaIndicadores.map(item => ({
           name: item.nombre,
-        value: item.total
+        value: item.total*100
         }));
+       
+        this.listaIndicadores.forEach(() => {
+          this.coloresTarjetas.push(this.getRandomColor());
+        });
+
         },
         (error) => {
           console.error('Error al obtener los datos:', error);
@@ -576,4 +847,59 @@ getPersonaActividad(objeto:Actividad){
   )
 }
 
+async descargarArchivosSeleccionados() {
+  const archivosSeleccionados = this.datacrite.filter(element => element.isSelected);
+
+  if (archivosSeleccionados.length === 0) {
+    // Mostrar alerta si no hay archivos seleccionados
+    await Swal.fire('Error', 'Por favor, seleccione al menos un archivo para descargar.', 'error');
+    return;
+  }
+
+  const downloadPromises = archivosSeleccionados.map(element => {
+    return this.descargarArchivo(element.archivo_enlace, this.obtenerNombreArchivo2(element.archivo_enlace));
+  });
+
+  try {
+    await Promise.all(downloadPromises);
+    
+    // Quitar los checks de selección
+    archivosSeleccionados.forEach(element => {
+      element.isSelected = false;
+    });
+    
+    await Swal.fire('Descarga confirmacion', 'Tiene que confirmar la descarga.', 'success');
+  } catch (error) {
+    console.error('Error en las descargas:', error);
+    await Swal.fire('Error', 'Hubo un error durante las descargas.', 'error');
+  }
+}
+
+
+
+async descargarArchivo(enlace: string, nombre: string) {
+  try {
+    const response = await fetch(enlace);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = nombre;
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    throw new Error('No se pudo descargar el archivo: ' + nombre);
+  }
+
+}
+seleccionarTodosArchivos() {
+  // Cambia el estado de selección de todos los archivos
+  for (const element of this.datacrite) {
+    element.isSelected = this.todosSeleccionados;
+  }
+
+}
 }

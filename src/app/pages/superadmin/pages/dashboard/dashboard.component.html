@@ -4,12 +4,7 @@
       <section class="content-header" id="enc">
         <div class="container-fluid" style="border: 1px; border-radius: 2%">
           <div class="row mb-2">
-            <div
-              class="col-sm-6"
-              id="letra"
-              (click)="irmodelo()"
-              title="Haga clic para ir al modelo"
-            >
+            <div class="col-sm-6" id="letra" (click)="irmodelo()" title="Haga clic para ir al modelo">
               <blockquote class="blockquote text-dark" style="margin-top: 5%">
                 <h1><strong>MODELO:</strong> {{ modeloMaximo?.nombre }}</h1>
               </blockquote>
@@ -17,25 +12,142 @@
           </div>
         </div>
       </section>
-      <select
-        name="fondo"
-        id="fondo"
-        [(ngModel)]="selectedColor"
-        (ngModelChange)="cambiar()"
-      >
+      <select name="fondo" id="fondo" [(ngModel)]="selectedColor" (ngModelChange)="cambiar()">
         <option value="white">Tema 1</option>
         <option value="#151a30">Tema 2</option>
         <option value="#131a22">Tema 3</option>
       </select>
+     
+      <div class="pie-grid" *ngIf="listaIndicadores">
+        <div class="card" *ngFor="let item of listaIndicadores; let i = index" [style.background-color]="coloresTarjetas[i]"
+        [style.border]="getBorderColor(item.total)" (click)="fetchAndProcessData(item.nombre)" title="Haga clic para para seleccionar un criterio">
+          <div class="card-content">
+            <div class="card-content">{{ item.total * 100 }}%</div>
+            <div class="card-name" style="color: black;">{{ item.nombre }}</div>
+            <div class="card-tot">Total: {{ item.total}}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="display: flex; border-bottom: thick double #32a1ce;border-top: thick double #32a1ce;" id="fig6">
+        <div
+          style="flex-basis: 70%; border-right: thick double #32a1ce"
+          id="fig7">
+<!-- Primer div -->
+<div><h3><span style="font-weight: bold;">Criterio Seleccionado:</span> {{titulocriterio}}</h3>
+
+  <button mat-button mat-raised-button [ngClass]="verCriterio ? 'btn-visible' : 'btn-oculto'" (click)="showCriterio()">
+    Criterio
+</button>
+
+  <button mat-button mat-raised-button [ngClass]="verSubcriterio ? 'btn-visible' : 'btn-oculto'" (click)="showSubcriterio()">
+    Subcriterio
+</button>
+
+<button mat-button mat-raised-button [ngClass]="verIndicador ? 'btn-visible' : 'btn-oculto'" (click)="showIndicador()">
+    Indicador
+</button>
+</div> 
+       <div style="display: flex; margin-bottom: 2%;">
+      
+         <div class="mat-elevation-z8">
+           <table mat-table [dataSource]="datacrite">
+             <ng-container matColumnDef="Criterio">
+               <th mat-header-cell *matHeaderCellDef [style.display]="verCriterio ? '' : 'none'">Criterio</th>
+               <td mat-cell style="padding: 4px;  font-size: 12px; " *matCellDef="let element; let i = index"
+                 [attr.rowspan]="getRowSpan3('Criterio', i)" [style.display]="verCriterio && 
+                       getRowSpan3('Criterio', i) ? '' : 'none'
+                     ">
+                 {{ element.criterionomj }}
+               </td>
+             </ng-container>
+             <ng-container matColumnDef="Subcriterio">
+               <th mat-header-cell *matHeaderCellDef [style.display]="verSubcriterio ? '' : 'none'">Subcriterio</th>
+               <td mat-cell style="padding: 4px; font-size: 12px;" *matCellDef="let element; let i = index"
+                 [attr.rowspan]="getRowSpan3('Subcriterio', i)"
+                 [style.display]="verSubcriterio && getRowSpan3('Subcriterio', i) ? '' : 'none'">
+                 {{ element.subcrierioj }}
+               </td>
+             </ng-container>
+             <ng-container matColumnDef="Indicador">
+               <th mat-header-cell *matHeaderCellDef [style.display]="verIndicador ? '' : 'none'">Indicador</th>
+               <td mat-cell style="padding: 4px; font-size: 12px;" *matCellDef="let element; let i = index"
+                 [attr.rowspan]="getRowSpan3('Indicador', i)"
+                 [style.display]="verIndicador && getRowSpan3('Indicador', i) ? '' : 'none'">
+                 {{ element.ind_nombrej }}
+               </td>
+             </ng-container>
+             <ng-container matColumnDef="Archivos">
+               <th mat-header-cell *matHeaderCellDef>
+                 <div style="display: flex; justify-content: space-between; align-items: center;">
+ 
+                  <span><mat-checkbox [(ngModel)]="todosSeleccionados" (change)="seleccionarTodosArchivos()"></mat-checkbox> Archivos</span>
+                   <button class="btn btn-download"
+                     style="background-color: rgb(10, 7, 161); color: white; border: none; padding: 10px 20px; cursor: pointer;"
+                     (click)="descargarArchivosSeleccionados()">
+                     <i class="fas fa-download"></i>
+                   </button>
+                 </div>
+               </th>
+               <td mat-cell style="padding: 4px; font-size: 14px;" *matCellDef="let element">
+                <mat-checkbox [(ngModel)]="element.isSelected"></mat-checkbox>
+ 
+                {{ element.archivo_nombre }}
+              </td>
+              
+             </ng-container>
+             
+             <tr mat-header-row *matHeaderRowDef="displayedColumns3"></tr>
+             <tr mat-row *matRowDef="let row; columns: displayedColumns3"></tr>
+           </table>
+         </div>
+       </div>
+       <!--fin-->
+
+      </div>
+
+      <div class="barra" style="flex-basis: 30%; margin-top: 2%">
+<!-- segundo div -->
+<div style="width: 450px;">
+  <div><h3 style="font-weight: bold;">Estado de los indicadores</h3></div>
+  <table mat-table [dataSource]="tabla" class="mat-elevation-z8">
+    <ng-container matColumnDef="indicadores">
+      <th mat-header-cell *matHeaderCellDef style="background-color: gray;"> Indicadores </th>
+      <td mat-cell *matCellDef="let element" [style.background-color]="colores(element.color)"> {{element.color.toUpperCase()}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="nindi">
+      <th mat-header-cell *matHeaderCellDef style="background-color: gray; text-align: center;"> N° indi </th>
+      <td mat-cell *matCellDef="let element" style=" text-align: center;"> {{element.indica}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="porcentaje">
+      <th mat-header-cell *matHeaderCellDef style="background-color: gray;text-align: center;"> % </th>
+      <td mat-cell *matCellDef="let element" style=" text-align: center;"> {{element.porcentaje}}% </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns4"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns4;"></tr>
+  </table>
+</div>
+      </div>
+    </div><!-- Fin div division -->
 
       <!-- Chart -->
       <div style="display: flex; border-bottom: thick double #32a1ce" id="fig">
         <div
           style="flex-basis: 70%; border-right: thick double #32a1ce"
-          (click)="detalle()"
           id="fig2"
         >
-          <ngx-charts-pie-grid
+
+    <canvas baseChart class="chart"
+      [data]="barChartData"
+      [options]="barChartOptions"
+      [plugins]="barChartPlugins"
+      [type]="barChartType" (chartClick)="chartClicked($event)">
+    </canvas>
+<!-- fin canvas -->
+
+          <!-- <ngx-charts-pie-grid
             [view]="view"
             [scheme]="colorScheme"
             [results]="datos"
@@ -43,6 +155,9 @@
             [customColors]="colorScheme"
             (select)="onSelect($event)"
           >
+        <div style="flex-basis: 70%; border-right: thick double #32a1ce" (click)="detalle()" id="fig2">
+          <ngx-charts-pie-grid [view]="view" [scheme]="colorScheme" [results]="datos" [designatedTotal]="1"
+            [customColors]="colorScheme" (select)="onSelect($event)">
             <ng-template #tooltipTemplate let-model="model">
               <div class="custom-tooltip" id="tooltip">
                 <span>{{ model.name }}</span>
@@ -50,29 +165,17 @@
                 <span>{{ model.value | percent }}</span>
               </div>
             </ng-template>
-          </ngx-charts-pie-grid>
+          </ngx-charts-pie-grid> -->
+          
+         
+        <!--   fin div de tabla indicadores-->
         </div>
 
-        <div
-          class="barra"
-          style="flex-basis: 30%; margin-top: 5%"
-          (click)="detalle()"
-          title="Haga clic para ir a los criterios"
-        >
-          <ngx-charts-bar-horizontal
-            [view]="[200, 200]"
-            [scheme]="colorScheme"
-            [results]="crite"
-            [xAxis]="true"
-            [yAxis]="true"
-            [showXAxisLabel]="true"
-            [showYAxisLabel]="false"
-            [xAxisLabel]="titulo"
-            [showDataLabel]="true"
-            [barPadding]="4"
-            [roundEdges]="true"
-            (select)="onSelect($event)"
-          >
+        <div class="barra" style="flex-basis: 30%; margin-top: 5%" (click)="detalle()"
+          title="Haga clic para ir a los criterios">
+          <ngx-charts-bar-horizontal [view]="[200, 200]" [scheme]="colorScheme" [results]="crite" [xAxis]="true"
+            [yAxis]="true" [showXAxisLabel]="true" [showYAxisLabel]="false" [xAxisLabel]="titulo" [showDataLabel]="true"
+            [barPadding]="4" [roundEdges]="true" (select)="onSelect($event)">
             <ng-template #tooltipTemplate let-model="model">
               <div class="custom-tooltip">
                 <span>{{ model.name }}</span>
@@ -83,6 +186,8 @@
           </ngx-charts-bar-horizontal>
         </div>
       </div>
+
+      
       <!-- calendario  -->
       <div style="display: flex; margin-bottom: 2%" id="not">
         <div class="calenda" id="letra2" style="flex-basis: 70%">
@@ -106,19 +211,13 @@
                     <span class="fc-title h4"></span>
                   </div>
                   <div class="fc-right">
-                    <button
-                      class="fc-dayGridMonth-button fc-button fc-button-primary"
-                    >
+                    <button class="fc-dayGridMonth-button fc-button fc-button-primary">
                       Mes
                     </button>
-                    <button
-                      class="fc-timeGridWeek-button fc-button fc-button-primary"
-                    >
+                    <button class="fc-timeGridWeek-button fc-button fc-button-primary">
                       Semana
                     </button>
-                    <button
-                      class="fc-timeGridDay-button fc-button fc-button-primary"
-                    >
+                    <button class="fc-timeGridDay-button fc-button fc-button-primary">
                       Día
                     </button>
                   </div>
@@ -138,8 +237,7 @@
                 </div>
                 <br />
                 <div>
-                  <i class="far fa-clock mr-1"></i
-                  >{{ notificacion.fecha | date : "dd MMM. 'a las' hh:mm a" }}
+                  <i class="far fa-clock mr-1"></i>{{ notificacion.fecha | date : "dd MMM. 'a las' hh:mm a" }}
                 </div>
                 <hr class="divider" />
                 <!-- Agrega la barra separadora solo si no es el último elemento -->
@@ -151,13 +249,11 @@
           </div>
         </div>
       </div>
-      <div
-        style="
+      <div style="
           display: flex;
           border-top: thick double #32a1ce;
           margin-bottom: 2%;
-        "
-      >
+        ">
         <div style="flex-basis: 70%; border-right: thick double #32a1ce">
           <mat-tab-group id="menu" class="men" [color]="color">
             <!-- Tab para Actividades Aprobadas -->
@@ -166,78 +262,51 @@
                 <table mat-table [dataSource]="dataSource">
                   <ng-container matColumnDef="actividad">
                     <th mat-header-cell *matHeaderCellDef>Nombre</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan2('actividad', i)"
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('actividad', i)"
                       [style.display]="
                         getRowSpan2('actividad', i) ? '' : 'none'
-                      "
-                    >
+                      ">
                       {{ element.actividades }}
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="inicio">
                     <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan2('inicio', i)"
-                      [style.display]="getRowSpan2('inicio', i) ? '' : 'none'"
-                    >
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('inicio', i)"
+                      [style.display]="getRowSpan2('inicio', i) ? '' : 'none'">
                       {{ element.inicio }}
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="fin">
                     <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan2('fin', i)"
-                      [style.display]="getRowSpan2('fin', i) ? '' : 'none'"
-                    >
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('fin', i)"
+                      [style.display]="getRowSpan2('fin', i) ? '' : 'none'">
                       {{ element.fin }}
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="encargado">
                     <th mat-header-cell *matHeaderCellDef>Encargado</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan2('encargado', i)"
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan2('encargado', i)"
                       [style.display]="
                         getRowSpan2('encargado', i) ? '' : 'none'
-                      "
-                    >
+                      ">
                       {{ element.encargado }}
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="enlace">
                     <th mat-header-cell *matHeaderCellDef>Enlace</th>
                     <td mat-cell *matCellDef="let element">
-                      <a
-                        [href]="element.enlace"
-                        [download]="obtenerNombreArchivo2(element.enlace)"
-                      >
+                      <a [href]="element.enlace" [download]="obtenerNombreArchivo2(element.enlace)">
                         {{ element.enlace }}
                       </a>
                     </td>
                   </ng-container>
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr
-                    mat-row
-                    *matRowDef="let row; columns: displayedColumns"
-                    class="tab-apr"
-                  ></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns" class="tab-apr"></tr>
                 </table>
 
-                <mat-paginator
-                  [pageSizeOptions]="[5, 10, 20]"
-                  showFirstLastButtons
-                  aria-label="Seleccione la pagina"
-                >
+                <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Seleccione la pagina">
                 </mat-paginator>
               </div>
             </mat-tab>
@@ -248,100 +317,64 @@
                 <table mat-table [dataSource]="dataSource1">
                   <ng-container matColumnDef="actividad">
                     <th mat-header-cell *matHeaderCellDef>Nombre</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan('actividad', i)"
-                      [style.display]="getRowSpan('actividad', i) ? '' : 'none'"
-                    >
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan('actividad', i)"
+                      [style.display]="getRowSpan('actividad', i) ? '' : 'none'">
                       {{ element.actividades }}
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="inicio">
                     <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan('inicio', i)"
-                      [style.display]="getRowSpan('inicio', i) ? '' : 'none'"
-                    >
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan('inicio', i)"
+                      [style.display]="getRowSpan('inicio', i) ? '' : 'none'">
                       {{ element.inicio }}
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="fin">
                     <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan('fin', i)"
-                      [style.display]="getRowSpan('fin', i) ? '' : 'none'"
-                    >
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan('fin', i)"
+                      [style.display]="getRowSpan('fin', i) ? '' : 'none'">
                       {{ element.fin }}
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="encargado">
                     <th mat-header-cell *matHeaderCellDef>Encargado</th>
-                    <td
-                      mat-cell
-                      *matCellDef="let element; let i = index"
-                      [attr.rowspan]="getRowSpan('encargado', i)"
-                      [style.display]="getRowSpan('encargado', i) ? '' : 'none'"
-                    >
+                    <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan('encargado', i)"
+                      [style.display]="getRowSpan('encargado', i) ? '' : 'none'">
                       {{ element.encargado }}
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="enlace">
                     <th mat-header-cell *matHeaderCellDef>Enlace</th>
                     <td mat-cell *matCellDef="let element">
-                      <a
-                        [href]="element.enlace"
-                        [download]="obtenerNombreArchivo(element.enlace)"
-                      >
+                      <a [href]="element.enlace" [download]="obtenerNombreArchivo(element.enlace)">
                         {{ element.enlace }}
                       </a>
                     </td>
                   </ng-container>
 
                   <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
-                  <tr
-                    mat-row
-                    *matRowDef="let row; columns: displayedColumns1"
-                    class="tab-rech"
-                  ></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns1" class="tab-rech"></tr>
                 </table>
 
-                <mat-paginator
-                  [pageSizeOptions]="[5, 10, 20]"
-                  showFirstLastButtons
-                  aria-label="Seleccione las actividades"
-                >
+                <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+                  aria-label="Seleccione las actividades">
                 </mat-paginator>
               </div>
             </mat-tab>
+            
           </mat-tab-group>
         </div>
 
         <div style="flex-basis: 30%" id="fig5">
           <h3 class="titu" id="graf">Gráfica de Avances desde 0% a 100%</h3>
           <div style="margin-top: 6%">
-            <ngx-charts-bar-horizontal
-              [view]="[300, 200]"
-              [scheme]="colorScheme"
-              [results]="avances"
-              [xAxis]="true"
-              [yAxis]="true"
-              [showXAxisLabel]="true"
-              [showYAxisLabel]="true"
-              [xAxisLabel]="titulo2"
-              [yAxisLabel]="titulo3"
-              [showDataLabel]="true"
-              [barPadding]="4"
-              [roundEdges]="true"
-              (select)="onSelect($event)"
-            >
+            <ngx-charts-bar-horizontal [view]="[300, 200]" [scheme]="colorScheme" [results]="avances" [xAxis]="true"
+              [yAxis]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxisLabel]="titulo2"
+              [yAxisLabel]="titulo3" [showDataLabel]="true" [barPadding]="4" [roundEdges]="true"
+              (select)="onSelect($event)">
               <ng-template #tooltipTemplate let-model="model">
                 <div class="custom-tooltip">
                   <span>{{ model.name }}</span>
@@ -353,6 +386,10 @@
           </div>
         </div>
       </div>
+
+     
     </div>
   </div>
+
+  
 </body>

@@ -5,6 +5,8 @@ import { FormBuilder } from '@angular/forms';
 import { Actividades } from 'src/app/models/actividades';
 import { usuario } from 'src/app/models/Usuario';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 @Component({
   selector: 'app-actividad-autoridad',
   templateUrl: './actividad-autoridad.component.html',
@@ -21,7 +23,25 @@ export class ActividadAutoridadComponent {
     responsable:usuario[]=[];
     public actividad = new Actividades();
     filteredActividades: usuario[] | undefined;
-  ngOnInit(): void {
+    dataSource = new MatTableDataSource<any>(this.responsable);
+    dataSource2 = new MatTableDataSource<any>(this.actividades);
+
+    displayedColumns: string[] = ['Usuario', 'Nombre', 'Apellido', 'Correo', 'Actividades'];
+    
+  displayedColumns2: string[] = ['Código', 'Nombre', 'Fecha Inicio', 'Fecha Fin'];
+
+  
+    ngAfterViewInit() {
+      console.log('Paginator:', this.paginator);
+      if (this.paginator) {
+        this.dataSource.paginator = this.paginator;
+      }
+    }
+
+    @ViewChild(MatPaginator)
+    paginator!: MatPaginator;
+  
+    ngOnInit(): void {
     //this.get();
     this.getResponsables();
   }
@@ -29,18 +49,18 @@ export class ActividadAutoridadComponent {
   get() {
     this.services.get().subscribe((actividades) => {
       this.actividades = actividades;
+     
       this.filterActividades(); // <-- Actualización aquí
     });
-//    this.services.get()
-  ///(())    .subscribe(response => this.actividades = response);
-  }
+ }
 
   getResponsables(){
-    this.serEvide.listarUsuarioRes().subscribe(
+    this.serEvide.listarsolorespon().subscribe(
       data =>{
         this.responsable=data;
+        this.dataSource.data = this.responsable;
         this.filterActividades();
-        //console.log(this.responsable);
+        console.log(this.responsable);
       }
     )
   }
@@ -49,6 +69,8 @@ export class ActividadAutoridadComponent {
     this.services.getActByUsua(usu.id).subscribe(
       data => {
         this.actividades=data;
+        this.dataSource2.data = this.actividades;
+
         console.log(this.actividades);
       }
     )
@@ -61,4 +83,19 @@ export class ActividadAutoridadComponent {
         actividad.persona.primer_nombre.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
+  filterPost = '';
+
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+ 
+      // Restaurar los datos originales si no hay filtro aplicado
+      this.getResponsables();
+      }
+  }
+
 }

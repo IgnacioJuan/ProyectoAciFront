@@ -12,8 +12,9 @@ import { EvidenciasComponent } from './pages/evidencias/evidencias.component';
 import { ObcervacionesComponent } from './pages/observaciones/obcervaciones.component';
 import { CriterioReporteComponent } from './pages/criterio-reporte/criterio-reporte.component';
 import { EvidenciaAtrasadaComponent } from './pages/evidencia-atrasada/evidencia-atrasada.component';
-
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     SuperadminRoutingModule,
-    
+    MatTableModule,
+    MatPaginatorModule,
     SharedModule,
   ]
 })

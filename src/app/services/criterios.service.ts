@@ -9,6 +9,7 @@ import { Persona2 } from '../models/Persona2';
 import { CriterioSubcriteriosProjection } from '../interface/CriterioSubcriteriosProjection';
 import { proyeccionCriterio } from '../pages/admin/aprobar-rechazar-admin/proyecciones-testeo/proyeccionCriterio';
 import { IndicadorProjection } from '../interface/IndicadorProjection';
+import { ValoresProjection } from '../interface/ValoresProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -58,9 +59,10 @@ export class CriteriosService {
     return this.http.get<any[]>(`${baserUrl}/api/indicadores/buscarindicador/` + id);
   }
 
-  getIndicador(): Observable<IndicadorProjection[]> {
-    return this.http.get<IndicadorProjection[]>(`${baserUrl}/api/indicadores/listarindi`)
+  getIndicador(id_modelo:number): Observable<IndicadorProjection[]> {
+    return this.http.get<IndicadorProjection[]>(`${baserUrl}/api/indicadores/listarindi/${id_modelo}`)
   }
+  
   getModeMaximo(): Observable<Modelo> {
     return this.http.get<any>(`${baserUrl}/api/modelo/listarMax`)
   }
@@ -100,5 +102,9 @@ export class CriteriosService {
 
   getCriterioPorEvidenciaproyeccion(idEvidencia: number): Observable<proyeccionCriterio[]> {
     return this.http.get<proyeccionCriterio[]>(`${this.url}/obtenerNombreCriterioPorEvidenciaproyeccion/${idEvidencia}`);
+  }
+
+  getvalores(id_modelo: number): Observable<ValoresProjection[]> {
+    return this.http.get<ValoresProjection[]>(`${baserUrl}/api/criterio/listarvalores/${id_modelo}`);
   }
 }

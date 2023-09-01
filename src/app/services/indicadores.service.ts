@@ -8,6 +8,7 @@ import { IndicadorEvidenciasProjection } from '../interface/IndicadorEvidenciasP
 import { Archivo } from '../models/Archivo';
 
 import { IndicadorEvidenciasProjectionFull } from '../interface/IndicadorEvidenciasProjectionFull';
+import { IndiColProjection } from '../interface/IndiColProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -87,9 +88,7 @@ export class IndicadoresService {
   }
 
   getIndicadorById(id_indicador: number): Observable<Indicador> {
-
     return this.http.get<Indicador>(`${baserUrl}/api/indicadores/buscar/id_indicador/${id_indicador}`);
-    
   }
 
   public obtenerIndicadoresPorCriterio(id: any): Observable<Indicador[]> {
@@ -118,7 +117,12 @@ export class IndicadoresService {
   obtenerDatosIndicadoresFull(): Observable<IndicadorEvidenciasProjectionFull[]> {
     return this.http.get<IndicadorEvidenciasProjectionFull[]>(`${baserUrl}/api/indicadores/datosIndicadoresFull`);
   }
+
   getIndicadorPorModelo(id_modelo: number): Observable<Indicador[]> {
     return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/indicadorespormodelo/${id_modelo}`);
+  }
+
+  getIndicadorColProjection(id_modelo: number): Observable<IndiColProjection[]> {
+    return this.http.get<IndiColProjection[]>(`${baserUrl}/api/indicadores/indicadorval/${id_modelo}`);
   }
 }
