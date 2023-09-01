@@ -1,7 +1,6 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ResponsableRoutingModule } from './responsable-routing.module';
 import { EvidenciasResponComponent } from './evidencias/evidencias.component';
 import { ActividadesResponsableComponent } from './actividades-responsable/actividades-responsable.component';

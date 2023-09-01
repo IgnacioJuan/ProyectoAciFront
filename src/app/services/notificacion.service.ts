@@ -25,4 +25,9 @@ export class NotificacionService {
   allnotificacion(noti:any):Observable<Notificacion[]>{
     return this.http.get<Notificacion[]>(`${baserUrl}/api/notificacion/listartodo/${noti}`);
   }
+  //john notif 
+  allnotificacionTODO(noti:any):Observable<Notificacion[]>{
+    return this.http.get<Notificacion[]>(`${baserUrl}/api/notificacion/listartodo2/${noti}`);
+  }
+
 }

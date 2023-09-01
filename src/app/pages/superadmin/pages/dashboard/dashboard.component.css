@@ -1,3 +1,12 @@
+.btn-visible {
+  background-color: rgba(9, 19, 155, 0.815);
+  color: white;
+}
+
+.btn-oculto {
+  background-color: rgb(186, 236, 48);
+  color: rgb(5, 0, 0);
+}
 
 .pie-grid {
   display: flex;
@@ -372,18 +381,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
   min-height: 100vh;
   padding: 30px;
-
-  color: #224;
-<<<<<<< Updated upstream
-  background:
-    url(https://source.unsplash.com/E8Ufcyxz514/2400x1823) center / cover no-repeat fixed;
-=======
-  
+  color: #224; 
 }
-
 .mat-table th, .mat-table td {
   border: 10px solid #0c0c0c;
   padding: 8px;
@@ -409,5 +410,4 @@ body {
 .btn-tab.selected {
   background-color: #044c9b;
   color: white;
->>>>>>> Stashed changes
 }

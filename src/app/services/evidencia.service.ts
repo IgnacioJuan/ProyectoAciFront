@@ -79,5 +79,8 @@ getEvidenciaCrite(idcriterio: number): Observable<Evidencia[]> {
     return this.http.get<any[]>(`${baserUrl}/usuarios/listarResponsableAdmin`);
   }
   
+  public listarsolorespon(): Observable<any[]> {
+    return this.http.get<any[]>(`${baserUrl}/usuarios/listarsoloResponsables`);
+  }
 
 }

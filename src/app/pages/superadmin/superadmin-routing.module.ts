@@ -34,9 +34,7 @@ const routes: Routes = [{
   pathMatch: 'full',
   canActivate: [RoleguardGuard],
   data: { allowedRoles: ['SUPERADMIN', 'ADMIN'] }
-
-}
-  ,
+},
 
 {
   path: 'subcriterioSuper',

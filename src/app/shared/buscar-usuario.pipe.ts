@@ -13,9 +13,7 @@ export class BuscarUsuarioPipe implements PipeTransform {
     return items.filter(item => {
       // Realiza aquí la lógica de filtrado según tus necesidades
       // En este ejemplo, se busca en la propiedad "nombre" del objeto
-      return item?.persona?.primer_nombre.toLowerCase().includes(searchText) ||
-             item?.persona?.primer_apellido.toLowerCase().includes(searchText);
-    });
+      return item?.criterionomj.toLowerCase().includes(searchText)    });
   }
 
 }

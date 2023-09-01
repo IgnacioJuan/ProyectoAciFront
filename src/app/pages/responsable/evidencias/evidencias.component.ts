@@ -14,6 +14,8 @@ import { Actividades } from 'src/app/models/actividades';
 import { LoginService } from 'src/app/services/login.service';
 import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-evidencias',
@@ -43,7 +45,20 @@ export class EvidenciasResponComponent implements OnInit {
   user: any = null;
   isLoggedIn = false;
   searchText = '';
+ // Crear una fuente de datos para la tabla
+ dataSource = new MatTableDataSource<Archivo>();
 
+ // Encabezados de la tabla
+ displayedColumns: string[] = ['Id', 'Evidencia', 'Borrar'];
+ @ViewChild(MatPaginator)
+ paginator!: MatPaginator;
+
+ ngAfterViewInit() {
+  console.log('Paginator:', this.paginator);
+  if (this.paginator) {
+    this.dataSource.paginator = this.paginator;
+  }
+}
   constructor(private archivo: ArchivoService,
     private _snackBar: MatSnackBar,
     private services: ActividadService,
@@ -102,7 +117,8 @@ export class EvidenciasResponComponent implements OnInit {
   listar(): void {
     this.archivo.geteviasig(this.user.username).subscribe(data => {
       this.aRCHI = data.filter(archivo => archivo.actividad?.id_actividad === this.activ.id_actividad);
-    });
+      this.dataSource.data = data.filter(archivo => archivo.actividad?.id_actividad === this.activ.id_actividad);
+   });
   }
 
   notificar() {
@@ -209,7 +225,19 @@ export class EvidenciasResponComponent implements OnInit {
       }
     );
   }
+  filterPost = '';
 
-  // código para subir el archivo
+  aplicarFiltro() {
+    if (this.filterPost) {
+      const lowerCaseFilter = this.filterPost.toLowerCase();
+      this.dataSource.data = this.dataSource.data.filter((item: any) => {
+        return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
+      });
+    } else {
+ 
+      // Restaurar los datos originales si no hay filtro aplicado
+      this.listar();
+      }
+  }
 
 }
