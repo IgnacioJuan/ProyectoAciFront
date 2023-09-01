@@ -89,6 +89,7 @@ export class DashboardComponent2 implements OnInit {
   id_criterio!:number;
   titulocriterio!: string;
   rol: any = null;
+  randomColors: string[] = [];
   noti = new Notificacion();
   notificaciones: Notificacion[] = [];
   numNotificacionesSinLeer: number = 0;
@@ -280,6 +281,7 @@ public chartHovered({
 
 //
 constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
+  private modelservices:ModeloService,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
   public login: LoginService, private notificationService: NotificacionService,
   private httpCriterios: CriteriosService,private indi:IndicadoresService) {
@@ -324,6 +326,9 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
   ngOnInit(): void {
     this.listarActividad();
     this.modeloMax();
+    this.listaIndicadores.forEach(() => {
+      this.randomColors.push(this.getRandomColor());
+    });
     this.services.get().subscribe((data: Actividades[]) => {
       // Envio los datos
       this.eventos = data.map(evento => ({
@@ -454,6 +459,69 @@ obtenerNombreArchivo2(url: string): string {
     return '';
   }
 }
+
+toggleSeleccion(nombre: string) {
+  this.seleccionados[nombre] = !this.seleccionados[nombre];
+  this.actualizarSeleccionGeneral();
+}
+
+actualizarSeleccionGeneral() {
+  this.todosSeleccionados = this.datacrite.every(item => this.seleccionados[item.criterionomj]);
+}
+fetchAndProcessData(nombre:string) {
+  this.titulocriterio=nombre;
+  if(this.titulocriterio===""){
+    this.titulocriterio="ORGANIZACIÓN";
+    nombre="ORGANIZACIÓN";
+  }
+  this.httpCriterios.getIdCriterio(nombre).subscribe(data => {
+    this.id_criterio = data.id_criterio;
+    console.log("id crti: "+this.id_criterio);
+  });
+  this.modelservices.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
+    this.datacrite = data;
+    this.datacrite.forEach(item => {
+      if (typeof this.seleccionados[item.criterionomj] === 'undefined') {
+        this.seleccionados[item.criterionomj] = false;
+      }
+    });
+    // Generar la jerarquía de celdas
+    this.cacheSpan3('Criterio', (d) => d.criterionomj);
+    this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
+    this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
+    this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej + d.archivo_enlace);
+  });
+}
+seleccionTodo(checked: boolean) {
+  this.todosSeleccionados = checked;
+  this.datacrite.forEach(item => {
+    this.seleccionados[item.criterionomj] = checked;
+  });
+}
+showCriterio() {
+  this.verCriterio = !this.verCriterio;
+}
+showSubcriterio() {
+  this.verSubcriterio = !this.verSubcriterio;
+}
+
+showIndicador() {
+  this.verIndicador = !this.verIndicador;
+}
+
+
+getColorcelda(elementName: string, opacity: number): string {
+  if (!this.coloresAsignados[elementName]) {
+    const red = Math.floor(Math.random() * 256);
+    const green = Math.floor(Math.random() * 256);
+    const blue = Math.floor(Math.random() * 256);
+    
+    this.coloresAsignados[elementName] = `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+  }
+
+  return this.coloresAsignados[elementName];
+}
+
 obtenerActividades() {
   this.services.getAc().subscribe(
     (actividades: ActividadesProjection[]) => {
