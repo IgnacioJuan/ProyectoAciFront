@@ -350,8 +350,20 @@ export class EvaluacionCuantitativaComponent implements OnInit {
   test(): void {
     console.log(this.formula);
     console.log(this.listaEvaluarCuant);
+  
+    // Verifica si los paréntesis están balanceados
+    if (!this.VerificarParentesis(this.formula)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error en la fórmula',
+        text: 'La fórmula tiene paréntesis desbalanceados. Por favor, corrige la fórmula antes de continuar.',
+        confirmButtonText: 'Ok'
+      });
+      return; // No realices la evaluación si los paréntesis están desbalanceados
+    }
+  
     const letterValues: Record<string, number> = {};
-
+  
     // Asignar valores aleatorios a cada abreviatura
     for (const cuantitativa of this.listaEvaluarCuant) {
       const value = Math.random() * 10;
@@ -375,7 +387,7 @@ export class EvaluacionCuantitativaComponent implements OnInit {
       result = 'Error';
     }
     console.log(result);
-
+  
     // Mostrar alerta con los valores utilizados y el resultado
     const abreviaturas = Object.keys(letterValues).map(abreviatura => `${abreviatura}: ${letterValues[abreviatura].toFixed(2)}`);
     const contenidoAlerta = `Valores utilizados:<br>${abreviaturas.join('<br>')}` +
@@ -389,6 +401,24 @@ export class EvaluacionCuantitativaComponent implements OnInit {
       confirmButtonText: 'Ok'
     });
   }
+  
+  VerificarParentesis(formula: string): boolean {
+    let contador = 0;
+    for (const caracter of formula) {
+      if (caracter === '(') {
+        contador++;
+      } else if (caracter === ')') {
+        contador--;
+      }
+    
+      if (contador < 0) {
+        return false;
+      }
+    }
+    return contador === 0;
+  }
+  
+
   info(): void {
     Swal.fire({
       title: 'Info',

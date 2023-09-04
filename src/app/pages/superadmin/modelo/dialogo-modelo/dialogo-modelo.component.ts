@@ -78,7 +78,6 @@ export class DialogoModeloComponent implements OnInit {
       return;
     }
 
-    //control de fechas de las 3
     if (this.modelo.fecha_inicio >= this.modelo.fecha_fin || this.modelo.fecha_inicio >= this.modelo.fecha_final_act || this.modelo.fecha_fin <= this.modelo.fecha_final_act) {
       Swal.fire('Error', `Las fechas no son correctas porfavor revisar`, 'error');
       return;
@@ -93,7 +92,6 @@ export class DialogoModeloComponent implements OnInit {
           this.asignacionIndicadorService.createAsignacionIndicador(this.asignacionIndicador).subscribe(
             (result) => {
               console.log(result);
-              //this.reiniciarAdmin();
               this.reiniciarIndicador();
               this.bloquearModelo(response.id_modelo);
               this.sharedDataService.agregarDatos([]);
@@ -101,8 +99,16 @@ export class DialogoModeloComponent implements OnInit {
             }
           )
         });
-
-      }
+      
+      },
+      (error) => {
+        if (error.status === 400) {
+          Swal.fire('Error', 'El modelo actual no puede tener las mismas fechas del modelo anterior.', 'error');
+        } else {
+          // Manejo de otros errores
+          Swal.fire('Error', 'Hay problemas con el servidor.', 'error');
+        }
+    }
     )
   }
 

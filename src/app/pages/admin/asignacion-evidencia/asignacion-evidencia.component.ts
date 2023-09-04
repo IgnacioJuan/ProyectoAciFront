@@ -358,12 +358,13 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.asignacion.evidencia.id_evidencia = element.id_evidencia;
     this.nombreasignado=element.descripcion;
     this.asignacion.usuario.id = this.usuarioSele.id
-    console.log(this.asignacion)
+    console.log("ASigna: "+JSON.stringify(this.asignacion));
     this.asignarEvidenciaService.createAsigna(this.asignacion)
       .subscribe(
         (response) => {
 
           this.listar();
+          this.ListarAsignacion();
           this.Listado();
           
           this.idusuario=this.usuarioSele.id;
@@ -403,7 +404,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
       listaAsig => {
         this.listaAsignaEvidencias = listaAsig;
         this.dataSource4.data = this.listaAsignaEvidencias;
-        console.log("Asignaciones"+JSON.stringify(this.dataSource4.data))
+       
         this.calculateRowSpan(); // Llamamos a la función para calcular rowspan
       }
     );
@@ -598,14 +599,18 @@ export class AsignacionEvidenciaComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, eliminarlo!',
+      cancelButtonText:'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
         this.asignarEvidenciaService.eliminarAsignaLogic(id).subscribe((response) => {
-
-          this.ListarAsignacion();
-          this.Listado();
+          this.nombreasignado=element.evidencia.descripcion;
+          this.nombre=element.usuario.persona.primer_nombre+" "+element.usuario.persona.primer_apellido;
+          console.log("Nombre eliminar "+this.nombreasignado+" nombres: "+this.nombre);
           this.notificarelimadmin();
           this.notificarelsupern();
+          this.ListarAsignacion();
+          this.Listado();
+          
         });
 
         Swal.fire('Eliminado!', 'Registro eliminado.', 'success');
@@ -680,12 +685,12 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   listar() {
-    console.log("usuario a consultar "+this.user.id);
+    
     this.evidenciaService.getEvidenciasAdmin(this.user.id).subscribe(
       listaEvi => {
         this.listaEvidencias = listaEvi; // Asignar la lista directamente
         this.dataSource3.data = this.listaEvidencias;
-        console.log("lista evidencias"+this.listaEvidencias);
+        
       }
     );
   }

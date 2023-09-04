@@ -125,7 +125,7 @@ export class CalificacionComponent implements OnInit {
       this.indicador.porc_utilida_obtenida = parseFloat((((resp) * this.data.peso) / 100).toFixed(3));
       this.indicadorServie.ponderarIndicador(this.data.id, this.indicador).subscribe({
         next: (data) => {
-          this.dialogRef.close();
+          this.dialogRef.close({event: 'success'});
         }
       });
     } else if (this.igualar == 2) {
@@ -146,7 +146,7 @@ export class CalificacionComponent implements OnInit {
       this.indicador.porc_utilida_obtenida = parseFloat((((resp) * this.data.peso) / 100).toFixed(3));
       this.indicadorServie.ponderarIndicador(this.data.id, this.indicador).subscribe({
         next: (data) => {
-          this.dialogRef.close();
+          this.dialogRef.close({event: 'success'});
         }
       });
     } else if (this.igualar == 0) {

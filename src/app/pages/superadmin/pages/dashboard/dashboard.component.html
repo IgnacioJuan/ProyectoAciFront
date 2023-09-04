@@ -21,11 +21,11 @@
 
       <div class="pie-grid" *ngIf="listaIndicadores" id="indic">
         <div class="card" *ngFor="let item of listaIndicadores; let i = index" [style.background-color]="coloresTarjetas[i]"
-        [style.border]="getBorderColor(item.total)" (click)="fetchAndProcessData(item.nombre)" title="Haga clic para para seleccionar un criterio">
+        [style.border]="borderStyles[i]" (click)="fetchAndProcessData(item.nombre)" title="Haga clic para para seleccionar un criterio">
           <div class="card-content">
-            <div class="card-content">{{ item.total * 100 }}%</div>
+            <div class="card-content">{{ item.total * 100 | number: '1.0-2' }}%</div>
             <div class="card-name" style="color: black;">{{ item.nombre }}</div>
-            <div class="card-tot">Total: {{ item.total}}</div>
+            <div class="card-tot">Total: {{ item.total| number: '1.2-4'}}</div>
           </div>
         </div>
       </div>

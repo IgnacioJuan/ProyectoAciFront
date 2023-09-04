@@ -128,6 +128,7 @@ spans: any[] = [];
 spans2: any[] = [];
 spans3: any[] = [];
 coloresTarjetas: string[] = [];
+borderStyles: string[] = [];
 dataSource1: ActivAprobadaProjection[] = [];
 datacrite: criteriosdesprojection[] = [];
 datacre: criteriosdesprojection= new criteriosdesprojection();
@@ -288,23 +289,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.colorScheme = {
       domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
     };
-    this.services.getActividadrechazada().subscribe((data: ActivAprobadaProjection[]) => {
-      this.dataSource1 = data;
-      console.log("rechazadai", JSON.stringify(this.dataSource1))
-      this.cacheSpan('actividad', (d) => d.actividades);
-      this.cacheSpan('inicio', (d) => d.actividades + d.inicio);
-      this.cacheSpan('fin', (d) => d.actividades + d.inicio + d.fin);
-      this.cacheSpan('encargado', (d) => d.actividades + d.inicio + d.fin + d.encargado);
-    });
-
-    this.services.getActividadaprobada().subscribe((data: ActivAprobadaProjection[]) => {
-      this.dataSource = data;
-      this.cacheSpan2('actividad', (y) => y.actividades);
-      this.cacheSpan2('inicio', (y) => y.actividades + y.inicio);
-      this.cacheSpan2('fin', (y) => y.actividades + y.inicio + y.fin);
-      this.cacheSpan2('encargado', (y) => y.actividades + y.inicio + y.fin + y.encargado);
-    });
-
+    
     this.rol = this.login.getUserRole();
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
@@ -322,13 +307,11 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     console.log(event);
   }
 
-
+  
   ngOnInit(): void {
     this.listarActividad();
     this.modeloMax();
-    this.listaIndicadores.forEach(() => {
-      this.randomColors.push(this.getRandomColor());
-    });
+    
     this.services.get().subscribe((data: Actividades[]) => {
       // Envio los datos
       this.eventos = data.map(evento => ({
@@ -357,7 +340,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
       this.selectedColor = storedColor;
       this.aplicarColorFondo(storedColor);
     }
-    this.obtenerActividades();
+    
   }
   //
   cacheSpan(key: string, accessor: (d: any) => any) {
@@ -522,8 +505,8 @@ getColorcelda(elementName: string, opacity: number): string {
   return this.coloresAsignados[elementName];
 }
 
-obtenerActividades() {
-  this.services.getAc().subscribe(
+obtenerActividades(id_modelo:number) {
+  this.services.getAc(id_modelo).subscribe(
     (actividades: ActividadesProjection[]) => {
       this.listact = actividades;
       console.log("Avances de base:", JSON.stringify(this.listact, null, 2));
@@ -797,15 +780,36 @@ getColor(item: any): string {
       this.coloresPro();
       this.idmodel = data.id_modelo;
       console.log("ID Modelo:", this.idmodel);
+      this.listaractividades(this.idmodel);
+      this.obtenerActividades(this.idmodel);
       this.httpCriterios.getCriterios().subscribe(data => {
         this.listaCriterios = data;
         this.cargarDatos();
       });
-     // this.fetchAndProcessData();
+
       this.idmodel = data.id_modelo;;
       console.log("ID Modelo:", this.idmodel);
 
-     // this.fetchAndProcessData();
+      //this.fetchAndProcessData("");
+    });
+  }
+
+  listaractividades(id_modelo:number){
+    this.services.getActividadrechazada(id_modelo).subscribe((data: ActivAprobadaProjection[]) => {
+      this.dataSource1 = data;
+      console.log("rechazadai", JSON.stringify(this.dataSource1))
+      this.cacheSpan('actividad', (d) => d.actividades);
+      this.cacheSpan('inicio', (d) => d.actividades + d.inicio);
+      this.cacheSpan('fin', (d) => d.actividades + d.inicio + d.fin);
+      this.cacheSpan('encargado', (d) => d.actividades + d.inicio + d.fin + d.encargado);
+    });
+
+    this.services.getActividadaprobada(id_modelo).subscribe((data: ActivAprobadaProjection[]) => {
+      this.dataSource = data;
+      this.cacheSpan2('actividad', (y) => y.actividades);
+      this.cacheSpan2('inicio', (y) => y.actividades + y.inicio);
+      this.cacheSpan2('fin', (y) => y.actividades + y.inicio + y.fin);
+      this.cacheSpan2('encargado', (y) => y.actividades + y.inicio + y.fin + y.encargado);
     });
   }
   colores(color: string): string {
@@ -830,9 +834,9 @@ getColor(item: any): string {
       this.indicol = data; // Calcula los totales
       this.pieChartData.datasets[0].data = this.indicol.map(val => val.porcentaje);
       const estadoColores: { [key: string]: string } = {
-        'rojo': '>=0 o <=25',
-        'naranja':'>25 o <=50',
-        'amarillo':'>50 o <=75',
+        'rojo': '>=0',
+        'naranja':'>25',
+        'amarillo':'>50',
         'verde':'>75',
       };
 
@@ -934,8 +938,9 @@ getColor(item: any): string {
         value: item.total*100
         }));
        
-        this.listaIndicadores.forEach(() => {
+        this.listaIndicadores.forEach((item) => {
           this.coloresTarjetas.push(this.getRandomColor());
+          this.borderStyles.push(this.getBorderColor(item.total));
         });
 
         },

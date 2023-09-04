@@ -19,8 +19,7 @@ import { CriteriosService } from 'src/app/services/criterios.service';
 import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 import { ModelIndiProjection } from 'src/app/interface/ModelIndiProjection';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { catchError } from 'rxjs/operators';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -230,9 +229,13 @@ export class DialogoModeloModComponent implements OnInit {
           await this.eliminarYGuardarAsignaciones();
           this.dialogRef.close();
           Swal.fire('Modificado con exito! '+this.mensaje, '', 'success');
-        } catch (error) {
+        } catch (error: any) {
+          if (error.status === 400) {
+            Swal.fire('Error', 'El modelo actual no puede tener las mismas fechas del modelo anterior.', 'error');
+          } else {
           console.error('Error al modificar el registro:', error);
-          Swal.fire('Error', 'Ocurrió un error al modificar el modelo.', 'error');
+
+          Swal.fire('Error', 'No se pudo modificar el modelo.', 'error');}
         }
       }
     });
