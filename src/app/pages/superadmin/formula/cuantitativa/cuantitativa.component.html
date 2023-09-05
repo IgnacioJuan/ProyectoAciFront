@@ -26,6 +26,13 @@
         >
           CREAR NUEVA FORMULA CUANTITATIVA
         </button>
+        <button
+          type="button"
+          class="btn btn-warning"
+          (click)="generarReportePDF()"
+        >
+          GENERAR REPORTE CUANTITATIVA
+        </button>
         <br />
 
         <table mat-table [dataSource]="dataSource">

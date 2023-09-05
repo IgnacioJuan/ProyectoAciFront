@@ -78,6 +78,23 @@ export class IndicadoresService {
     return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/indicadoresPorCriterios`, options);
   }
 
+  public indicadoresPorCriteriosPruebaAlvCL(ids: number[]): Observable<Indicador[]> {
+    const params = new HttpParams().set('idCriterios', ids.join(','));
+    const options = {
+      params: params,
+      responseType: 'json' as const
+    };
+    return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/indicadoresPorCriteriosPruebaCL`, options);
+  }
+  public indicadoresPorCriteriosPruebaAlvCT(ids: number[]): Observable<Indicador[]> {
+    const params = new HttpParams().set('idCriterios', ids.join(','));
+    const options = {
+      params: params,
+      responseType: 'json' as const
+    };
+    return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/indicadoresPorCriteriosPruebaCT`, options);
+  }
+
 
   public ponderarIndicador(id: any, indicador: any): Observable<any> {
     return this.http.put(`${baserUrl}/api/indicadores/ponderacion/${id}`, indicador);

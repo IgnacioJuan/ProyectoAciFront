@@ -96,7 +96,7 @@
                <th mat-header-cell *matHeaderCellDef>
                  <div style="display: flex; justify-content: space-between; align-items: center;">
                    <span>Archivos</span>
-                   <mat-checkbox [checked]="todosSeleccionados" (change)="seleccionTodo($event.checked)"></mat-checkbox>
+                   <mat-checkbox [(ngModel)]="todosSeleccionados" (change)="seleccionarTodosArchivos()"></mat-checkbox>
                    <button class="btn btn-download"
                      style="background-color: rgb(10, 7, 161); color: white; border: none; padding: 10px 20px; cursor: pointer;"
                      (click)="descargarArchivosSeleccionados()">
@@ -105,7 +105,7 @@
                  </div>
                </th>
                <td mat-cell style="padding: 4px; font-size: 14px;" *matCellDef="let element">
-                <mat-checkbox [(ngModel)]="seleccionados[element.criterionomj]" (change)="toggleSeleccion(element.criterionomj)"></mat-checkbox>
+                <mat-checkbox [(ngModel)]="element.isSelected"></mat-checkbox>
                 {{ element.archivo_nombre }}
                 
               </td>

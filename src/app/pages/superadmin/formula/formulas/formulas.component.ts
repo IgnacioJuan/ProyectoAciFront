@@ -76,13 +76,13 @@ export class FormulasComponent implements OnInit {
     this.service.crear(this.formu).
       subscribe(
         (reponse) => {
-          console.log('Criterio creado con éxito:', reponse);
+          console.log('Formula creada con éxito:', reponse);
           this.guardadoExitoso = true;
           this.listar();
 
         },
         (error) => {
-          console.error('Error al crear el criterio:', error);
+          console.error('Error al crear la formula:', error);
         }
       )
   }

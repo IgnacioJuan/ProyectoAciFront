@@ -122,6 +122,7 @@ export class MatrizEvaluacionComponent implements OnInit {
     this.idmodelo = history.state.modelo;
 
     this.indicadorService.listarIndicadorPorCriterioModelo(this.idcriterio.id_criterio, this.idmodelo.id_modelo).subscribe(data => {
+      
       this.dataSource.data = data;
       if (data.length > 0) {
         data.forEach(indicador => {
@@ -154,7 +155,9 @@ export class MatrizEvaluacionComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
       if (result.event == 'success') {
+        console.log(result);
         this.llenar_datasource();
         Swal.fire({
           position: 'center',
