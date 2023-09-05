@@ -15,6 +15,8 @@ import { EvidenciaAtrasadaComponent } from './pages/evidencia-atrasada/evidencia
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { AprobacionactComponent } from './pages/aprobacionact/aprobacionact.component';
+import { DetalleaprobComponent } from './pages/detalleaprob/detalleaprob.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     SubcriteriosComponent,
     CriterioReporteComponent,
     EvidenciaAtrasadaComponent,
+    AprobacionactComponent,
+    DetalleaprobComponent
   ],
   imports: [
     CommonModule,

@@ -46,7 +46,7 @@ export class UserDashboardComponent implements OnInit {
 
     // Formatea la hora y la fecha
     this.time = `${hours}:${minutes.toString().padStart(2, '0')} ${ante}`;
-    this.day = `${now.toLocaleDateString('en-US', {
+    this.day = `${now.toLocaleDateString('es-EC', {
       weekday: 'long',
       month: 'long',
       day: 'numeric',

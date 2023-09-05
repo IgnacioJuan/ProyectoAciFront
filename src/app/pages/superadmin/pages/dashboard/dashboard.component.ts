@@ -172,6 +172,7 @@ avances: any[] = [];
   totalAct: number = 0;
   actApro: number = 0;
   porc:number=0;
+  clic: boolean = false;
   datosUsuarios: any[] = [];
   filterPost = '';
   verIndicador=true;
@@ -453,6 +454,7 @@ actualizarSeleccionGeneral() {
 }
 fetchAndProcessData(nombre:string) {
   this.titulocriterio=nombre;
+  this.clic = true;
   if(this.titulocriterio===""){
     this.titulocriterio="ORGANIZACIÓN";
     nombre="ORGANIZACIÓN";

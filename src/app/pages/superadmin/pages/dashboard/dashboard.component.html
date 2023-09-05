@@ -36,22 +36,31 @@
           style="flex-basis: 70%; border-right: thick double #32a1ce"
           id="fig7">
 <!-- Primer div -->
-<div id="tit"><h3><span style="font-weight: bold;">Criterio Seleccionado:</span> {{titulocriterio}}</h3>
-  <div class="btn-tabs">
-    <button mat-button class="btn-tab" [ngClass]="verCriterio ? 'selected' : ''" (click)="showCriterio()">
-      Criterio
-    </button>
-  
-    <button mat-button class="btn-tab" [ngClass]="verSubcriterio ? 'selected' : ''" (click)="showSubcriterio()">
-      Subcriterio
-    </button>
-  
-    <button mat-button class="btn-tab" [ngClass]="verIndicador ? 'selected' : ''" (click)="showIndicador()">
-      Indicador
-    </button>
+
+
+  <div *ngIf="!clic" class="imagen">
+    <!-- Aquí puedes agregar la imagen que deseas mostrar -->
+    <img src="https://i.blogs.es/09b647/googlefotos/1366_2000.webp" alt="Imagen de placeholder" />
   </div>
+
+  <div *ngIf="clic">
+        <div id="tit"><h3><span style="font-weight: bold;">Criterio Seleccionado:</span> {{titulocriterio}}</h3>
+        <div class="btn-tabs">
+        <button mat-button class="btn-tab" [ngClass]="verCriterio ? 'selected' : ''" (click)="showCriterio()">
+        Criterio
+        </button>
   
-</div> 
+        <button mat-button class="btn-tab" [ngClass]="verSubcriterio ? 'selected' : ''" (click)="showSubcriterio()">
+        Subcriterio
+        </button>
+  
+        <button mat-button class="btn-tab" [ngClass]="verIndicador ? 'selected' : ''" (click)="showIndicador()">
+        Indicador
+        </button>
+        </div>
+  
+        </div> 
+
        <div style="display: flex; margin-bottom: 2%;">
       
          <div class="mat-elevation-z8">
@@ -125,8 +134,9 @@
        <!--fin-->
 
       </div>
-
+</div>
       <div class="cent">
+      
 <!-- segundo div -->
 <div style="width: 80%;height: 40%; ">
   <div id="tit2"><h3 style="font-weight: bold;">Estado de los indicadores</h3></div>
@@ -347,7 +357,7 @@ class="chart"
             </mat-tab>
 
             <!-- Tab para Actividades Rechazadas -->
-            <mat-tab label="Actividades Rechazadas">
+            <mat-tab label="Actividades Rechazadas/Sin Aprobar">
               <div class="mat-elevation-z8">
                 <table mat-table [dataSource]="dataSource1">
                   <ng-container matColumnDef="actividad">

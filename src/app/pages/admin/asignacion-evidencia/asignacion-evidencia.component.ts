@@ -13,9 +13,11 @@ import { Rol } from 'src/app/models/Rol';
 import { Usuario2 } from 'src/app/models/Usuario2';
 import { AsignaEvidenciaService } from 'src/app/services/asigna-evidencia.service';
 import { AsignacionResponsableService } from 'src/app/services/asignacion-responsable.service';
+import { CriteriosService } from 'src/app/services/criterios.service';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { FenixService } from 'src/app/services/fenix.service';
 import { LoginService } from 'src/app/services/login.service';
+import { ModeloService } from 'src/app/services/modelo.service';
 import { NotificacionService } from 'src/app/services/notificacion.service';
 import { PersonaService } from 'src/app/services/persona.service';
 import { UsuarioService } from 'src/app/services/usuario.service';
@@ -60,7 +62,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   listaUsuarios: ResponsableProjection[] = [];
   listaUsuariosResponsables: ResponsableProjection[] = [];
   listaEvidencias: Evidencia[] = [];
-
+  id_modelo!:number;
   listaAsignaEvidencias: Asigna_Evi[] = [];
   filterPost = '';
   personaSele = new Persona2();
@@ -83,6 +85,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   //
   noti=new Notificacion();
   idusuario:any=null;
+
   nombre:any=null;
   nombreasignado:any=null;
   ngAfterViewInit() {
@@ -100,8 +103,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   constructor(
-    private personaService: PersonaService,
-    private usuariosService: UsuarioService,
+    private personaService: PersonaService,private modeser:ModeloService,
+    private usuariosService: UsuarioService, private criteservice:CriteriosService,
     private fenix_service: FenixService,
     private responsableService: AsignacionResponsableService,
     private evidenciaService: EvidenciaService,
@@ -140,12 +143,16 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.personaService.getPersonas().subscribe(
       listaPerso => this.listaPersonas = listaPerso);
 
+    this.modeloMax();
 
     this.listar();
 
     this.Listado();
     this.ListarAsignacion();
   }
+
+  //
+  
   cacheSpan(key: string, accessor: (data: any) => any): void {
     let prevValue: any = undefined;
     let rowspan = 1;
@@ -357,6 +364,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   
     this.asignacion.evidencia.id_evidencia = element.id_evidencia;
     this.nombreasignado=element.descripcion;
+    this.asignacion.id_modelo=this.id_modelo;
     this.asignacion.usuario.id = this.usuarioSele.id
     console.log("ASigna: "+JSON.stringify(this.asignacion));
     this.asignarEvidenciaService.createAsigna(this.asignacion)
@@ -558,7 +566,10 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
 
 
-
+  modeloMax() {
+    this.criteservice.getModeMaximo().subscribe((data) => {
+      this.id_modelo =data.id_modelo;})
+    }
 
 
 
@@ -590,7 +601,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
   eliminarAsignacion(element: any) {
     const id = element.id_asignacion_evidencia;
-
+    const id_evi=element.evidencia.id_evidencia;
     Swal.fire({
       title: 'Desea eliminarlo?',
       text: "No podrá revertirlo!",
@@ -602,18 +613,28 @@ export class AsignacionEvidenciaComponent implements OnInit {
       cancelButtonText:'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.asignarEvidenciaService.eliminarAsignaLogic(id).subscribe((response) => {
-          this.nombreasignado=element.evidencia.descripcion;
-          this.nombre=element.usuario.persona.primer_nombre+" "+element.usuario.persona.primer_apellido;
-          console.log("Nombre eliminar "+this.nombreasignado+" nombres: "+this.nombre);
-          this.notificarelimadmin();
-          this.notificarelsupern();
-          this.ListarAsignacion();
-          this.Listado();
-          
-        });
-
-        Swal.fire('Eliminado!', 'Registro eliminado.', 'success');
+        console.log("id_evidencia"+id_evi+"id usuario "+this.user.id+"id modelo "+this.id_modelo)
+        this.asignarEvidenciaService.eliminasigna(id,id_evi,this.user.id,this.id_modelo).subscribe((response: any) => {
+            
+              this.nombreasignado = element.evidencia.descripcion;
+              this.nombre = element.usuario.persona.primer_nombre + " " + element.usuario.persona.primer_apellido;
+              console.log("Nombre eliminar " + this.nombreasignado + " nombres: " + this.nombre);
+              this.notificarelimadmin();
+              this.notificarelsupern();
+              this.ListarAsignacion();
+              this.Listado();
+              Swal.fire('Eliminado!', 'Registro eliminado.', 'success');
+            
+          },
+          (error:any) => {
+            if(error.status === 400){
+              Swal.fire('Error', error.error, 'error');
+            } else{
+            console.error('Error al eliminar el registro:', error);
+            Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
+          }
+          }
+        );
       }
     });
   }

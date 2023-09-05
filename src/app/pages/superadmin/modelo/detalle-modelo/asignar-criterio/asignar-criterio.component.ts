@@ -57,6 +57,7 @@ export class AsignarCriterioComponent implements OnInit {
 
   }
   //
+  
   notificaruser() {
     this.noti.fecha = new Date();
     this.noti.rol = "";

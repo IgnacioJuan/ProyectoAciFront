@@ -33,6 +33,7 @@ export class EvalucionComponent implements OnInit {
   columnasEvidencia: string[] = ['idevi', 'descripcion', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['idasigna', 'usuario', 'descripcion', 'actions'];
   rowspanArray: number[] = [];
+  id_mod!:number;
   titulocrite!:string;
   //Cambiar texto tabla
   itemsPerPageLabel = 'Datos por página';
@@ -144,7 +145,13 @@ this.criteservice.getCriterios().subscribe(
 
     this.Listado();
     this.ListarAsignacion();
+    this.modeloMax();
   }
+
+  modeloMax() {
+    this.criteservice.getModeMaximo().subscribe((data) => {
+      this.id_mod =data.id_modelo;})
+    }
   cacheSpan(key: string, accessor: (data: any) => any): void {
     let prevValue: any = undefined;
     let rowspan = 1;
@@ -379,7 +386,8 @@ this.criteservice.getCriterios().subscribe(
   public AsignaUsuario(element: any) {
     this.asignacion.evidencia.id_evidencia = element.id_evidencia;
     this.nombreasignado=element.descripcion;
-    this.asignacion.usuario.id = this.usuarioSele.id
+    this.asignacion.usuario.id = this.usuarioSele.id;
+    this.asignacion.id_modelo=this.id_mod;
     console.log(this.asignacion)
     this.asignarEvidenciaService.createAsigna(this.asignacion)
       .subscribe(

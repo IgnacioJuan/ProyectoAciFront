@@ -62,7 +62,11 @@ export class AsignaEvidenciaService {
 
   }
 
+  eliminasigna(id: number,id_evi:number,id_usuario:number,id_modelo:number): Observable<any> {
+    console.log(id)
+    return this.httpClient.put(`${baserUrl}/api/asignacionevidencia/elimasig/${id}/${id_evi}/${id_usuario}/${id_modelo}`, id);
 
+  }
    
 
     public getAsignacionUsuario(user: String): Observable< Evidencia[]> {

@@ -6,6 +6,7 @@ export class Asigna_Evi {
   evidencia: Evidencia = new Evidencia();
   usuario: Usuario2 = new Usuario2();
   visible: boolean = true;
+  id_modelo: number = 0;
 }
 /*
 interface Evidencia{

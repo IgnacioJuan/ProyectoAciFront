@@ -120,8 +120,8 @@ export class SidebarService {
       titulo: "Revisión  ",
       submenu: [
         { titulo: 'Responsables de actividades', url: 'sup/actividad_responsable', icono: 'fas fa-times-circle' },
-        { titulo: 'Actividades Rechazadas', url: 'sup/actividad-rechazada', icono: 'fas fa-cubes' }
-
+        { titulo: 'Actividades Rechazadas', url: 'sup/actividad-rechazada', icono: 'fas fa-cubes' },
+        { titulo: 'Aprobaciones', url: 'sup/aprobaciones', icono: 'fas fa-cubes' },
       ]
     },
 

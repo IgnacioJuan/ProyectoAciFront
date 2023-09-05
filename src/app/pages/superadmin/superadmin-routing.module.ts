@@ -12,6 +12,8 @@ import { EvidenciaAtrasadaComponent } from './pages/evidencia-atrasada/evidencia
 import { CriterioReporteComponent } from './pages/criterio-reporte/criterio-reporte.component';
 import { DashboardComponent } from '../admin/dashboard/dashboard.component';
 import { EvalucionComponent } from '../admin/evalucion/evalucion.component';
+import { AprobacionactComponent } from './pages/aprobacionact/aprobacionact.component';
+import { DetalleaprobComponent } from './pages/detalleaprob/detalleaprob.component';
 
 const routes: Routes = [{
   path: 'dashboard',
@@ -84,6 +86,20 @@ const routes: Routes = [{
 {
   path: 'responsables',
   component: EvalucionComponent,
+  pathMatch: 'full',
+  canActivate: [RoleguardGuard],
+  data: { allowedRoles: ['SUPERADMIN'] }
+},
+{
+  path: 'aprobaciones',
+  component: AprobacionactComponent,
+  pathMatch: 'full',
+  canActivate: [RoleguardGuard],
+  data: { allowedRoles: ['SUPERADMIN'] }
+},
+{
+  path: 'detalle',
+  component: DetalleaprobComponent,
   pathMatch: 'full',
   canActivate: [RoleguardGuard],
   data: { allowedRoles: ['SUPERADMIN'] }
