@@ -12,7 +12,8 @@ import { NotificacionService } from 'src/app/services/notificacion.service';
 import { ModeloService } from 'src/app/services/modelo.service';
 import { Modelo } from 'src/app/models/Modelo';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+
 
 @Component({
   selector: 'app-actividades-responsable',
@@ -43,8 +44,7 @@ export class ActividadesResponsableComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
     }
   }
-  @ViewChild(MatPaginator)
-  paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
  // Encabezados de la tabla
   displayedColumns: string[] = [
     'ID',
@@ -61,7 +61,8 @@ export class ActividadesResponsableComponent implements OnInit {
     private router: Router,
     public login: LoginService,
     private modeloService: ModeloService,
-    private notificationService: NotificacionService
+    private notificationService: NotificacionService,
+    private paginatorIntl: MatPaginatorIntl,
   ) {
     this.fechaminima();
     this.frmActividades = fb.group({
@@ -71,10 +72,37 @@ export class ActividadesResponsableComponent implements OnInit {
       fecha_fin: ['', Validators.required]
 
     });
+    this.paginatorIntl.nextPageLabel = 'Siguiente';
+    this.paginatorIntl.lastPageLabel = 'Última';
+    this.paginatorIntl.itemsPerPageLabel = 'Ítems por página';
+    this.paginatorIntl.previousPageLabel = 'Anterior';
+    this.paginatorIntl.firstPageLabel = 'Primera';
+    // Además, puedes definir la función para la etiqueta de rango en español si es necesario
+    this.paginatorIntl.getRangeLabel = (page, pageSize, length) => {
+      if (length == 0 || pageSize == 0) {
+        return `0 de ${length}`;
+      }
+
+      length = Math.max(length, 0);
+      const startIndex = page * pageSize;
+      const endIndex =
+        startIndex < length
+          ? Math.min(startIndex + pageSize, length)
+          : startIndex + pageSize;
+      return `${startIndex + 1} - ${endIndex} de ${length}`;
+    };
   }
   evi: Evidencia = new Evidencia();
+  
   ngOnInit(): void {
 
+    this.services.geteviasig(this.user.username).subscribe(data => {
+      this.Actividades = data;
+      this.dataSource.data = data;
+      this.dataSource.paginator = this.paginator; // Asigna el paginador aquí
+      // ...
+    });
+    
     const data = history.state.data;
     this.evi = data;
     if (this.evi == undefined) {
@@ -95,7 +123,7 @@ export class ActividadesResponsableComponent implements OnInit {
     this.calcularfecha();
     this.listar();
   }
-
+  
   notificar() {
     this.noti.fecha = new Date();
     this.noti.rol = "SUPERADMIN";
