@@ -10,6 +10,11 @@ import Swal from 'sweetalert2';
 import { CriterioSubcriteriosProjection } from 'src/app/interface/CriterioSubcriteriosProjection';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
+
 @Component({
   selector: 'app-criterios-admin',
   templateUrl: './criterios-admin.component.html',

@@ -18,8 +18,8 @@ import { IdCriterioProjection } from '../interface/IdCriterioProjection';
 export class CriteriosService {
 
   constructor(private http: HttpClient) { }
+  
   getCriterioById(id: number): Observable<Criterio> {
-
     return this.http.get<Criterio>(`${baserUrl}/api/criterio/buscar/${id}`);
   }
   public listarCriterio(): Observable<Criterio[]> {
