@@ -370,6 +370,45 @@ Listar(){
   );
 }
 
+enviar() {
+  // Antes de enviar el correo electrónico, asegúrate de que la notificación esté lista
+  // Puedes crear la notificación aquí o en cualquier otro lugar según tu estructura
+  const notificacion = {
+    destinatarios: [this.toUser],
+    mensaje: 'Correo enviado con éxito',
+    // Otros campos de notificación
+  };
+
+  // Envía el correo electrónico
+  this.emailService.sendEmail([this.toUser], this.subject, this.message)
+    .subscribe(
+      (response) => {
+        // El correo electrónico se envió con éxito
+        // Ahora, después del éxito del correo, puedes enviar la notificación
+        this.enviarNotificacion(notificacion);
+      },
+      (error) => {
+        // El envío del correo electrónico falló, maneja el error aquí si es necesario
+        console.error('Error sending email:', error);
+      }
+    );
+}
+
+enviarNotificacion(notificacion: any) {
+  // Aquí puedes llamar a tu servicio de notificaciones para enviar la notificación
+  // Utiliza el objeto 'notificacion' que pasaste como argumento
+
+  this.notificationService.crear(notificacion).subscribe(
+    (data: any) => {
+      console.log('Notificación enviada con éxito');
+      // Realiza cualquier otra acción necesaria después de enviar la notificación
+    },
+    (error: any) => {
+      console.error('No se pudo enviar la notificación', error);
+      // Maneja el error si es necesario
+    }
+  );
+}
 
 
   getColorByEstado(estado: string): string {
@@ -496,7 +535,7 @@ this.detalleEvi.estado=true;
       }
     });
   }
-  enviar() {
+ /* enviar() {
     const startTime = new Date(); // Obtener hora actual antes de enviar el correo
     this.isSending = true;
     this.spinnerInterval = setInterval(() => {
@@ -563,7 +602,7 @@ this.detalleEvi.estado=true;
           console.error('Error sending email:', error);
         }
       );
-  }
+  }*/
 
   Limpiar() {
     this.message = '';
