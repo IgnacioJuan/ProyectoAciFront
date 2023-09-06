@@ -130,9 +130,9 @@ spans3: any[] = [];
 coloresTarjetas: string[] = [];
 borderStyles: string[] = [];
 dataSource1: ActivAprobadaProjection[] = [];
-datacrite: criteriosdesprojection[] = [];
+datacrite: any[] = [];
 datacre: criteriosdesprojection= new criteriosdesprojection();
-displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Archivos', 'Calificar'];
+displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Archivos', 'Calificar'];
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
@@ -141,6 +141,7 @@ displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Archivos'
   valoresp:ValoresProjection[] = [];
   modeloMaximo:any;
   listaIndicadores: IndicadorProjection[] = [];
+  listain: IndicadorProjection[] = [];
   persona:Persona2 = new Persona2();
   suma: { [nombre: string]: number } = {};
   //prueba
@@ -175,6 +176,7 @@ avances: any[] = [];
   clic: boolean = false;
   datosUsuarios: any[] = [];
   filterPost = '';
+  verEvidencia=true;
   verIndicador=true;
   verSubcriterio=true;
   verCriterio=false;
@@ -454,6 +456,8 @@ actualizarSeleccionGeneral() {
 }
 fetchAndProcessData(nombre:string) {
   this.titulocriterio=nombre;
+  this.datacrite = [];
+  this.spans3 =[];
   this.clic = true;
   if(this.titulocriterio===""){
     this.titulocriterio="ORGANIZACIÓN";
@@ -474,7 +478,11 @@ fetchAndProcessData(nombre:string) {
     this.cacheSpan3('Criterio', (d) => d.criterionomj);
     this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
     this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
-    this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej + d.archivo_enlace);
+    this.cacheSpan3('Evidencia', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.descrip);
+    this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej +d.descrip+ d.archivo_enlace);
+    setTimeout(() => {
+      this.aplicar();
+    }, 0);
   });
 }
 seleccionTodo(checked: boolean) {
@@ -482,6 +490,37 @@ seleccionTodo(checked: boolean) {
   this.datacrite.forEach(item => {
     this.seleccionados[item.criterionomj] = checked;
   });
+}
+aplicar() {
+  this.datacrite.forEach(element => {
+    element.randomColor = this.generarColor();
+  });
+  this.datacrite.forEach(element => {
+    element.Colores = this.generarColor2();
+  });
+  this.datacrite.forEach(element => {
+    element.indicol = this.generarColor3();
+  });
+}
+
+generarColor(): string {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  return `rgba(${r}, ${g}, ${b}, 0.3)`;
+}
+generarColor2(): string {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  return `rgba(${r}, ${g}, ${b}, 0.3)`;
+}
+
+generarColor3(): string {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  return `rgba(${r}, ${g}, ${b}, 0.3)`;
 }
 showCriterio() {
   this.verCriterio = !this.verCriterio;
@@ -494,6 +533,9 @@ showIndicador() {
   this.verIndicador = !this.verIndicador;
 }
 
+showEvidencia() {
+  this.verEvidencia = !this.verEvidencia;
+}
 
 getColorcelda(elementName: string, opacity: number): string {
   if (!this.coloresAsignados[elementName]) {
@@ -929,6 +971,7 @@ getColor(item: any): string {
     this.httpCriterios.getIndicador(this.idmodel).subscribe(
         (data: IndicadorProjection[]) => {
           this.listaIndicadores = data;
+          this.listain=data;
           this.datos = this.listaIndicadores.map(item => ({
             name: item.nombre,
             value: item.total

@@ -19,8 +19,8 @@
       </select>
      
 
-      <div class="pie-grid" *ngIf="listaIndicadores" id="indic">
-        <div class="card" *ngFor="let item of listaIndicadores; let i = index" [style.background-color]="coloresTarjetas[i]"
+      <div class="pie-grid" *ngIf="listain" id="indic">
+        <div class="card" *ngFor="let item of listain; let i = index" [style.background-color]="coloresTarjetas[i]"
         [style.border]="borderStyles[i]" (click)="fetchAndProcessData(item.nombre)" title="Haga clic para para seleccionar un criterio">
           <div class="card-content">
             <div class="card-content">{{ item.total * 100 | number: '1.0-2' }}%</div>
@@ -57,6 +57,10 @@
         <button mat-button class="btn-tab" [ngClass]="verIndicador ? 'selected' : ''" (click)="showIndicador()">
         Indicador
         </button>
+
+        <button mat-button class="btn-tab" [ngClass]="verEvidencia ? 'selected' : ''" (click)="showEvidencia()">
+          Evidencia
+          </button>
         </div>
   
         </div> 
@@ -78,7 +82,7 @@
                <th mat-header-cell *matHeaderCellDef [style.display]="verSubcriterio ? '' : 'none'">Subcriterio</th>
                <td mat-cell style="padding: 4px; font-size: 12px;" *matCellDef="let element; let i = index"
                  [attr.rowspan]="getRowSpan3('Subcriterio', i)"
-                 [style.background-color]="getColorcelda('Subcriterio', 0.3)"
+                 [style.background-color]="element.randomColor"
                  [style.display]="verSubcriterio && getRowSpan3('Subcriterio', i) ? '' : 'none'">
                  {{ element.subcrierioj }}
                </td>
@@ -87,11 +91,20 @@
                <th mat-header-cell *matHeaderCellDef [style.display]="verIndicador ? '' : 'none'">Indicador</th>
                <td mat-cell style="padding: 4px; font-size: 12px;" *matCellDef="let element; let i = index"
                  [attr.rowspan]="getRowSpan3('Indicador', i)"
-                 [style.background-color]="getColorcelda('Indicador', 0.3)"
+                 [style.background-color]="element.Colores"
                  [style.display]="verIndicador && getRowSpan3('Indicador', i) ? '' : 'none'">
                  {{ element.ind_nombrej }}
                </td>
              </ng-container>
+             <ng-container matColumnDef="Evidencia">
+              <th mat-header-cell *matHeaderCellDef [style.display]="verEvidencia ? '' : 'none'">Evidencia</th>
+              <td mat-cell style="padding: 4px; font-size: 12px;" *matCellDef="let element; let i = index"
+                [attr.rowspan]="getRowSpan3('Evidencia', i)"
+                [style.background-color]="element.indicol"
+                [style.display]="verEvidencia && getRowSpan3('Evidencia', i) ? '' : 'none'">
+                {{ element.descrip }}
+              </td>
+            </ng-container>
              <ng-container matColumnDef="Archivos">
                <th mat-header-cell *matHeaderCellDef>
                  <div style="display: flex; justify-content: space-between; align-items: center;">
