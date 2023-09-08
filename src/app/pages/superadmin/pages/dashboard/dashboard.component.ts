@@ -36,6 +36,7 @@ import { ValoresProjection } from 'src/app/interface/ValoresProjection';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { IndiColProjection } from 'src/app/interface/IndiColProjection';
 import { MatTableDataSource } from '@angular/material/table';
+import { EvidenciasProjection } from 'src/app/interface/EvidenciasProjection';
 
 // Color aleatorio
 function cambiarColor(str: string): string {
@@ -81,6 +82,8 @@ const colors: { [key: string]: string } = {
 
 export class DashboardComponent2 implements OnInit {
   displayedColumns: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
+  displayedColumns5: string[] = ['enca', 'crit', 'subc', 'indic', 'descr'];
+  displayedColumns6: string[] = ['enca', 'crit', 'subc', 'indic', 'descr'];
   displayedColumns4: string[] = ['indicadores', 'nindi', 'porcentaje'];
   dataSource : ActivAprobadaProjection[] = [];
   isLoggedIn = false;
@@ -126,11 +129,15 @@ spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];
 spans3: any[] = [];
+spans4: any[] = [];
+spans5: any[] = [];
 coloresTarjetas: string[] = [];
 borderStyles: string[] = [];
 rowSpanValue: number = 0;
 mostrarIconoCalificar: boolean = true;
 dataSource1: ActivAprobadaProjection[] = [];
+dataSource3:EvidenciasProjection[] = [];
+dataSource4:EvidenciasProjection[] = [];
 datacrite: any[] = [];
 datacre: criteriosdesprojection= new criteriosdesprojection();
 displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos', 'Calificar'];
@@ -431,7 +438,59 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
   getRowSpan3(col: any, index: any) {
     return this.spans3[index] && this.spans3[index][col];
   }
+//Evindecias combinar
+cacheSpan4(key: string, accessor: (d: any) => any) {
+  for (let i = 0; i < this.dataSource3.length;) {
+    let currentValue = accessor(this.dataSource3[i]);
+    let count = 1;
 
+    for (let j = i + 1; j < this.dataSource3.length; j++) {
+      if (currentValue !== accessor(this.dataSource3[j])) {
+        break;
+      }
+      count++;
+    }
+
+    if (!this.spans4[i]) {
+      this.spans4[i] = {};
+    }
+
+    this.spans4[i][key] = count;
+    i += count;
+  }
+}
+
+
+getRowSpan4(col: any, index: any) {
+  return this.spans4[index] && this.spans4[index][col];
+}
+
+cacheSpan5(key: string, accessor: (d: any) => any) {
+  for (let i = 0; i < this.dataSource4.length;) {
+    let currentValue = accessor(this.dataSource4[i]);
+    let count = 1;
+
+    for (let j = i + 1; j < this.dataSource4.length; j++) {
+      if (currentValue !== accessor(this.dataSource4[j])) {
+        break;
+      }
+      count++;
+    }
+
+    if (!this.spans5[i]) {
+      this.spans5[i] = {};
+    }
+
+    this.spans5[i][key] = count;
+    i += count;
+  }
+}
+
+
+getRowSpan5(col: any, index: any) {
+  return this.spans5[index] && this.spans5[index][col];
+}
+//fin evidencias combinar
   calcularRowSpanValue(index: number): void {
     this.rowSpanValue = this.getRowSpan3('Indicador', index);
   }
@@ -873,6 +932,8 @@ getColor(item: any): string {
       console.log("ID Modelo:", this.idmodel);
       this.listaractividades(this.idmodel);
       this.obtenerActividades(this.idmodel);
+      this.listarevaprob(this.idmodel);
+      this.listarevarech(this.idmodel);
       this.httpCriterios.getCriterios().subscribe(data => {
         this.listaCriterios = data;
         this.cargarDatos();
@@ -885,6 +946,30 @@ getColor(item: any): string {
     });
   }
 
+listarevaprob(id_modelo:number){
+  this.eviden.geteviaprobada(id_modelo).subscribe((data: EvidenciasProjection[]) => {
+    this.dataSource3 = data;
+    console.log("evidencia apr", JSON.stringify(this.dataSource3))
+    this.cacheSpan4('enca', (d) => d.enca);
+    this.cacheSpan4('crit', (d) => d.enca + d.crit);
+    this.cacheSpan4('subc', (d) => d.enca + d.crit+d.subc);
+    this.cacheSpan4('indic', (d) => d.enca + d.crit +d.subc+ d.indic);
+    this.cacheSpan4('descr', (d) => d.enca + d.crit +d.subc+ d.indic+d.descr);
+
+  });
+}
+
+listarevarech(id_modelo:number){
+  this.eviden.getevirechazada(id_modelo).subscribe((data: EvidenciasProjection[]) => {
+    this.dataSource4 = data;
+    console.log("evidencia rech", JSON.stringify(this.dataSource3))
+    this.cacheSpan5('enca', (d) => d.enca);
+    this.cacheSpan5('crit', (d) => d.enca + d.crit);
+    this.cacheSpan5('subc', (d) => d.enca + d.crit+d.subc);
+    this.cacheSpan5('indic', (d) => d.enca + d.crit +d.subc+ d.indic);
+    this.cacheSpan5('descr', (d) => d.enca + d.crit +d.subc+ d.indic+d.descr);
+  });
+}
   listaractividades(id_modelo:number){
     this.services.getActividadrechazada(id_modelo).subscribe((data: ActivAprobadaProjection[]) => {
       this.dataSource1 = data;

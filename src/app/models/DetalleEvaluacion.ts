@@ -9,6 +9,6 @@ export class detalleEvaluacion {
     visible: boolean=true;
     usuario: Usuario2= new Usuario2 ();
    evidencia:Evidencia = new Evidencia();
-
+id_modelo:number=0;
   }
   

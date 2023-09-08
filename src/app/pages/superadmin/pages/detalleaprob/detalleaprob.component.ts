@@ -93,6 +93,7 @@ export class DetalleaprobComponent implements OnInit {
   actividadSeleccionada: Actividades = new Actividades();
   public actividad = new Actividades();
   listadoObservaciones: Observacion2[] = [];
+  aprobado: boolean=false;
 
   constructor(
     private services: ActividadService,
@@ -436,6 +437,7 @@ export class DetalleaprobComponent implements OnInit {
       showConfirmButton: false,
       timer: 1500,
     });
+    this.aprobado = true;
     this.mostrar = false;
     this.estadoEvi = 'Aprobada';
     this.observacion = 'Ninguna';
@@ -447,6 +449,7 @@ export class DetalleaprobComponent implements OnInit {
   }
 
   Rechazado() {
+    this.aprobado = false;
     Swal.fire({
       icon: 'error',
       title: 'La actividad ha sido rechazada.',
@@ -468,7 +471,38 @@ export class DetalleaprobComponent implements OnInit {
 
 
   Guardar() {
-    if (
+    if (this.aprobado) {
+      this.actividadSeleccionada.estado = this.estadoEvi;
+      this.actividadSeleccionada.usuario = null;
+      console.log(this.actividadSeleccionada);
+
+      if (this.actividadSeleccionada) {
+        this.services
+          .update(
+            this.actividadSeleccionada.id_actividad,
+            this.actividadSeleccionada
+          )
+          .subscribe((response) => {
+            this.listar();
+          });
+      } else {
+        console.log('id_actividad es undefined');
+      }
+
+      this.observaciones.observacion = this.observacion;
+      this.observaciones.actividad.id_actividad =
+        this.actividadSeleccionada.id_actividad;
+      this.observaciones.usuario = this.user.id;
+      this.services
+        .createObservacion(this.observaciones)
+        .subscribe((data) =>
+          Swal.fire(
+            'Guardado con éxito!',
+            'Observaciones guardado con éxito',
+            'success'
+          )
+        );
+    } else if (
       this.observaciones.observacion == '' ||
       this.observaciones.observacion == null ||
       this.actividadSeleccionada.estado == '' ||

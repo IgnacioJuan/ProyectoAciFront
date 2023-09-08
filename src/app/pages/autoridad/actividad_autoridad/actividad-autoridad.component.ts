@@ -6,16 +6,42 @@ import { Actividades } from 'src/app/models/actividades';
 import { usuario } from 'src/app/models/Usuario';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 @Component({
   selector: 'app-actividad-autoridad',
   templateUrl: './actividad-autoridad.component.html',
   styleUrls: ['./actividad-autoridad.component.css']
 })
 export class ActividadAutoridadComponent {
-  constructor(private serEvide:EvidenciaService, private services: ActividadService, private router: Router,
-    private fb: FormBuilder) { }
-
+  constructor(private serEvide:EvidenciaService, private services: ActividadService, 
+    private paginatorIntl: MatPaginatorIntl,private router: Router,
+    private fb: FormBuilder) { 
+      this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+      this.paginatorIntl.lastPageLabel = this.lastPageLabel;
+      this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
+      this.paginatorIntl.previousPageLabel=this.previousPageLabel;
+      this.paginatorIntl.firstPageLabel=this.firstPageLabel;
+      this.paginatorIntl.getRangeLabel=this.rango;
+    }
+    itemsPerPageLabel = 'Items por página';
+    nextPageLabel = 'Siguiente';
+    lastPageLabel = 'Última';
+    firstPageLabel='Primera';
+    previousPageLabel='Anterior';
+    
+    rango:any= (page: number, pageSize: number, length: number) => {
+      if (length == 0 || pageSize == 0) {
+        return `0 de ${length}`;
+      }
+    
+      length = Math.max(length, 0);
+      const startIndex = page * pageSize;
+      const endIndex =
+        startIndex < length
+          ? Math.min(startIndex + pageSize, length)
+          : startIndex + pageSize;
+      return `${startIndex + 1} - ${endIndex} de ${length}`;
+    };
     searchText = '';
   @ViewChild('datosModalRef') datosModalRef: any;
     searchTerm: string = '';
