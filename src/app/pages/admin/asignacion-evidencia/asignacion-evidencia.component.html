@@ -530,6 +530,27 @@
                               </td>
                             </ng-container>
 
+                            <ng-container matColumnDef="criterio">
+                              <th mat-header-cell *matHeaderCellDef>CRITERIO</th>
+                              <td mat-cell *matCellDef="let elemento">
+                                {{ elemento.indicador.subcriterio.criterio.nombre }}
+                              </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="subcriterio">
+                              <th mat-header-cell *matHeaderCellDef>SUBCRITERIO</th>
+                              <td mat-cell *matCellDef="let elemento">
+                                {{ elemento.indicador.subcriterio.nombre }}
+                              </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="evidencia">
+                              <th mat-header-cell *matHeaderCellDef>INDICADOR</th>
+                              <td mat-cell *matCellDef="let elemento">
+                                {{ elemento.indicador.nombre }}
+                              </td>
+                            </ng-container>
+
                             <ng-container matColumnDef="descripcion">
                               <th mat-header-cell *matHeaderCellDef>
                                 DESCRIPCIÓN

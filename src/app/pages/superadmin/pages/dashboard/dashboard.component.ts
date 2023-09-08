@@ -80,7 +80,7 @@ const colors: { [key: string]: string } = {
 })
 
 export class DashboardComponent2 implements OnInit {
-  displayedColumns: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
+  displayedColumns: string[] = ['actividad', 'nombre', 'subcriterio', 'indicadores', 'inicio', 'fin', 'encargado', 'enlace'];
   displayedColumns4: string[] = ['indicadores', 'nindi', 'porcentaje'];
   dataSource : ActivAprobadaProjection[] = [];
   isLoggedIn = false;
@@ -121,7 +121,7 @@ export class DashboardComponent2 implements OnInit {
   seleccionados: { [key: string]: boolean } = {};
   todosSeleccionados=false;
   //
-displayedColumns1: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
+displayedColumns1: string[] = ['actividad', 'nombre', 'subcriterio', 'indicadores', 'inicio', 'fin', 'encargado', 'enlace'];
 spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];

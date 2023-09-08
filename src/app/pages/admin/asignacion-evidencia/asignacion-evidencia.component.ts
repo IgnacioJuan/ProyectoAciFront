@@ -30,7 +30,7 @@ let ELEMENT_DATA: Fenix[] = [];
 })
 export class AsignacionEvidenciaComponent implements OnInit {
   columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
-  columnasEvidencia: string[] = ['idevi', 'descripcion', 'actions'];
+  columnasEvidencia: string[] = ['idevi','criterio','subcriterio', 'evidencia', 'descripcion', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['idasigna', 'criterio','subcriterio', 'evidencia', 'usuario', 'descripcion', 'actions'];
   rowspanArray: number[] = [];
   //Cambiar texto tabla
@@ -711,7 +711,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
       listaEvi => {
         this.listaEvidencias = listaEvi; // Asignar la lista directamente
         this.dataSource3.data = this.listaEvidencias;
-        
+        console.log(listaEvi)
       }
     );
   }

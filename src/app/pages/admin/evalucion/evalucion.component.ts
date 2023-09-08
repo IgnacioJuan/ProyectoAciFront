@@ -30,7 +30,7 @@ let ELEMENT_DATA: Fenix[] = [];
 })
 export class EvalucionComponent implements OnInit {
   columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
-  columnasEvidencia: string[] = ['idevi', 'descripcion', 'actions'];
+  columnasEvidencia: string[] = ['idevi', 'subcriterio', 'indicador', 'descripcion', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['idasigna',  'criterio', 'subcriterio','evidencia', 'usuario', 'descripcion', 'actions'];
   rowspanArray: number[] = [];
   id_mod!:number;

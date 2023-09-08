@@ -25,6 +25,11 @@ export class AsignaEvidenciaService {
     return this.httpClient.get(`${baserUrl}/api/evidencia/listarv`).
       pipe(map((response) => response as Evidencia[]));
   }
+  //LISTAR EVIDENCIAS
+  public listarEvidenciaprueba(): Observable<Evidencia[]> {
+    return this.httpClient.get(`${baserUrl}/api/evidencia/listarpruebasevi`).
+      pipe(map((response) => response as Evidencia[]));
+  }
 
   //GUARDAR ASIGNACION_EVICENCIA
   public createAsigna(asigna: Asigna_Evi): Observable<Asigna_Evi> {

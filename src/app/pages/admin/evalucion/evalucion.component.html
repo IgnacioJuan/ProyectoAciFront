@@ -544,6 +544,24 @@
                                 </td>
                               </ng-container>
   
+                              <ng-container matColumnDef="subcriterio">
+                                <th mat-header-cell *matHeaderCellDef>
+                                  SUBCRITERIO
+                                </th>
+                                <td mat-cell *matCellDef="let elemento">
+                                  {{ elemento.indicador.subcriterio.nombre }}
+                                </td>
+                              </ng-container>
+
+                              <ng-container matColumnDef="indicador">
+                                <th mat-header-cell *matHeaderCellDef>
+                                  INDICADOR
+                                </th>
+                                <td mat-cell *matCellDef="let elemento">
+                                  {{ elemento.indicador.nombre }}
+                                </td>
+                              </ng-container>
+
                               <ng-container matColumnDef="descripcion">
                                 <th mat-header-cell *matHeaderCellDef>
                                   DESCRIPCIÓN
