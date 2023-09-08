@@ -3,6 +3,7 @@ import { Observable, map } from 'rxjs';
 import { Evidencia } from '../models/Evidencia';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import baserUrl from './helper';
+import { EvidenciasProjection } from '../interface/EvidenciasProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -63,7 +64,13 @@ getEvidenciaCrite(idcriterio: number): Observable<Evidencia[]> {
     return this.http.get<any[]>(`${baserUrl}/usuarios/listarResDatos`);
   }
 
+  public geteviaprobada(id_modelo:number): Observable<EvidenciasProjection[]> {
+    return this.http.get<EvidenciasProjection[]>(`${baserUrl}/api/evidencia/evidenciaprobada/${id_modelo}`);
+  }
 
+  public getevirechazada(id_modelo:number): Observable<EvidenciasProjection[]> {
+    return this.http.get<EvidenciasProjection[]>(`${baserUrl}/api/evidencia/evidenciarechazada/${id_modelo}`);
+  }
   /*
  public listarUsuario(): Observable<any> {
     return this.http.get(`${baserUrl}/usuarios/listarResDatos`);

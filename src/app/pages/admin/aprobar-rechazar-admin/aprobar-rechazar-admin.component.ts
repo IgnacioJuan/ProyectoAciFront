@@ -66,6 +66,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
   idusuario: any = null;
   nombre: any = null;
   nombreev:any=null;
+  aprobado: boolean=false;
   descripcionSeleccionada: any=null;
   fechaActual: Date = new Date();
   fechaFormateada: string = this.fechaActual.toLocaleDateString('es-ES');
@@ -371,6 +372,9 @@ Listar(){
 }
 
 enviar() {
+  this.notificarrechazo();
+    this.notificarrechazoadmin();
+    this.notificarrechazouser();
   // Antes de enviar el correo electrónico, asegúrate de que la notificación esté lista
   // Puedes crear la notificación aquí o en cualquier otro lugar según tu estructura
   const notificacion = {
@@ -425,7 +429,7 @@ enviarNotificacion(notificacion: any) {
 
   Aprobado(descripcion:any) {
     this.descripcionSeleccionada = descripcion;
-    
+    this.aprobado = true;
     Swal.fire({
       icon: 'success',
       title: 'La tarea ha sido aprobada',
@@ -441,6 +445,7 @@ enviarNotificacion(notificacion: any) {
   }
 
   Rechazado(descripcion:any) {
+    this.aprobado = false;
     this.descripcionSeleccionada = descripcion;
     Swal.fire({
       icon: 'error',
@@ -449,19 +454,59 @@ enviarNotificacion(notificacion: any) {
     this.estadoEvi = 'Rechazada';
     this.mostrar = !this.mostrar;
     this.observacion = '';
-    this.notificarrechazo();
-    this.notificarrechazoadmin();
-    this.notificarrechazouser();
+    
   }
  
 
 
 
   ModificarTarea() {
+   
     this.detalleEvi.evidencia.id_evidencia = this.evid.id_evidencia;
     this.detalleEvi.usuario.id = this.user.id;
     this.detalleEvi.observacion=this.observacion;
-    if (
+    if (this.aprobado) {
+      this.evid.estado = this.estadoEvi;
+      if(this.evid.estado=='Aprobada'){
+this.detalleEvi.estado=true;
+
+      }else{
+        this.detalleEvi.estado=false;
+
+      }
+
+      this.detalleEvaluaService
+        .create(this.detalleEvi)
+        .subscribe((data) =>
+          Swal.fire(
+            'Guardado con éxito!',
+            'Observaciones guardado con éxito',
+            'success'
+          )
+        );
+      this.evidenciaService
+        .actualizar(this.evid.id_evidencia, this.evid)
+        .subscribe(
+          (response: any) => {
+            Swal.fire({
+              title: '¡Registro  exitoso!',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          },
+          (error: any) => {
+            Swal.fire({
+              title: '¡Error al guardar!',
+              text: 'Hubo un error al guardar la tarea.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+
+            console.log(error);
+          }
+        );
+    }else if (
       this.detalleEvi.estado != null &&
       this.detalleEvi.observacion != null &&
       this.detalleEvi.observacion != ''

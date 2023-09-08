@@ -540,3 +540,133 @@ class="chart"
           </div>
         </div>
       </div>
+      <!-- evidencias rechazadas -->
+<div style="
+display: flex;
+border-top: thick double #32a1ce;
+margin-bottom: 2%;
+">
+<div style="flex-basis: 90%; border-right: thick double #32a1ce">
+  <h3>Listado de Evidencias</h3>
+<mat-tab-group class="men" [color]="color">
+  <!-- Tab para Actividades Aprobadas -->
+  <mat-tab label="Evidencias Aprobadas">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource3">
+        <ng-container matColumnDef="enca">
+          <th mat-header-cell *matHeaderCellDef>Encargado</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan4('enca', i)"
+            [style.display]="
+              getRowSpan4('enca', i) ? '' : 'none'
+            ">
+            {{ element.enca }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="crit">
+          <th mat-header-cell *matHeaderCellDef>Criterio</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan4('crit', i)"
+            [style.display]="
+              getRowSpan4('crit', i) ? '' : 'none'
+            ">
+            {{ element.crit }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="subc">
+          <th mat-header-cell *matHeaderCellDef>Subcriterio</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan4('subc', i)"
+            [style.display]="
+              getRowSpan4('subc', i) ? '' : 'none'
+            ">
+            {{ element.subc }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="indic">
+          <th mat-header-cell *matHeaderCellDef>Indicador</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan4('indic', i)"
+            [style.display]="
+              getRowSpan4('indic', i) ? '' : 'none'
+            ">
+            {{ element.indic }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="descr">
+          <th mat-header-cell *matHeaderCellDef>Evidencia</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan4('descr', i)"
+            [style.display]="
+              getRowSpan4('descr', i) ? '' : 'none'
+            ">
+            {{ element.descr }}
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns5"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns5" class="tab-apr"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Seleccione la pagina">
+      </mat-paginator>
+    </div>
+  </mat-tab>
+
+  <!-- Tab para Actividades Rechazadas -->
+  <mat-tab label="Evidencias Rechazadas/Sin Aprobar">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource4">
+        <ng-container matColumnDef="enca">
+          <th mat-header-cell *matHeaderCellDef>Encargado</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan5('enca', i)"
+            [style.display]="
+              getRowSpan5('enca', i) ? '' : 'none'
+            ">
+            {{ element.enca }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="crit">
+          <th mat-header-cell *matHeaderCellDef>Criterio</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan5('crit', i)"
+            [style.display]="
+              getRowSpan5('crit', i) ? '' : 'none'
+            ">
+            {{ element.crit }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="subc">
+          <th mat-header-cell *matHeaderCellDef>Subcriterio</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan5('subc', i)"
+            [style.display]="
+              getRowSpan5('subc', i) ? '' : 'none'
+            ">
+            {{ element.subc }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="indic">
+          <th mat-header-cell *matHeaderCellDef>Indicador</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan5('indic', i)"
+            [style.display]="
+              getRowSpan5('indic', i) ? '' : 'none'
+            ">
+            {{ element.indic }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="descr">
+          <th mat-header-cell *matHeaderCellDef>Evidencia</th>
+          <td mat-cell *matCellDef="let element; let i = index" [attr.rowspan]="getRowSpan5('descr', i)"
+            [style.display]="
+              getRowSpan5('descr', i) ? '' : 'none'
+            ">
+            {{ element.descr }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns6"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns6" class="tab-rech"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+        aria-label="Seleccione las actividades">
+      </mat-paginator>
+    </div>
+  </mat-tab>
+  
+</mat-tab-group>
+</div>
+</div>

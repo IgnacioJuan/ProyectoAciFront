@@ -140,9 +140,9 @@ export class SidebarService {
     },
     {
       icono: 'nav-icon fas fa-tasks',
-      titulo: "Criterios",
+      titulo: "Modelos",
       submenu: [
-        { titulo: 'Reporte Criterios', url: 'res/actividadCriterio', icono: 'fas fa-file-contract' }
+        { titulo: 'Reporte Modelos', url: 'res/actividadCriterio', icono: 'fas fa-file-contract' }
 
       ]
     }

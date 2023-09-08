@@ -33,6 +33,7 @@ export class AprobacionactComponent implements OnInit {
     'usua',
     'actions',
   ];
+  aprobado: boolean=false;
   dataSource = new MatTableDataSource<Evidencia>();
   dataSource4 = new MatTableDataSource<detalleEvaluacion>();
   noRegistros: any;
@@ -52,8 +53,10 @@ export class AprobacionactComponent implements OnInit {
   spinnerValue = 0;
   spinnerInterval: any;
   mostrar = false;
+  enviado= false;
   maxTime: number = 30;
   sent: boolean = false;
+  mostrarModal: boolean = false;
   toUser: string = '';
   subject: string = '';
   message: string = '';
@@ -77,7 +80,7 @@ export class AprobacionactComponent implements OnInit {
   observacion = '';
   detalleEvi: detalleEvaluacion = new detalleEvaluacion();
   listadodetalleEval: detalleEvaluacion[] = [];
-
+id_modelo!:number;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   
   constructor(
@@ -103,10 +106,14 @@ export class AprobacionactComponent implements OnInit {
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
-    
+    this.modeloMax();
   }
   
+  modeloMax() {
+    this.criteriosService.getModeMaximo().subscribe((data) => {
 
+      this.id_modelo =data.id_modelo;});
+    }
   applyFilter() {
     const filterValue = this.idFilter.value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -118,9 +125,9 @@ export class AprobacionactComponent implements OnInit {
     this.noti.rol = 'SUPERADMIN';
     const nombres = localStorage.getItem('nombres');
     this.noti.mensaje =
-      this.user.persona.primer_nombre +
+      this.user?.persona?.primer_nombre +
       ' ' +
-      this.user.persona.primer_apellido +
+      this.user?.persona?.primer_apellido +
       ' ha rechazado la evidencia ' +
       this.descripcionSeleccionada +
       ' de ' +
@@ -142,9 +149,9 @@ export class AprobacionactComponent implements OnInit {
     this.noti.fecha = new Date();
     this.noti.rol = '';
     this.noti.mensaje =
-      this.user.persona.primer_nombre +
+      this.user?.persona?.primer_nombre +
       ' ' +
-      this.user.persona.primer_apellido +
+      this.user?.persona?.primer_apellido +
       ' ha rechazado tu evidencia ' 
       +this.descripcionSeleccionada;
     this.noti.visto = false;
@@ -168,9 +175,9 @@ export class AprobacionactComponent implements OnInit {
     const nombres = localStorage.getItem('nombres');
     console.log("Nombres usuario "+nombres );
     this.noti.mensaje =
-      this.user.persona.primer_nombre +
+      this.user?.persona?.primer_nombre +
       ' ' +
-      this.user.persona.primer_apellido +
+      this.user?.persona?.primer_apellido +
       ' ha rechazado la evidencia ' +
       this.descripcionSeleccionada +
       ' de ' +
@@ -195,9 +202,9 @@ notificaraprob() {
   this.noti.rol = 'SUPERADMIN';
   const nombres = localStorage.getItem('nombres');
   this.noti.mensaje =
-    this.user.persona.primer_nombre +
+    this.user?.persona?.primer_nombre +
     ' ' +
-    this.user.persona.primer_apellido +
+    this.user?.persona?.primer_apellido +
     ' ha aprobado la evidencia ' +
     this.descripcionSeleccionada +
     ' de ' +
@@ -219,9 +226,9 @@ notificaraprobuser() {
   this.noti.fecha = new Date();
   this.noti.rol = '';
   this.noti.mensaje =
-    this.user.persona.primer_nombre +
+    this.user?.persona?.primer_nombre +
     ' ' +
-    this.user.persona.primer_apellido +
+    this.user?.persona?.primer_apellido +
     ' ha aprobado tu evidencia ' 
     +this.descripcionSeleccionada;
   this.noti.visto = false;
@@ -245,9 +252,9 @@ notificaraprobadmin() {
   const nombres = localStorage.getItem('nombres');
   console.log("Nombres usuario "+nombres );
   this.noti.mensaje =
-    this.user.persona.primer_nombre +
+    this.user?.persona?.primer_nombre +
     ' ' +
-    this.user.persona.primer_apellido +
+    this.user?.persona?.primer_apellido +
     ' ha aprobado la evidencia ' +
     this.descripcionSeleccionada +
     ' de ' +
@@ -385,7 +392,7 @@ Listar(){
 
   Aprobado(descripcion:any) {
     this.descripcionSeleccionada = descripcion;
-    
+    this.aprobado = true;
     Swal.fire({
       icon: 'success',
       title: 'La tarea ha sido aprobada',
@@ -401,6 +408,7 @@ Listar(){
   }
 
   Rechazado(descripcion:any) {
+    this.aprobado = false;
     this.descripcionSeleccionada = descripcion;
     Swal.fire({
       icon: 'error',
@@ -413,13 +421,70 @@ Listar(){
   }
  
 
-
+guardarap(){
+  if(this.evid.estado=='Rechazada'&&this.enviado){
+    this.ModificarTarea();
+    
+  } else if(this.evid.estado=='Aprobada'){
+    this.ModificarTarea();
+  } else {
+    Swal.fire(
+      'La actividad fue rechazada',
+      'Debe enviar el correo con la observación',
+      'warning'
+    );
+    
+  }
+}
 
   ModificarTarea() {
+    
     this.detalleEvi.evidencia.id_evidencia = this.evid.id_evidencia;
     this.detalleEvi.usuario.id = this.user.id;
+    this.detalleEvi.id_modelo=this.id_modelo;
     this.detalleEvi.observacion=this.observacion;
-    if (
+    if (this.aprobado) {
+      this.evid.estado = this.estadoEvi;
+      if(this.evid.estado=='Aprobada'){
+this.detalleEvi.estado=true;
+
+      }else if(this.evid.estado=='Rechazada'){
+        this.detalleEvi.estado=false;
+
+      }
+
+      this.detalleEvaluaService
+        .create(this.detalleEvi)
+        .subscribe((data) =>
+          Swal.fire(
+            'Guardado con éxito!',
+            'Observaciones guardadas con éxito',
+            'success'
+          )
+        );
+      this.evidenciaService
+        .actualizar(this.evid.id_evidencia, this.evid)
+        .subscribe(
+          (response: any) => {
+            Swal.fire({
+              title: '¡Registro  exitoso!',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          },
+          (error: any) => {
+            Swal.fire({
+              title: '¡Error al guardar!',
+              text: 'Hubo un error al guardar la tarea.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+
+            console.log(error);
+          }
+        );
+    }else if (
       this.detalleEvi.estado != null &&
       this.detalleEvi.observacion != null &&
       this.detalleEvi.observacion != ''
@@ -428,7 +493,7 @@ Listar(){
       if(this.evid.estado=='Aprobada'){
 this.detalleEvi.estado=true;
 
-      }else{
+      }else if(this.evid.estado=='Rechazada'){
         this.detalleEvi.estado=false;
 
       }
@@ -467,10 +532,11 @@ this.detalleEvi.estado=true;
     } else {
       Swal.fire(
         'No agregó ninguna observación',
-        'Porfavor agregue alguna',
+        'Por favor agregue alguna',
         'warning'
       );
     }
+    this.mostrarModal = true;
   }
 
   Eliminar(element: any) {
@@ -494,6 +560,7 @@ this.detalleEvi.estado=true;
     });
   }
   enviar() {
+    this.enviado=true;
     const startTime = new Date(); // Obtener hora actual antes de enviar el correo
     this.isSending = true;
     this.spinnerInterval = setInterval(() => {
