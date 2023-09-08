@@ -387,6 +387,22 @@
                     {{ elemento.id_asignacion_evidencia}}
                   </td>
                 </ng-container>
+
+                <ng-container matColumnDef="criterio">
+                  <th mat-header-cell *matHeaderCellDef>CRITERIO</th>
+                  <td mat-cell *matCellDef="let elemento">{{ elemento.evidencia.indicador.subcriterio.criterio.nombre }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="subcriterio">
+                  <th mat-header-cell *matHeaderCellDef>SUBCRITERIO</th>
+                  <td mat-cell *matCellDef="let elemento">{{ elemento.evidencia.indicador.subcriterio.nombre }}</td>
+                </ng-container>
+                
+                <ng-container matColumnDef="evidencia">
+                  <th mat-header-cell *matHeaderCellDef>EVIDENCIA</th>
+                  <td mat-cell *matCellDef="let elemento">{{ elemento.evidencia.indicador.nombre }}</td>
+                </ng-container>
+
                 <ng-container matColumnDef="usuario">
                   <th mat-header-cell *matHeaderCellDef>USUARIO</th>
                   <td mat-cell *matCellDef="let elemento; let i = index" [attr.rowspan]="rowspanArray[i]"

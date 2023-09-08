@@ -23,7 +23,7 @@ import Swal from 'sweetalert2';
 })
 export class AprobacionactComponent implements OnInit {
 
-  columnas: string[] = ['id', 'nombre', 'descripcion', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'subcriterio', 'indicadores', 'descripcion', 'actions'];
   columnasDetalle: string[] = [
     'iddetalle',
     'evi',

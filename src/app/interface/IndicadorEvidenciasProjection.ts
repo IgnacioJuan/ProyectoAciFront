@@ -1,6 +1,9 @@
 export interface IndicadorEvidenciasProjection {
     id_indicador: number;
     nombre: string;
+    criterio: string;
+    subcriterio: string;
+    evidencia: string;
     descripcion: string;
     peso: number;
     estandar: number;
