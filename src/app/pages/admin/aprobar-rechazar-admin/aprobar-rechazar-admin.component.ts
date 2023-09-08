@@ -25,7 +25,7 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./aprobar-rechazar-admin.component.css'],
 })
 export class AprobarRechazarAdminComponent implements OnInit {
-  columnas: string[] = ['id', 'nombre', 'descripcion', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'subcriterio','indicadores','descripcion', 'actions'];
   columnasDetalle: string[] = [
     'iddetalle',
     'evi',

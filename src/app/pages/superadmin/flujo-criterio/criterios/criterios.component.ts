@@ -195,18 +195,6 @@ export class CriteriosComponent implements OnInit {
             alignment: 'center'
           }
         },
-        '\n\n', // Agregamos un espacio entre las dos tablas
-        {
-          table: {
-            headerRows: 1,
-            widths: ['auto', 'auto', 'auto'],
-            body: [
-              ['ID', 'Descripción', 'Nombre'],
-              ...data
-            ],
-            alignment: 'center'
-          }
-        }
       ],
       styles: {
         header: {

@@ -23,7 +23,7 @@ export class EvidenciaTareasAsginadasComponent {
  
   botonDeshabilitado: boolean | undefined;
   dataSource = new MatTableDataSource<Evidencia>();
-  displayedColumns: string[] = ['ID', 'Descripción', 'Actividad'];
+  displayedColumns: string[] = ['ID', 'Criterio', 'Subcriterio', 'Evidencia', 'Descripción', 'Actividad'];
   
   constructor(
     private asignaService: AsignaEvidenciaService,

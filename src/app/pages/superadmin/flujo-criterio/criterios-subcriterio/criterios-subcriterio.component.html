@@ -24,22 +24,30 @@
           />
         </div>
         <br />
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#materiaModal"
+          >
+            CREAR NUEVO SUBCRITERIO
+          </button>
+        <br />
         <button
           type="button"
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#materiaModal"
+          class="btn btn-warning"
+          (click)="generarReportePDFsubcriterio()"
+          style="margin-right: 5%"
         >
-          CREAR NUEVO SUBCRITERIO
-        </button>
-        <br />
+          <i class="fas fa-file-pdf"></i>
+          GENERAR REPORTE
+        </button> 
         <br />
         <br />
         <div
           class="mat-elevation-z8 table-responsive"
           style="margin-bottom: 5%"
-        >
-          
+        > 
 
           <table mat-table [dataSource]="dataSource">
             <ng-container matColumnDef="id_subcriterio">
@@ -99,14 +107,7 @@
                 >
                   <i class="fas fa-edit"></i>
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  (click)="generarReportePDFsubcriterio()"
-                  style="margin-right: 5%"
-                >
-                  <i class="fas fa-file-alt"></i>
-                </button>
+                
               </td>
             </ng-container>
 
