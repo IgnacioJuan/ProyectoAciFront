@@ -95,7 +95,8 @@ export class ActividadesResponsableComponent implements OnInit {
   evi: Evidencia = new Evidencia();
   
   ngOnInit(): void {
-
+    this.isLoggedIn = this.login.isLoggedIn();
+    this.user = this.login.getUser();
     this.services.geteviasig(this.user.username).subscribe(data => {
       this.Actividades = data;
       this.dataSource.data = data;
@@ -110,8 +111,9 @@ export class ActividadesResponsableComponent implements OnInit {
       location.replace('/use/user-dashboard');
     }
 
-    this.isLoggedIn = this.login.isLoggedIn();
-    this.user = this.login.getUser();
+   
+    this.idusuario=this.user.id;
+    console.log("usuar "+this.idusuario);
     this.login.loginStatusSubjec.asObservable().subscribe(
       data => {
         this.isLoggedIn = this.login.isLoggedIn();
@@ -181,7 +183,7 @@ export class ActividadesResponsableComponent implements OnInit {
     console.log("Nombre actividad: "+this.actividad.nombre);
     this.nombreacti=this.actividad.nombre;
     this.actividad.evidencia = this.evi;
-    this.actividad.usuario = this.user.id;
+    this.actividad.usuario = this.idusuario;
     this.actividad.estado = "pendiente"
     this.services.crear(this.actividad)
       .subscribe(

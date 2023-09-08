@@ -9,5 +9,8 @@ export class criteriosdesprojection{
     archivo_enlace:string="";
     Visi :boolean=true;
     lista_enlaces: any;
-
+    pes:number=0;
+    obt:number=0
+    uti:number=0
+    val:number=0
 }

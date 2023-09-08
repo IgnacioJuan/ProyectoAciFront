@@ -116,7 +116,7 @@ export class MatrizEvaluacionComponent implements OnInit {
           });
         }
       });
-      localStorage.removeItem('datopasado');
+      
     }else{
     this.idcriterio = history.state.criterio;
     this.idmodelo = history.state.modelo;

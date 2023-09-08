@@ -455,9 +455,7 @@ export class DetalleaprobComponent implements OnInit {
 
     this.mostrar = !this.mostrar;
 
-    this.notificarrechazo();
-    this.notificarrechazoadmin();
-    this.notificarrechazouser();
+    
     this.disableEvaluar = true;
   }
 
@@ -571,7 +569,11 @@ export class DetalleaprobComponent implements OnInit {
             timeDiff,
             'seconds'
           );
+          
           console.log('Email sent successfully!');
+          this.notificarrechazo();
+          this.notificarrechazoadmin();
+          this.notificarrechazouser();
           Swal.fire({
             title: 'El correo se ha enviado con éxito',
             timer: 2000,
