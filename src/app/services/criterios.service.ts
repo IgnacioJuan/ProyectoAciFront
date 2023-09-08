@@ -62,6 +62,10 @@ export class CriteriosService {
   getIndicador(id_modelo:number): Observable<IndicadorProjection[]> {
     return this.http.get<IndicadorProjection[]>(`${baserUrl}/api/indicadores/listarindi/${id_modelo}`)
   }
+
+  getIndicadorad(id_modelo:number,id:number): Observable<IndicadorProjection[]> {
+    return this.http.get<IndicadorProjection[]>(`${baserUrl}/api/indicadores/listarindiad/${id_modelo}/${id}`)
+  }
   
   getModeMaximo(): Observable<Modelo> {
     return this.http.get<any>(`${baserUrl}/api/modelo/listarMax`)
@@ -106,6 +110,10 @@ export class CriteriosService {
 
   getvalores(id_modelo: number): Observable<ValoresProjection[]> {
     return this.http.get<ValoresProjection[]>(`${baserUrl}/api/criterio/listarvalores/${id_modelo}`);
+  }
+
+  getvalorad(id_modelo: number,id:number): Observable<ValoresProjection[]> {
+    return this.http.get<ValoresProjection[]>(`${baserUrl}/api/criterio/listvalad/${id_modelo}/${id}`);
   }
 
   getIdCriterio(nombre: string): Observable<IdCriterioProjection> {

@@ -71,4 +71,8 @@ export class ModeloService {
     const url = `${baserUrl}/api/modelo/listcritedesNOM/${id_modelo}/${nombre}`;
     return this.http.get<criteriosdesprojection[]>(url);
   }
+
+  getcriterioadmin(id_modelo:number,id:number): Observable<criteriosdesprojection[]> {
+    return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/listcriterioadmin/${id_modelo}/${id}`)
+  }
 }

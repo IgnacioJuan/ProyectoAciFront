@@ -409,9 +409,7 @@ Listar(){
     this.estadoEvi = 'Rechazada';
     this.mostrar = !this.mostrar;
     this.observacion = '';
-    this.notificarrechazo();
-    this.notificarrechazoadmin();
-    this.notificarrechazouser();
+   
   }
  
 
@@ -522,6 +520,9 @@ this.detalleEvi.estado=true;
             'seconds'
           );
           console.log('Email sent successfully!');
+          this.notificarrechazo();
+          this.notificarrechazoadmin();
+          this.notificarrechazouser();
           Swal.fire({
             title: 'El correo se ha enviado con éxito',
             timer: 2000,

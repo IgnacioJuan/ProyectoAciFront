@@ -70,7 +70,6 @@ const colors: { [key: string]: string } = {
   naranja: '#FFA500', // 'naranja' se asocia con el color naranja en hexadecimal
   rojo: '#FF0000', // 'rojo' se asocia con el color rojo en hexadecimal
   amarillo: '#f8f32b',
-  // ... Agrega más colores si es necesario
 };
 
 @Component({
@@ -129,10 +128,12 @@ spans2: any[] = [];
 spans3: any[] = [];
 coloresTarjetas: string[] = [];
 borderStyles: string[] = [];
+rowSpanValue: number = 0;
+mostrarIconoCalificar: boolean = true;
 dataSource1: ActivAprobadaProjection[] = [];
 datacrite: any[] = [];
 datacre: criteriosdesprojection= new criteriosdesprojection();
-displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Archivos', 'Calificar'];
+displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos', 'Calificar'];
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
@@ -176,8 +177,13 @@ avances: any[] = [];
   clic: boolean = false;
   datosUsuarios: any[] = [];
   filterPost = '';
-  verEvidencia=true;
+  verEvidencia=false;
   verIndicador=true;
+  verPeso=true;
+  verObtenido=true;
+  verUtilidad=false;
+  verArchivo=false;
+  verValor=true;
   verSubcriterio=true;
   verCriterio=false;
   coloresAsignados: { [key: string]: string } = {}; 
@@ -426,7 +432,9 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     return this.spans3[index] && this.spans3[index][col];
   }
 
-  
+  calcularRowSpanValue(index: number): void {
+    this.rowSpanValue = this.getRowSpan3('Indicador', index);
+  }
  //listar archivos
  obtenerNombreArchivo(url: string): string {
   if (url) {
@@ -478,8 +486,12 @@ fetchAndProcessData(nombre:string) {
     this.cacheSpan3('Criterio', (d) => d.criterionomj);
     this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
     this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
-    this.cacheSpan3('Evidencia', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.descrip);
-    this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej +d.descrip+ d.archivo_enlace);
+    this.cacheSpan3('Peso', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes);
+    this.cacheSpan3('Obtenido', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt);
+    this.cacheSpan3('Utilidad', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti);
+    this.cacheSpan3('Valor', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti+d.val);
+    this.cacheSpan3('Evidencia', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti+d.val+d.descrip);
+    this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace);
     setTimeout(() => {
       this.aplicar();
     }, 0);
@@ -522,6 +534,23 @@ generarColor3(): string {
   const b = Math.floor(Math.random() * 256);
   return `rgba(${r}, ${g}, ${b}, 0.3)`;
 }
+
+showArchivo() {
+  this.verArchivo = !this.verArchivo;
+}
+
+showValor() {
+  this.verValor = !this.verValor;
+}
+
+showUtilidad() {
+  this.verUtilidad = !this.verUtilidad;
+}
+
+showObtenido() {
+  this.verObtenido = !this.verObtenido;
+}
+
 showCriterio() {
   this.verCriterio = !this.verCriterio;
 }
@@ -532,7 +561,9 @@ showSubcriterio() {
 showIndicador() {
   this.verIndicador = !this.verIndicador;
 }
-
+showPeso() {
+  this.verPeso = !this.verPeso;
+}
 showEvidencia() {
   this.verEvidencia = !this.verEvidencia;
 }
@@ -582,6 +613,7 @@ obtenerActividades(id_modelo:number) {
     const cal = document.getElementById("cal");
     const tit = document.getElementById("tit");
     const tit2 = document.getElementById("tit2");
+    const tit3 = document.getElementById("tit3");
     const fig = document.getElementById("fig");
     const fig5 = document.getElementById("fig5");
     const menu = document.getElementById("menu");
@@ -612,6 +644,11 @@ obtenerActividades(id_modelo:number) {
       tit2.style.color = "black";
      
       tit2.style.boxShadow = "";
+    }
+    if (tit3) {
+      tit3.style.color = "black";
+     
+      tit3.style.boxShadow = "";
     }
     if (let2) {
       let2.style.color = "black";
@@ -660,6 +697,11 @@ obtenerActividades(id_modelo:number) {
       tit2.style.color = "white";
      
       tit2.style.boxShadow = "";
+    }
+    if (tit3) {
+      tit3.style.color = "white";
+     
+      tit3.style.boxShadow = "";
     }
     if (let2) {
       let2.style.color = "white";
@@ -710,6 +752,11 @@ obtenerActividades(id_modelo:number) {
       tit2.style.color = "white";
       
       tit2.style.boxShadow = "0 0 10px #00b2d6, 0 0 20px #00b2d6, 0 0 40px #00b2d6, 0 0 80px #00b2d6";
+    }
+    if (tit3) {
+      tit3.style.color = "white";
+      
+      tit3.style.boxShadow = "0 0 10px #00b2d6, 0 0 20px #00b2d6, 0 0 40px #00b2d6, 0 0 80px #00b2d6";
     }
     if (let2) {
       let2.style.color = "white";
@@ -830,7 +877,7 @@ getColor(item: any): string {
         this.listaCriterios = data;
         this.cargarDatos();
       });
-
+      this.listaind();
       this.idmodel = data.id_modelo;;
       console.log("ID Modelo:", this.idmodel);
 
@@ -966,12 +1013,18 @@ getColor(item: any): string {
     return `${borderWidth} solid ${borderColor}`;
   }
   //LISTAR Y MOSTRAR LOS GRAFICOS
+  listaind(){
+    this.httpCriterios.getIndicador(this.idmodel).subscribe(
+      (data: IndicadorProjection[]) => {
+        this.listain=data;
+        console.log("lista in "+this.listain)
+      });
+  }
   cargarDatos(): void {
     console.log("Id modelo a verificar "+this.idmodel);
     this.httpCriterios.getIndicador(this.idmodel).subscribe(
         (data: IndicadorProjection[]) => {
           this.listaIndicadores = data;
-          this.listain=data;
           this.datos = this.listaIndicadores.map(item => ({
             name: item.nombre,
             value: item.total
@@ -985,7 +1038,7 @@ getColor(item: any): string {
        
         this.listaIndicadores.forEach((item) => {
           this.coloresTarjetas.push(this.getRandomColor());
-          this.borderStyles.push(this.getBorderColor(item.total));
+          this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
         });
 
         },

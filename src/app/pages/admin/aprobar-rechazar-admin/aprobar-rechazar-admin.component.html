@@ -212,16 +212,19 @@
                         <br />
                         <div class="container">
                           <div class="col">
-                            <button type="button" class="btn btn-warning btn-block" (click)="Limpiar()">
-                              <i class="fas fa-eraser"></i> Limpiar
+                            <button type="button" class="btn btn-warning btn-block" (click)="Limpiar()"
+                            title="Haz clic para borrar" >
+                              <i class="fas fa-eraser"></i>
                             </button>
                             <button type="button" class="btn btn-success btn-block"
-                              (click)="Aprobado(evid.descripcion)">
-                              <i class="fas fa-thumbs-up"></i> Aprobar
+                              (click)="Aprobado(evid.descripcion)"
+                              title="Haz clic aquí para aprobar">
+                              <i class="fas fa-thumbs-up"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-block"
-                              (click)="Rechazado(evid.descripcion)">
-                              <i class="fas fa-thumbs-down"></i> Rechazar
+                              (click)="Rechazado(evid.descripcion)"
+                              title="Haz clic aquí para rechazar">
+                              <i class="fas fa-thumbs-down"></i>
                             </button>
                           </div>
                         </div>

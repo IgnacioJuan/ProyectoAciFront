@@ -119,7 +119,7 @@ export class SidebarService {
       icono: 'nav-icon fas fa-exclamation-circle',
       titulo: "Revisión  ",
       submenu: [
-        { titulo: 'Responsables de actividades', url: 'sup/actividad_responsable', icono: 'fas fa-times-circle' },
+        { titulo: 'Responsables de criterios', url: 'sup/actividad_responsable', icono: 'fas fa-times-circle' },
         { titulo: 'Actividades Rechazadas', url: 'sup/actividad-rechazada', icono: 'fas fa-cubes' },
         { titulo: 'Aprobaciones', url: 'sup/aprobaciones', icono: 'fas fa-cubes' },
       ]
