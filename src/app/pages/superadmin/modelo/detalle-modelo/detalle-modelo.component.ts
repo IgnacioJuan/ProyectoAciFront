@@ -127,6 +127,7 @@ idmodelo: number = 0;
     this.idmodelo=this.model.id_modelo
     console.log("Modelo a ver"+this.model.id_modelo)
     this.recibeModelo();
+    localStorage.removeItem("datopasado");
   }
 
 
