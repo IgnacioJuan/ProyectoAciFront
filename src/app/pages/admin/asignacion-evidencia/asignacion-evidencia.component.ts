@@ -33,6 +33,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   columnasEvidencia: string[] = ['idevi','criterio','subcriterio', 'evidencia', 'descripcion', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['idasigna', 'criterio','subcriterio', 'evidencia', 'usuario', 'descripcion', 'actions'];
   rowspanArray: number[] = [];
+  spans: any[] = [];
   //Cambiar texto tabla
   itemsPerPageLabel = 'Datos por página';
   nextPageLabel = 'Siguiente';
@@ -55,7 +56,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   //
   usuarioGuardar = new Usuario2();
   dataSource2 = new MatTableDataSource<ResponsableProjection>();
-  dataSource3 = new MatTableDataSource<Evidencia>();
+  dataSource3:any[] = [];
   dataSource4 = new MatTableDataSource<any>();
   fenix: Fenix = new Fenix();
   listaPersonas: Persona2[] = [];
@@ -92,7 +93,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
      // Usuarios
      this.dataSource2.paginator = this.paginator|| null
      // Evidencias
-     this.dataSource3.paginator = this.paginator2|| null
+     //this.dataSource3.paginator = this.paginator2|| null
      // Asignaciones
      this.dataSource4.paginator = this.paginator3|| null
 
@@ -710,18 +711,42 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.evidenciaService.getEvidenciasAdmin(this.user.id).subscribe(
       listaEvi => {
         this.listaEvidencias = listaEvi; // Asignar la lista directamente
-        this.dataSource3.data = this.listaEvidencias;
+        this.dataSource3 = this.listaEvidencias;
+        this.cacheSpan2('idevi', (d) => d.id_evidencia);
+        this.cacheSpan2('criterio', (d) => d.id_evidencia + d.indicador.subcriterio.criterio.nombre);
+        this.cacheSpan2('subcriterio', (d) => d.id_evidencia + d.indicador.subcriterio.criterio.nombre+d.indicador.subcriterio.nombre);
+        this.cacheSpan2('evidencia', (d) => d.id_evidencia + d.indicador.subcriterio.criterio.nombre+d.indicador.subcriterio.nombre+d.indicador.nombre);
+        this.cacheSpan2('descripcion', (d) => d.id_evidencia + d.indicador.subcriterio.criterio.nombre+d.indicador.subcriterio.nombre+d.indicador.nombre+d.descripcion);
         console.log(listaEvi)
       }
     );
   }
 
+ //
+ cacheSpan2(key: string, accessor: (d: any) => any) {
+  for (let i = 0; i < this.dataSource3.length;) {
+    let currentValue = accessor(this.dataSource3[i]);
+    let count = 1;
+
+    for (let j = i + 1; j < this.dataSource3.length; j++) {
+      if (currentValue !== accessor(this.dataSource3[j])) {
+        break;
+      }
+      count++;
+    }
+
+    if (!this.spans[i]) {
+      this.spans[i] = {};
+    }
+
+    this.spans[i][key] = count;
+    i += count;
+  }
+}
 
 
-
-
-
-
-
+getRowSpan2(col: any, index: any) {
+  return this.spans[index] && this.spans[index][col];
+}
 
 }

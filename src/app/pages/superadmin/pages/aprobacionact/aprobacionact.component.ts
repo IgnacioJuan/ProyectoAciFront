@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectionListChange } from '@angular/material/list';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { EvidenciaCalProjection } from 'src/app/interface/EvidenciaCalProjection';
 import { detalleEvaluacion } from 'src/app/models/DetalleEvaluacion';
 import { Evidencia } from 'src/app/models/Evidencia';
 import { Notificacion } from 'src/app/models/Notificacion';
@@ -15,6 +17,7 @@ import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { LoginService } from 'src/app/services/login.service';
 import { NotificacionService } from 'src/app/services/notificacion.service';
 import Swal from 'sweetalert2';
+import { CalificacionComponent } from '../../modelo/matriz-evaluacion/calificacion/calificacion.component';
 
 @Component({
   selector: 'app-aprobacionact',
@@ -78,14 +81,16 @@ export class AprobacionactComponent implements OnInit {
   disableVerDetalles: boolean = false;
   disableEvaluar: boolean = false;
   observacion = '';
+  idevi!:number;
   detalleEvi: detalleEvaluacion = new detalleEvaluacion();
   listadodetalleEval: detalleEvaluacion[] = [];
 id_modelo!:number;
+verificar:boolean=false;
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   
   constructor(
     private evidenciaService: EvidenciaService,
-    private router: Router,
+    private router: Router,private dialog: MatDialog,
     private emailService: EmailServiceService,
     public login: LoginService,
     private notificationService: NotificacionService,
@@ -114,6 +119,7 @@ id_modelo!:number;
 
       this.id_modelo =data.id_modelo;});
     }
+
   applyFilter() {
     const filterValue = this.idFilter.value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -330,7 +336,39 @@ notificaraprobadmin() {
   seleccionarTarea(element: any) {
       this.evid = element;
   }
-
+calificar(element:any){
+  this.idevi=element.id_evidencia;
+  this.evidenciaService.getevical(this.idevi,this.id_modelo).subscribe(data => {
+    console.log("Datos ev "+JSON.stringify(data));
+    const tipo:any = data.tipo;
+    const id: any = data.id_in;
+    const peso:any=data.peso;
+  
+    console.log("tipo "+tipo+" id ind "+id+" peso "+peso);
+    
+     this.evaluar(tipo,id,peso);
+  });
+   
+}
+evaluar(valor: any, id: any, peso: any): void {
+  console.log("tipo "+valor+" id ind "+id+" peso "+peso);
+  const dialogRef = this.dialog.open(CalificacionComponent, {
+    data: { valor, id, peso },
+  });
+  dialogRef.afterClosed().subscribe(result => {
+    console.log(result);
+    if (result.event == 'success') {
+      console.log(result);
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Calificación registrada',
+        showConfirmButton: true,
+        timer: 1500
+      })
+    }
+  });
+}
   seleccionarTareaDetalle(element: any) {
     this.evidDetalle = element;
     this.detalleEvaluaService
@@ -400,6 +438,7 @@ Listar(){
       timer: 1500,
     });
     this.mostrar = false;
+    this.verificar=true;
     this.estadoEvi = 'Aprobada';
     this.observacion = 'Ninguna';
     this.notificaraprob();
@@ -416,17 +455,19 @@ Listar(){
     });
     this.estadoEvi = 'Rechazada';
     this.mostrar = !this.mostrar;
+    this.verificar=false;
     this.observacion = '';
    
   }
  
 
 guardarap(){
-  if(this.evid.estado=='Rechazada'&&this.enviado){
+  if(this.estadoEvi=='Rechazada'){
+    this.ModificarTarea();
+ this.verificar=false;
+  } else if(this.estadoEvi=='Aprobada'){
     this.ModificarTarea();
     
-  } else if(this.evid.estado=='Aprobada'){
-    this.ModificarTarea();
   } else {
     Swal.fire(
       'La actividad fue rechazada',
@@ -536,6 +577,7 @@ this.detalleEvi.estado=true;
         'warning'
       );
     }
+    this.LimpiarModal();
     this.mostrarModal = true;
   }
 
@@ -561,6 +603,7 @@ this.detalleEvi.estado=true;
   }
   enviar() {
     this.enviado=true;
+    this.verificar=true;
     const startTime = new Date(); // Obtener hora actual antes de enviar el correo
     this.isSending = true;
     this.spinnerInterval = setInterval(() => {
@@ -640,6 +683,7 @@ this.detalleEvi.estado=true;
 
   LimpiarModal() {
     this.mostrar = false;
+    this.verificar=false;
     this.estadoEvi = '';
     this.subject = '';
     this.detalleEvi.observacion = '';

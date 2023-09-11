@@ -38,7 +38,7 @@
               <figure class="text-center text-dark" style="margin-top: 5%; font-style: italic; font-size: smaller">
                 <blockquote class="blockquote text-dark">
                   <h1>
-                    <strong> TAREAS ASIGNADAS</strong>
+                    <strong> EVIDENCIAS ASIGNADAS</strong>
                   </h1>
                 </blockquote>
               </figure>
@@ -90,7 +90,8 @@
                     <ng-container matColumnDef="actions">
                       <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
                       <td mat-cell *matCellDef="let element">
-                        <button type="button" class="btn btn-primary custom-button" style="
+                        <div style="display: flex; align-items: center;">
+                        <button type="button" class="btn btn-primary custom-button" title="Ver las actividades" style="
                             background-color: rgb(58, 156, 156);
                             margin-right: 5%;
                           " (click)="verDetalles(element)" [disabled]="
@@ -98,21 +99,26 @@
                           ">
                           <i class="fas fa-list"></i>
                         </button>
-                        <button type="button" class="btn btn-primary custom-buttonEvaluar" mat-icon-button type="button"
+                        <button type="button" class="btn btn-primary custom-buttonEvaluar" mat-icon-button type="button" title="Aprobar o Rechazar"
                           (click)="seleccionarTarea(element)" style="
                             background-color: rgb(190, 170, 78);
                             margin-right: 5%;
                           " data-bs-toggle="modal" data-bs-target="#exampleModal2">
-                          <mat-icon>star</mat-icon>
+                          <mat-icon> functions</mat-icon>
                         </button>
-                        <button *ngIf="element.estado !== 'pendiente'" type="button"
-                          class="btn btn-primary custom-buttonDetalle" mat-icon-button
-                          (click)="seleccionarTareaDetalle(element)" style="
-                            background-color: rgb(150, 215, 219);
-                            margin-right: 5%;
-                          " data-bs-toggle="modal" data-bs-target="#exampleModal3">
-                          <mat-icon>help</mat-icon>
-                        </button>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                          <button type="button" class="btn btn-primary custom-button" mat-icon-button type="button" title="Calificar"
+                            (click)="calificar(element)" style="background-color: rgb(190, 170, 78); margin-right: 5%;">
+                            <mat-icon>filter_frames</mat-icon>
+                          </button>
+                          <button *ngIf="element.estado !== 'pendiente'" type="button" class="btn btn-primary custom-buttonDetalle" title="Ver observaciones"
+                            mat-icon-button (click)="seleccionarTareaDetalle(element)"
+                            style="background-color: rgb(150, 215, 219); margin-right: 5%;" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+                            <mat-icon>help</mat-icon>
+                          </button>
+                        </div>
+                        
                       </td>
                     </ng-container>
 
@@ -300,8 +306,9 @@
                 </div>
               </div>
               <div class="modal-footer" style="background-color: rgb(0, 122, 255)">
-                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                  style="background-color: rgb(10, 8, 94)" (click)="ModificarTarea()">
+                <button type="button" class="btn btn-success" *ngIf="verificar" 
+                [attr.data-bs-dismiss]="verificar ? 'modal' : null"
+                  style="background-color: rgb(10, 8, 94)" (click)="guardarap()">
                   <i class="fas fa-save"></i>
                   Guardar
                 </button>
@@ -316,7 +323,7 @@
 
         <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content" >
               <div class="modal-header" style="background-color: rgb(0, 122, 255)">
                 <h1 class="modal-title" style="font-family: Arial, sans-serif; color: white" id="exampleModalLabel">
                   OBSERVACIONES
@@ -324,7 +331,7 @@
 
               </div>
               <div class="modal-body">
-                <div class="table-responsive mat-elevation-z8 modal-table" style="margin-bottom: 5%">
+                <div class="mat-elevation-z8" style="margin-bottom: 5%">
                   <table mat-table [dataSource]="dataSource4">
                     <ng-container matColumnDef="iddetalle">
                       <th mat-header-cell *matHeaderCellDef>ID</th>

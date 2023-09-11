@@ -37,6 +37,7 @@ export class NavbarComponent implements OnInit {
   }
 
   listarnot(id: any) {
+    console.log("id ver "+id);
     if (this.rol == "ADMIN" || this.rol == "SUPERADMIN") {
       // Cargar notificaciones del rol ADMIN
       this.notificationService.allnotificacion(this.rol).subscribe(
@@ -62,6 +63,7 @@ export class NavbarComponent implements OnInit {
       this.notificationService.getNotificaciones(id).subscribe(
         (data: Notificacion[]) => {
           this.notificaciones = data;
+          console.log("noti "+JSON.stringify(this.notificaciones));
           this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
         },
         (error: any) => {

@@ -97,7 +97,9 @@
 .tab-rech {
   background-color: rgba(255, 0, 0, 0.158);
 }
-
+.tab-pend{
+  background-color: rgba(215, 224, 84, 0.158);
+}
 .tab-apr {
   background-color: rgba(0, 255, 64, 0.158);
 }
@@ -312,6 +314,10 @@ table {
 }
 
 /* charts */
+.btntext{
+  display: flex;
+  align-items: center; 
+}
 .imagen img {
   max-width: 100%;  
   max-height: 100%; 

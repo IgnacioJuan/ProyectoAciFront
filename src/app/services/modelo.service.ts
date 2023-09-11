@@ -67,6 +67,10 @@ export class ModeloService {
     return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/listcritedes/${id_modelo}/${nombre}`)
   }
 
+  getliscritemod(id_criterio:number,id_modelo:number): Observable<criteriosdesprojection[]> {
+    return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/listcritmod/${id_criterio}/${id_modelo}`)
+  }
+
   getliscriteno(id_modelo: number, nombre: string): Observable<criteriosdesprojection[]> {
     const url = `${baserUrl}/api/modelo/listcritedesNOM/${id_modelo}/${nombre}`;
     return this.http.get<criteriosdesprojection[]>(url);

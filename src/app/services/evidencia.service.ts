@@ -4,6 +4,7 @@ import { Evidencia } from '../models/Evidencia';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import baserUrl from './helper';
 import { EvidenciasProjection } from '../interface/EvidenciasProjection';
+import { EvidenciaCalProjection } from '../interface/EvidenciaCalProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +60,9 @@ getEvidenciaCrite(idcriterio: number): Observable<Evidencia[]> {
     return this.http.get<Evidencia[]>(`${baserUrl}/api/evidencia/buscarev/${user}`);
   }
 
+  public getevical(id_evidencia:number,id_modelo:number): Observable<EvidenciaCalProjection> {
+    return this.http.get<EvidenciaCalProjection>(`${baserUrl}/api/evidencia/evidenciacal/${id_evidencia}/${id_modelo}`);
+  }
   //LISTAR RESPONSABLE
   public listarUsuario(): Observable<any[]> {
     return this.http.get<any[]>(`${baserUrl}/usuarios/listarResDatos`);

@@ -41,6 +41,9 @@ export class ActividadService {
     return this.http.get<ActivAprobadaProjection[]>(`${baserUrl}/api/actividad/actividadaprobada/${id_modelo}`);
   }
 
+  getActividadpendiente(id_modelo:number): Observable<ActivAprobadaProjection[]> {
+    return this.http.get<ActivAprobadaProjection[]>(`${baserUrl}/api/actividad/actividadpendiente/${id_modelo}`);
+  }
 
   update(id: number, actividades: Actividades): Observable<any> {
     console.log(actividades)

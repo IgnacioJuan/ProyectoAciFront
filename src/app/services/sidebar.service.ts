@@ -69,9 +69,9 @@ export class SidebarService {
     },
     {
       icono: 'nav-icon fas fa-solid fa-check-square',
-      titulo: "Observación/Asignación",
+      titulo: "Email/Asignación",
       submenu: [
-        { titulo: ' Agregar observación ', url: 'sup/observaciones', icono: 'fas fa-cubes' },
+        { titulo: ' Enviar e-mails ', url: 'sup/email', icono: 'fas fa-cubes' },
         { titulo: ' Asignar responsables', url: 'sup/responsables', icono: 'fas fa-cubes' }
       ]
     },

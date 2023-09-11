@@ -26,6 +26,7 @@ import { FormControl } from '@angular/forms';
 })
 export class AprobarRechazarAdminComponent implements OnInit {
   columnas: string[] = ['id', 'nombre', 'subcriterio','indicadores','descripcion', 'actions'];
+  verificar:boolean=false;
   columnasDetalle: string[] = [
     'iddetalle',
     'evi',
@@ -372,6 +373,7 @@ Listar(){
 }
 
 enviar() {
+  this.verificar=true;
   this.notificarrechazo();
     this.notificarrechazoadmin();
     this.notificarrechazouser();
@@ -427,9 +429,27 @@ enviarNotificacion(notificacion: any) {
     }
   }
 
+  guardarap(){
+    if(this.estadoEvi=='Rechazada'){
+      this.ModificarTarea();
+   this.verificar=false;
+    } else if(this.estadoEvi=='Aprobada'){
+      this.ModificarTarea();
+      
+    } else {
+      Swal.fire(
+        'La actividad fue rechazada',
+        'Debe enviar el correo con la observación',
+        'warning'
+      );
+      
+    }
+  }
+
   Aprobado(descripcion:any) {
     this.descripcionSeleccionada = descripcion;
     this.aprobado = true;
+    this.verificar=true;
     Swal.fire({
       icon: 'success',
       title: 'La tarea ha sido aprobada',
@@ -454,6 +474,7 @@ enviarNotificacion(notificacion: any) {
     this.estadoEvi = 'Rechazada';
     this.mostrar = !this.mostrar;
     this.observacion = '';
+    this.verificar=false;
     
   }
  
@@ -558,6 +579,7 @@ this.detalleEvi.estado=true;
         'warning'
       );
     }
+    this.LimpiarModal();
   }
 
   Eliminar(element: any) {
@@ -657,6 +679,7 @@ this.detalleEvi.estado=true;
 
   LimpiarModal() {
     this.mostrar = false;
+    this.verificar=false;
     this.estadoEvi = '';
     this.subject = '';
     this.detalleEvi.observacion = '';

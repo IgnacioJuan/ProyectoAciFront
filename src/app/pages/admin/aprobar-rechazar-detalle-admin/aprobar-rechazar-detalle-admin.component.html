@@ -473,8 +473,9 @@
               <button
                 type="button"
                 class="btn btn-success"
-                (click)="Guardar()"
-                data-bs-dismiss="modal"
+                (click)="guardarap()"
+                *ngIf="verificar" 
+                [attr.data-bs-dismiss]="verificar ? 'modal' : null"
                 style="background-color: rgb(10, 8, 94)"
               >
                 <i class="fas fa-save"></i>

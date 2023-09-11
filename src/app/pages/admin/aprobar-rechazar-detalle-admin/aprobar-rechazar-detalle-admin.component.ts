@@ -38,7 +38,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
     'descripcionArchi',
     'enlace',
   ];
-
+  verificar:boolean=false;
   columnasObservaciones: string[] = [
     'id',
     'observacion',
@@ -370,7 +370,22 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       }
     );
   }
-
+  guardarap(){
+    if(this.estadoEvi=='Rechazada'){
+      this.Guardar();
+   this.verificar=false;
+    } else if(this.estadoEvi=='Aprobada'){
+      this.Guardar();
+      
+    } else {
+      Swal.fire(
+        'La evidencia fue rechazada',
+        'Debe enviar el correo con la observación',
+        'warning'
+      );
+      
+    }
+  }
   listar(): void {
     this.services.getEviAsig(this.evidencia.id_evidencia).subscribe((data) => {
       this.listadoActividad = data;
@@ -436,6 +451,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       timer: 1500,
     });
     this.aprobado = true;
+    this.verificar=true;
     this.mostrar = false;
     this.estadoEvi = 'Aprobada';
     this.observacion = 'Ninguna';
@@ -448,6 +464,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
 
   Rechazado() {
     this.aprobado = false;
+    this.verificar=false;
     Swal.fire({
       icon: 'error',
       title: 'La actividad ha sido rechazada.',
@@ -543,6 +560,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
           )
         );
     }
+    this.LimpiarModal();
   }
 
   getColorByEstado(estado: string): string {
@@ -582,6 +600,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
     this.notificarrechazouser();
     const startTime = new Date();
     this.isSending = true;
+    this.verificar=true;
     this.spinnerInterval = setInterval(() => {
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
@@ -656,6 +675,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
 
   LimpiarModal() {
     this.mostrar = false;
+    this.verificar=false;
     this.estadoEvi = '';
     this.subject = '';
     this.observaciones.observacion = '';

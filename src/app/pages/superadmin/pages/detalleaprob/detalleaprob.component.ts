@@ -50,7 +50,7 @@ export class DetalleaprobComponent implements OnInit {
   ];
 
 
-
+  verificar:boolean=false;
   archivoSeleccionado: string = '';
   noRegistros: any;
   noRegistrosAprobadas: any;
@@ -438,6 +438,7 @@ export class DetalleaprobComponent implements OnInit {
       timer: 1500,
     });
     this.aprobado = true;
+    this.verificar=true;
     this.mostrar = false;
     this.estadoEvi = 'Aprobada';
     this.observacion = 'Ninguna';
@@ -468,7 +469,22 @@ export class DetalleaprobComponent implements OnInit {
   }
 
 
-
+  guardarev(){
+    if(this.estadoEvi=='Rechazada'){
+      this.Guardar();
+   this.verificar=false;
+    } else if(this.estadoEvi=='Aprobada'){
+      this.Guardar();
+      
+    } else {
+      Swal.fire(
+        'La actividad fue rechazada',
+        'Debe enviar el correo con la observación',
+        'warning'
+      );
+      
+    }
+  }
 
   Guardar() {
     if (this.aprobado) {
@@ -545,6 +561,7 @@ export class DetalleaprobComponent implements OnInit {
           )
         );
     }
+    this.LimpiarModal();
   }
 
   getColorByEstado(estado: string): string {
@@ -581,6 +598,7 @@ export class DetalleaprobComponent implements OnInit {
   enviar() {
     const startTime = new Date();
     this.isSending = true;
+    this.verificar=true;
     this.spinnerInterval = setInterval(() => {
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
@@ -658,6 +676,7 @@ export class DetalleaprobComponent implements OnInit {
   }
 
   LimpiarModal() {
+    this.verificar=false;
     this.mostrar = false;
     this.estadoEvi = '';
     this.subject = '';
