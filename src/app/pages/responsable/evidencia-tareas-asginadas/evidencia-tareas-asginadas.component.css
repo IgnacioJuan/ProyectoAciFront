@@ -11,3 +11,15 @@ body {
     color: #224;
  
   }
+
+  .aprobado {
+    color: green;
+  }
+  
+  .pendiente {
+    color: yellow;
+  }
+  
+  .rechazado {
+    color: red;
+  }

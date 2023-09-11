@@ -28,7 +28,7 @@ export class CrearUsuariosComponent implements OnInit {
   fenix: Fenix = new Fenix();
 
   listaPersonas: Persona2[] = [];
-
+  selectedRole: string | null = null;
   listaUsuarios: any[] = [];
   filterPost = '';
   personaSele = new Persona2();
@@ -123,7 +123,18 @@ export class CrearUsuariosComponent implements OnInit {
 
   }
 
+  aplicarFiltroPorRol() {
+    if (this.selectedRole) {
+      this.dataSource2.data = this.listaUsuarios.filter((item: any) => {
+        return item.rol.rolNombre === this.selectedRole;
+      });
+    } else {
+      // Restaurar los datos originales si no hay filtro de rol aplicado
+      this.dataSource2.data = this.listaUsuarios;
+    }
+  }
 
+  
   aplicarFiltro() {
     if (this.filterPost) {
       const lowerCaseFilter = this.filterPost.toLowerCase();
