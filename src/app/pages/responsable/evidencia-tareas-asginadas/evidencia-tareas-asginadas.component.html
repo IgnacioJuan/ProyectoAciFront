@@ -29,6 +29,11 @@
                 <th mat-header-cell *matHeaderCellDef>EVIDENCIA</th>
                 <td mat-cell *matCellDef="let ev">{{ ev.indicador.nombre }}</td>
               </ng-container>
+              
+              <ng-container matColumnDef="Estado">
+                <th mat-header-cell *matHeaderCellDef>ESTADO</th>
+                <td mat-cell *matCellDef="let ev">{{ ev.estado }}</td>
+              </ng-container>
 
               <ng-container matColumnDef="Descripción">
                 <th mat-header-cell *matHeaderCellDef>Descripción</th>

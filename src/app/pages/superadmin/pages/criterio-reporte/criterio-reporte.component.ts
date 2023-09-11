@@ -18,6 +18,7 @@ export class CriterioReporteComponent {
   criteriosCuanti: any[] = [];
   mostrarVistaGeneral: boolean = false;
   modoVisualizacion: 'cualitativo' | 'cuantitativo' = 'cualitativo'; // Inicialmente, muestra los datos cualitativos
+  modoVista: 'general' | 'cualitativo' | 'cuantitativo' = 'general'; // Inicialmente, muestra la vista general
   searchText = '';
   constructor(
     private indicadorservice: IndicadoresService,
@@ -118,8 +119,10 @@ export class CriterioReporteComponent {
        );
      }
    }
-  
-
+   tablaExpandida: 'tablaGeneral' | 'tablaCualitativa' | 'tablaCuantitativa' = 'tablaGeneral';
+   alternarTabla(tabla: 'tablaGeneral' | 'tablaCualitativa' | 'tablaCuantitativa') {
+    this.tablaExpandida = tabla;
+  }
    generarInformeTotal(): void {
      const content = [];
    // Agrega la fecha de generación del PDF
@@ -321,7 +324,7 @@ export class CriterioReporteComponent {
     };
   console.log('Contenido del informe cualitativo:', content);
     // Genera el PDF y descárgalo
-    pdfMake.createPdf(documentDefinition).download('informe.pdf');
+    pdfMake.createPdf(documentDefinition).download('ReportesIndicadores.pdf');
   }
   
   
