@@ -3,6 +3,7 @@ export interface ActivAprobadaProjection{
     criterio: string;
     subcriterio: string;
     indicador: string;
+    nomb:string;
     actividades: string;
     inicio: string;
     fin: string;

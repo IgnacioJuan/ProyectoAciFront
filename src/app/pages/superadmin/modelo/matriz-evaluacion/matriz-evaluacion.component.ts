@@ -13,6 +13,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { ArchivoService } from 'src/app/services/archivo.service';
 import { Archivo } from 'src/app/models/Archivo';
+import { ModeloService } from 'src/app/services/modelo.service';
+import { criteriosdesprojection } from 'src/app/interface/criteriosdesprojection';
 
 type Columnname = {
   [key: string]: string;
@@ -31,6 +33,7 @@ type Columnname = {
   ]
 })
 export class MatrizEvaluacionComponent implements OnInit {
+  spans3: any[] = [];
   itemsPerPageLabel = 'Indicadores por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
@@ -49,7 +52,19 @@ export class MatrizEvaluacionComponent implements OnInit {
         : startIndex + pageSize;
     return `${startIndex + 1} - ${endIndex} de ${length}`;
   };
-
+  displayedColumns3: string[] = ['Indicador','DescIn','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos','Idind','Tipo', 'Calificar'];
+  rowSpanValue: number = 0;
+  verEvidencia=false;
+  verTipo=true;
+  ocultar=false;
+  verIndicador=true;
+  verPeso=true;
+  verObtenido=true;
+  verUtilidad=true;
+  verArchivo=false;
+  verValor=true;
+  verDescripcion=false;
+  verDesIndicador=true;
   public columnNames: Columnname = {
     nombre: 'Nombre del Indicador',
     descripcion: 'Descripción del Indicador',
@@ -66,12 +81,12 @@ export class MatrizEvaluacionComponent implements OnInit {
   idcriterio: Criterio = new Criterio();
   idmodelo: Modelo = new Modelo();
   indicador: Indicador = new Indicador();
-
+  datacrite: any[] = [];
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   constructor(
     private route: Router,private paginatorIntl: MatPaginatorIntl,
     private indicadorService: IndicadoresService,
-    private archi: ArchivoService, 
+    private archi: ArchivoService,private modelserv:ModeloService,
     private dialog: MatDialog) 
   { 
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
@@ -87,8 +102,97 @@ export class MatrizEvaluacionComponent implements OnInit {
   }
   ngOnInit(): void {
     this.llenar_datasource();
+    this.llenardatos();
+    localStorage.removeItem("datopasado");
+  }
+  calcularRowSpanValue(index: number): void {
+    this.rowSpanValue = this.getRowSpan3('Indicador', index);
+  }
+  showTipo() {
+    this.verTipo = !this.verTipo;
+  }
+  showArchivo() {
+    this.verArchivo = !this.verArchivo;
+  }
+  
+  showValor() {
+    this.verValor = !this.verValor;
+  }
+  
+  showUtilidad() {
+    this.verUtilidad = !this.verUtilidad;
+  }
+  
+  showObtenido() {
+    this.verObtenido = !this.verObtenido;
+  }
+  
+  showDescripcionin() {
+    this.verDesIndicador = !this.verDesIndicador;
+  }
+  
+  
+  showIndicador() {
+    this.verIndicador = !this.verIndicador;
+  }
+  showPeso() {
+    this.verPeso = !this.verPeso;
+  }
+  showEvidencia() {
+    this.verEvidencia = !this.verEvidencia;
+  }
+  showDescripcion() {
+    this.verDescripcion = !this.verDescripcion;
   }
 
+  cacheSpan3(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.datacrite.length;) {
+      let currentValue = accessor(this.datacrite[i]);
+      let count = 1;
+
+      for (let j = i + 1; j < this.datacrite.length; j++) {
+        if (currentValue !== accessor(this.datacrite[j])) {
+          break;
+        }
+        count++;
+      }
+  
+      if (!this.spans3[i]) {
+        this.spans3[i] = {};
+      }
+  
+      this.spans3[i][key] = count;
+      i += count;
+    }
+  }
+  
+  
+  getRowSpan3(col: any, index: any) {
+    return this.spans3[index] && this.spans3[index][col];
+  }
+llenardatos(){
+  this.idcriterio = history.state.criterio;
+  this.idmodelo = history.state.modelo;
+  this.modelserv.getliscritemod(this.idcriterio.id_criterio, this.idmodelo.id_modelo).subscribe((data: criteriosdesprojection[]) => {
+    this.datacrite = data;
+    console.log("Datos mios "+"id mod "+this.idmodelo.id_modelo+"id crite "+this.idcriterio.id_criterio+" "+JSON.stringify(data));
+    
+    this.cacheSpan3('Indicador', (d) => d.ind_nombrej);
+    this.cacheSpan3('DescIn', (d) => d.criterionomj+d.ides);
+    this.cacheSpan3('Peso', (d) => d.ind_nombrej+d.ides+d.pes);
+    this.cacheSpan3('Obtenido', (d) => d.ind_nombrej+d.ides+d.pes+d.obt);
+    this.cacheSpan3('Utilidad', (d) => d.ind_nombrej+d.ides+d.pes+d.obt+d.uti);
+    this.cacheSpan3('Valor', (d) =>  d.ind_nombrej+d.ides+d.pes+d.obt+d.uti+d.val);
+    this.cacheSpan3('Evidencia', (d) =>  d.ind_nombrej+d.ides+d.pes+d.obt+d.uti+d.val+d.descrip);
+    this.cacheSpan3('Archivos', (d) =>d.ind_nombrej+d.ides +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace);
+    this.cacheSpan3('Idind', (d) =>  d.ind_nombrej+d.ides +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace+d.id_indicardorj);
+    this.cacheSpan3('Tipo', (d) =>  d.ind_nombrej+d.ides +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace+d.id_indicardorj+d.tip);
+  },
+  (error) => {
+
+    console.error("Error al obtener datos:", error);
+  })
+}
   llenar_datasource() {
     const datosString = localStorage.getItem('datopasado');
     if (datosString) {
@@ -158,7 +262,7 @@ export class MatrizEvaluacionComponent implements OnInit {
       console.log(result);
       if (result.event == 'success') {
         console.log(result);
-        this.llenar_datasource();
+        this.llenardatos();
         Swal.fire({
           position: 'center',
           icon: 'success',

@@ -31,7 +31,7 @@ const routes: Routes = [{
 
 {
 
-  path: 'observaciones',
+  path: 'email',
   component: ObcervacionesComponent,
   pathMatch: 'full',
   canActivate: [RoleguardGuard],

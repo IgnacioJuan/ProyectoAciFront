@@ -111,7 +111,9 @@ export class CriteriosService {
   getvalores(id_modelo: number): Observable<ValoresProjection[]> {
     return this.http.get<ValoresProjection[]>(`${baserUrl}/api/criterio/listarvalores/${id_modelo}`);
   }
-
+  getvalorescriterio(id_modelo: number,nombre:string): Observable<ValoresProjection[]> {
+    return this.http.get<ValoresProjection[]>(`${baserUrl}/api/criterio/valorescriterio/${id_modelo}/${nombre}`);
+  }
   getvalorad(id_modelo: number,id:number): Observable<ValoresProjection[]> {
     return this.http.get<ValoresProjection[]>(`${baserUrl}/api/criterio/listvalad/${id_modelo}/${id}`);
   }

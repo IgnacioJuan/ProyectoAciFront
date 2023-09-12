@@ -98,12 +98,12 @@ export class ActividadesResponsableComponent implements OnInit {
   ngOnInit(): void {
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
-    this.services.geteviasig(this.user.username).subscribe(data => {
+   /* this.services.geteviasig(this.user.username).subscribe(data => {
       this.Actividades = data;
       this.dataSource.data = data;
       this.dataSource.paginator = this.paginator; // Asigna el paginador aquí
       // ...
-    });
+    });*/
     
     const data = history.state.data;
     this.evi = data;
@@ -227,6 +227,8 @@ export class ActividadesResponsableComponent implements OnInit {
     this.services.geteviasig(this.user.username).subscribe(data => {
       this.Actividades = data.filter(actividad => actividad.evidencia?.id_evidencia === this.evi.id_evidencia);
       this.dataSource.data = data.filter(actividad => actividad.evidencia?.id_evidencia === this.evi.id_evidencia);
+      this.dataSource.data = data;
+      this.dataSource.paginator = this.paginator;
     });
   }
 

@@ -23,7 +23,7 @@
         <div class="card-body" >
           <div class="container" style="margin-top: 5%; margin-bottom: 5%">
             <mat-accordion>
-              <mat-expansion-panel
+              <mat-expansion-panel [expanded]="true"
                 (opened)="panelOpenState = true"
                 (closed)="panelOpenState = false"
               >
@@ -32,7 +32,7 @@
                     <h4><strong> DESCRIPCIÓN DE EVIDENCIA</strong></h4>
                   </mat-panel-title>
                   <mat-panel-description>
-                    {{ panelOpenState ? "OPEN" : "CLOSED" }}
+                    {{ panelOpenState ? "Abierto" : "Cerrado" }}
                   </mat-panel-description>
                 </mat-expansion-panel-header>
                 <div style="text-align: justify">
@@ -92,6 +92,7 @@
                       background-color: rgb(58, 156, 156);
                       margin-right: 5%;
                     "
+                    title="Ver archivos"
                     (click)="listarArchivo(element)"
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
@@ -103,6 +104,7 @@
                     class="btn btn-primary custom-buttonEvaluar"
                     mat-icon-button
                     type="button"
+                    title="Aprobar - Rechazar Actividades"
                     (click)="seleccionarArchivo(element)"
                     style="
                       background-color: rgb(190, 170, 78);
@@ -113,7 +115,7 @@
                     
 
                   >
-                    <mat-icon>star</mat-icon>
+                  <mat-icon> functions</mat-icon>
                   </button>
 
 
@@ -123,7 +125,7 @@
                   class="btn btn-primary custom-buttonDetalle"
                   mat-icon-button
                   (click)="seleccionarTareaDetalle(element)"
-
+                  title="Ver observaciones"
                   style="
                     background-color: rgb(150, 215, 219);
                     margin-right: 5%;
@@ -133,13 +135,6 @@
                 >
                 <mat-icon>help</mat-icon>
                 </button>
-
-
-
-
-
-
-
 
                 </td>
               </ng-container>
@@ -472,8 +467,9 @@
               <button
                 type="button"
                 class="btn btn-success"
-                (click)="Guardar()"
-                data-bs-dismiss="modal"
+                *ngIf="verificar" 
+                [attr.data-bs-dismiss]="verificar ? 'modal' : null"
+                (click)="guardarev()"
                 style="background-color: rgb(10, 8, 94)"
               >
                 <i class="fas fa-save"></i>

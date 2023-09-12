@@ -37,6 +37,8 @@ import { IndicadoresService } from 'src/app/services/indicadores.service';
 import { IndiColProjection } from 'src/app/interface/IndiColProjection';
 import { MatTableDataSource } from '@angular/material/table';
 import { EvidenciasProjection } from 'src/app/interface/EvidenciasProjection';
+import { MatDialog } from '@angular/material/dialog';
+import { CalificacionComponent } from '../../modelo/matriz-evaluacion/calificacion/calificacion.component';
 
 // Color aleatorio
 function cambiarColor(str: string): string {
@@ -83,7 +85,7 @@ const colors: { [key: string]: string } = {
 export class DashboardComponent2 implements OnInit {
 
   // displayedColumns: string[] = ['actividad', 'inicio', 'fin', 'encargado', 'enlace'];
-  displayedColumns: string[] = ['actividad', 'nombre', 'subcriterio', 'indicadores', 'inicio', 'fin', 'encargado', 'enlace'];
+  displayedColumns: string[] = ['actividad', 'nombre', 'subcriterio','indicadores', 'inicio', 'fin', 'encargado', 'enlace'];
   displayedColumns5: string[] = ['enca', 'crit', 'subc', 'indic', 'descr'];
   displayedColumns6: string[] = ['enca', 'crit', 'subc', 'indic', 'descr'];
 
@@ -91,6 +93,7 @@ export class DashboardComponent2 implements OnInit {
   dataSource : ActivAprobadaProjection[] = [];
   isLoggedIn = false;
   user: any = null;
+  texto!:string;
   id_criterio!:number;
   titulocriterio!: string;
   rol: any = null;
@@ -100,6 +103,7 @@ export class DashboardComponent2 implements OnInit {
   numNotificacionesSinLeer: number = 0;
   selectedColor: string="";
   abrir: boolean = false;
+  mostrargrafico = false;
   itemsPerPageLabel = 'Items por página';
   nextPageLabel = 'Siguiente';
   lastPageLabel = 'Última';
@@ -128,28 +132,33 @@ export class DashboardComponent2 implements OnInit {
   todosSeleccionados=false;
   //
 displayedColumns1: string[] = ['actividad', 'nombre', 'subcriterio', 'indicadores', 'inicio', 'fin', 'encargado', 'enlace'];
+displayedColumns8: string[] = ['actividad', 'nombre', 'subcriterio', 'indicadores', 'inicio', 'fin', 'encargado', 'enlace'];
 spanningColumns = ['actividad', 'inicio', 'fin', 'encargado'];
 spans: any[] = [];
 spans2: any[] = [];
 spans3: any[] = [];
 spans4: any[] = [];
 spans5: any[] = [];
+spans8: any[] = [];
 coloresTarjetas: string[] = [];
 borderStyles: string[] = [];
 rowSpanValue: number = 0;
 mostrarIconoCalificar: boolean = true;
+vertit=true;
 dataSource1: ActivAprobadaProjection[] = [];
+dataSource8: ActivAprobadaProjection[] = [];
 dataSource3:EvidenciasProjection[] = [];
 dataSource4:EvidenciasProjection[] = [];
 datacrite: any[] = [];
 datacre: criteriosdesprojection= new criteriosdesprojection();
-displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos', 'Calificar'];
+displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos','Idind','Tipo', 'Calificar'];
   labesCriterios: any[] = [];
   datosPOrceCriter: number[] = [];
   criteri: any;
   valores: number[] = [10,0];
   listaCriterios: any[] = [];
   valoresp:ValoresProjection[] = [];
+  valoresp2:ValoresProjection[] = [];
   modeloMaximo:any;
   listaIndicadores: IndicadorProjection[] = [];
   listain: IndicadorProjection[] = [];
@@ -188,6 +197,8 @@ avances: any[] = [];
   datosUsuarios: any[] = [];
   filterPost = '';
   verEvidencia=false;
+  verTipo=true;
+  ocultar=false;
   verIndicador=true;
   verPeso=true;
   verObtenido=true;
@@ -231,6 +242,13 @@ public barChartType: ChartType = 'bar';
 public barChartPlugins = [DataLabelsPlugin];
 
 public barChartData: ChartData<'bar'> = {
+  labels: [],
+    datasets: [
+      { data: [], label: 'V/Obtenido', backgroundColor: 'rgba(56,116,188,255)'  },
+      { data: [], label: 'V/por obtener', backgroundColor: 'rgba(184,54,51,255)' },
+    ],
+};
+public barChartData2: ChartData<'bar'> = {
   labels: [],
     datasets: [
       { data: [], label: 'V/Obtenido', backgroundColor: 'rgba(56,116,188,255)'  },
@@ -301,7 +319,7 @@ public chartHovered({
 
 //
 constructor(private services: ActividadService,private paginatorIntl: MatPaginatorIntl,
-  private modelservices:ModeloService,
+  private modelservices:ModeloService,private dialog: MatDialog,
   private eviden: EvidenciaService,private router: Router, private servper:PersonaService,
   public login: LoginService, private notificationService: NotificacionService,
   private httpCriterios: CriteriosService,private indi:IndicadoresService) {
@@ -316,7 +334,6 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
     this.paginatorIntl.previousPageLabel=this.previousPageLabel;
     this.paginatorIntl.firstPageLabel=this.firstPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
-    
    }
 
    abrirOpcn() {
@@ -493,6 +510,32 @@ cacheSpan5(key: string, accessor: (d: any) => any) {
 getRowSpan5(col: any, index: any) {
   return this.spans5[index] && this.spans5[index][col];
 }
+
+cacheSpan8(key: string, accessor: (d: any) => any) {
+  for (let i = 0; i < this.dataSource8.length;) {
+    let currentValue = accessor(this.dataSource8[i]);
+    let count = 1;
+
+    for (let j = i + 1; j < this.dataSource8.length; j++) {
+      if (currentValue !== accessor(this.dataSource8[j])) {
+        break;
+      }
+      count++;
+    }
+
+    if (!this.spans8[i]) {
+      this.spans8[i] = {};
+    }
+
+    this.spans8[i][key] = count;
+    i += count;
+  }
+}
+
+
+getRowSpan8(col: any, index: any) {
+  return this.spans8[index] && this.spans8[index][col];
+}
 //fin evidencias combinar
   calcularRowSpanValue(index: number): void {
     this.rowSpanValue = this.getRowSpan3('Indicador', index);
@@ -509,12 +552,13 @@ getRowSpan5(col: any, index: any) {
 
 obtenerNombreArchivo2(url: string): string {
   if (url) {
-    const nombreArchivo = url.substring(url.lastIndexOf('/') + 1);
-  return nombreArchivo;
+    const nombreAr = url.substring(url.lastIndexOf('/') + 1);
+    return nombreAr; 
   } else {
     return '';
   }
 }
+
 
 toggleSeleccion(nombre: string) {
   this.seleccionados[nombre] = !this.seleccionados[nombre];
@@ -524,18 +568,34 @@ toggleSeleccion(nombre: string) {
 actualizarSeleccionGeneral() {
   this.todosSeleccionados = this.datacrite.every(item => this.seleccionados[item.criterionomj]);
 }
+grafCom(){
+  this.mostrargrafico = !this.mostrargrafico;
+  this.vertitulo();
+}
+vertitulo(){
+  if (this.vertit) {
+    this.texto="-           No ha seleccionado ningún criterio"
+  }else{
+    this.texto="";
+  }
+}
 fetchAndProcessData(nombre:string) {
   this.titulocriterio=nombre;
   this.datacrite = [];
   this.spans3 =[];
   this.clic = true;
+  this.vertit=false;
+  this.vertitulo();
+  this.mostrargrafico = true;
+  this.valorescriterio(nombre);
+  
   if(this.titulocriterio===""){
     this.titulocriterio="ORGANIZACIÓN";
     nombre="ORGANIZACIÓN";
   }
   this.httpCriterios.getIdCriterio(nombre).subscribe(data => {
     this.id_criterio = data.id_criterio;
-    console.log("id crti: "+this.id_criterio);
+   
   });
   this.modelservices.getlisdescrite(this.idmodel,nombre).subscribe((data: criteriosdesprojection[]) => {
     this.datacrite = data;
@@ -545,6 +605,7 @@ fetchAndProcessData(nombre:string) {
       }
     });
     // Generar la jerarquía de celdas
+    //'subcriterio', 'idind','indicadores','tipo', 'inicio', 
     this.cacheSpan3('Criterio', (d) => d.criterionomj);
     this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
     this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
@@ -554,6 +615,9 @@ fetchAndProcessData(nombre:string) {
     this.cacheSpan3('Valor', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti+d.val);
     this.cacheSpan3('Evidencia', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti+d.val+d.descrip);
     this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace);
+    this.cacheSpan3('Idind', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace+d.id_indicardorj);
+    this.cacheSpan3('Tipo', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace+d.id_indicardorj+d.tip);
+    //'Idind','Tipo'
     setTimeout(() => {
       this.aplicar();
     }, 0);
@@ -565,6 +629,33 @@ seleccionTodo(checked: boolean) {
     this.seleccionados[item.criterionomj] = checked;
   });
 }
+
+evaluar(valor: any, id: any, peso: any): void {
+  console.log("tipo "+valor+" id ind "+id+" peso "+peso);
+  const dialogRef = this.dialog.open(CalificacionComponent, {
+    data: { valor, id, peso },
+  });
+  dialogRef.afterClosed().subscribe(result => {
+    console.log(result);
+    if (result.event == 'success') {
+      console.log(result);
+      this.fetchAndProcessData(this.titulocriterio);
+      this.listaind();
+      this.coloresPro();
+      this.valorespr();
+      this.cargarDatos();
+      this.valorescriterio(this.titulocriterio);
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Calificación registrada',
+        showConfirmButton: true,
+        timer: 1500
+      })
+    }
+  });
+}
+
 aplicar() {
   this.datacrite.forEach(element => {
     element.randomColor = this.generarColor();
@@ -596,7 +687,9 @@ generarColor3(): string {
   const b = Math.floor(Math.random() * 256);
   return `rgba(${r}, ${g}, ${b}, 0.3)`;
 }
-
+showTipo() {
+  this.verTipo = !this.verTipo;
+}
 showArchivo() {
   this.verArchivo = !this.verArchivo;
 }
@@ -990,6 +1083,14 @@ listarevarech(id_modelo:number){
       this.cacheSpan2('fin', (y) => y.actividades + y.inicio + y.fin);
       this.cacheSpan2('encargado', (y) => y.actividades + y.inicio + y.fin + y.encargado);
     });
+
+    this.services.getActividadpendiente(id_modelo).subscribe((data: ActivAprobadaProjection[]) => {
+      this.dataSource8 = data;
+      this.cacheSpan8('actividad', (y) => y.actividades);
+      this.cacheSpan8('inicio', (y) => y.actividades + y.inicio);
+      this.cacheSpan8('fin', (y) => y.actividades + y.inicio + y.fin);
+      this.cacheSpan8('encargado', (y) => y.actividades + y.inicio + y.fin + y.encargado);
+    });
   }
   colores(color: string): string {
     switch (color) {
@@ -1061,6 +1162,20 @@ listarevarech(id_modelo:number){
       this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);
   
       this.barChartData = { ...this.barChartData };
+    });
+    
+  }
+
+  valorescriterio(nombre:string){
+    this.httpCriterios.getvalorescriterio(this.idmodel,nombre).subscribe((valores: ValoresProjection[]) => {
+      this.valoresp2 = valores;
+      
+      console.log("Valores de tabla"+JSON.stringify(this.valoresp2))
+      this.barChartData2.labels = this.valoresp2.map(val => val.nomcriterio);
+      this.barChartData2.datasets[0].data = this.valoresp2.map(val => val.vlObtenido);
+      this.barChartData2.datasets[1].data = this.valoresp2.map(val => val.vlobtener);
+  
+      this.barChartData2 = { ...this.barChartData2 };
     });
   }
   listarActividad() {

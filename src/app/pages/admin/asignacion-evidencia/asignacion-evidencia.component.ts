@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { error } from 'jquery';
 import { catchError, tap, throwError } from 'rxjs';
+import { AsigEvidProjection } from 'src/app/interface/AsigEvidProjection';
+import { AsignaProjection } from 'src/app/interface/AsignaProjection';
 import { ResponsableProjection } from 'src/app/interface/ResponsableProjection';
 import { Asigna_Evi } from 'src/app/models/Asignacion-Evidencia';
 import { Evidencia } from 'src/app/models/Evidencia';
@@ -30,9 +33,11 @@ let ELEMENT_DATA: Fenix[] = [];
 })
 export class AsignacionEvidenciaComponent implements OnInit {
   columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
-  columnasEvidencia: string[] = ['idevi','criterio','subcriterio', 'evidencia', 'descripcion', 'actions'];
-  columnasEvidenciaAsignacion: string[] = ['idasigna', 'criterio','subcriterio', 'evidencia', 'usuario', 'descripcion', 'actions'];
+  columnasEvidencia: string[] = ['criterio','subcriterio','indicador', 'descripcion','idev', 'actions'];
+  columnasEvidenciaAsignacion: string[] = ['usuario','criterio','subcriterio', 'evidencia',  'idasigna', 'ideviden','descripcion', 'actions'];
   rowspanArray: number[] = [];
+  spans: any[] = [];
+  spans2: any[] = [];
   //Cambiar texto tabla
   itemsPerPageLabel = 'Datos por página';
   nextPageLabel = 'Siguiente';
@@ -55,15 +60,20 @@ export class AsignacionEvidenciaComponent implements OnInit {
   //
   usuarioGuardar = new Usuario2();
   dataSource2 = new MatTableDataSource<ResponsableProjection>();
-  dataSource3 = new MatTableDataSource<Evidencia>();
-  dataSource4 = new MatTableDataSource<any>();
+  dataSource3:any[] = [];
+  dataSource4:any[] = [];
   fenix: Fenix = new Fenix();
   listaPersonas: Persona2[] = [];
   listaUsuarios: ResponsableProjection[] = [];
   listaUsuariosResponsables: ResponsableProjection[] = [];
-  listaEvidencias: Evidencia[] = [];
+  listaEvidencias:AsigEvidProjection [] = [];
   id_modelo!:number;
-  listaAsignaEvidencias: Asigna_Evi[] = [];
+  verCriterio=false;
+  verSubcriterio=false;
+  verIndicador=true;
+  verDescripcion=true;
+  ocultar=false;
+  listaAsignaEvidencias: AsignaProjection[] = [];
   filterPost = '';
   personaSele = new Persona2();
   evidenciaSele = new Evidencia();
@@ -92,9 +102,9 @@ export class AsignacionEvidenciaComponent implements OnInit {
      // Usuarios
      this.dataSource2.paginator = this.paginator|| null
      // Evidencias
-     this.dataSource3.paginator = this.paginator2|| null
+     //this.dataSource3.paginator = this.paginator2|| null
      // Asignaciones
-     this.dataSource4.paginator = this.paginator3|| null
+     //this.dataSource4.paginator = this.paginator3|| null
 
 
     this.listar();
@@ -151,30 +161,42 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.ListarAsignacion();
   }
 
+  showCriterio() {
+    this.verCriterio = !this.verCriterio;
+  }
+
+  showSubcriterio() {
+    this.verSubcriterio = !this.verSubcriterio;
+  }
+  
+  showIndicador() {
+    this.verIndicador = !this.verIndicador;
+  }
   //
   
-  cacheSpan(key: string, accessor: (data: any) => any): void {
-    let prevValue: any = undefined;
-    let rowspan = 1;
+  cacheSpan(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.dataSource4.length;) {
+      let currentValue = accessor(this.dataSource4[i]);
+      let count = 1;
   
-    this.listaAsignaEvidencias.forEach((row: any, index: number) => {
-      const value = accessor(row);
-      if (index === 0) {
-        prevValue = value;
-      } else if (value === prevValue) {
-        rowspan++;
-      } else {
-        // Set the rowspan and reset the values for the next group of rows.
-        this.dataSource4.data[index - rowspan][key + '-rowspan'] = rowspan;
-        rowspan = 1;
-        prevValue = value;
+      for (let j = i + 1; j < this.dataSource4.length; j++) {
+        if (currentValue !== accessor(this.dataSource4[j])) {
+          break;
+        }
+        count++;
       }
   
-      // Set rowspan for the last group of rows.
-      if (index === this.listaAsignaEvidencias.length - 1) {
-        this.dataSource4.data[index][key + '-rowspan'] = rowspan;
+      if (!this.spans2[i]) {
+        this.spans2[i] = {};
       }
-    });
+  
+      this.spans2[i][key] = count;
+      i += count;
+    }
+  }
+
+  getRowSpan(col: any, index: any) {
+    return this.spans2[index] && this.spans2[index][col];
   }
 
 
@@ -362,11 +384,11 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
   public AsignaUsuario(element: any) {
   
-    this.asignacion.evidencia.id_evidencia = element.id_evidencia;
-    this.nombreasignado=element.descripcion;
+    this.asignacion.evidencia.id_evidencia = element.idev;
+    this.nombreasignado=element.descripc;
     this.asignacion.id_modelo=this.id_modelo;
     this.asignacion.usuario.id = this.usuarioSele.id
-    console.log("ASigna: "+JSON.stringify(this.asignacion));
+    console.log("Asigna: "+JSON.stringify(this.asignacion));
     this.asignarEvidenciaService.createAsigna(this.asignacion)
       .subscribe(
         (response) => {
@@ -408,37 +430,28 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
 
  ListarAsignacion() {
-    this.asignarEvidenciaService.listarAsignarEvi().subscribe(
-      listaAsig => {
+  this.dataSource4 = [];
+  this.spans2 =[];
+    this.asignarEvidenciaService.getAsignacion().subscribe(
+      (listaAsig:AsignaProjection[]) => {
         this.listaAsignaEvidencias = listaAsig;
-        this.dataSource4.data = this.listaAsignaEvidencias;
-       
-        this.calculateRowSpan(); // Llamamos a la función para calcular rowspan
+        this.dataSource4 = this.listaAsignaEvidencias;
+        console.log("DAtos as "+JSON.stringify(this.dataSource4));
+        //'idasigna', 'criterio','subcriterio', 'evidencia', 'usuario', 'descripcion', 'actions'
+        this.cacheSpan('usuario', (d) => d.respon);
+    this.cacheSpan('criterio', (d) => d.respon+d.crite);
+    this.cacheSpan('subcriterio', (d) => d.respon+d.crite + d.subcrite);
+    this.cacheSpan('evidencia', (d) => d.respon+d.crite + d.subcrite+d.indi);
+    this.cacheSpan('idasigna', (d) => d.respon+d.crite + d.subcrite+d.indi+d.idevid);
+    this.cacheSpan('ideviden', (d) => d.respon+d.crite + d.subcrite+d.indi+d.idevid+d.ideviden);
+    this.cacheSpan('descripcion', (d) =>d.respon+ d.crite + d.subcrite+d.indi+d.idevid+d.ideviden+d.descev);
+      },(error:any)=>{
+        console.log("aqui error "+error);
       }
     );
   }
 
-  calculateRowSpan() {
-    this.rowspanArray = [];
-    const rowCount = this.dataSource4.data.length;
-
-    for (let i = 0; i < rowCount; i++) {
-      this.rowspanArray[i] = 1;
-      if (i > 0) {
-        const current = this.dataSource4.data[i].usuario.persona.primer_nombre;
-        const previous = this.dataSource4.data[i - 1].usuario.persona.primer_nombre;
-        if (current === previous) {
-          this.rowspanArray[i] = 0;
-        }
-      }
-    }
-
-    for (let i = rowCount - 1; i >= 0; i--) {
-      if (this.rowspanArray[i] === 0 && i > 0) {
-        this.rowspanArray[i - 1] += 1;
-      }
-    }
-  }
+  
   Listado() {
     this.responsableService.getResponsables().subscribe(
       listaUsua => {
@@ -600,8 +613,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
 
   eliminarAsignacion(element: any) {
-    const id = element.id_asignacion_evidencia;
-    const id_evi=element.evidencia.id_evidencia;
+    const id = element.idevid;
+    const id_evi=element.ideviden;
     Swal.fire({
       title: 'Desea eliminarlo?',
       text: "No podrá revertirlo!",
@@ -616,7 +629,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
         console.log("id_evidencia"+id_evi+"id usuario "+this.user.id+"id modelo "+this.id_modelo)
         this.asignarEvidenciaService.eliminasigna(id,id_evi,this.user.id,this.id_modelo).subscribe((response: any) => {
             
-              this.nombreasignado = element.evidencia.descripcion;
+              this.nombreasignado = element.descev;
               this.nombre = element.usuario.persona.primer_nombre + " " + element.usuario.persona.primer_apellido;
               console.log("Nombre eliminar " + this.nombreasignado + " nombres: " + this.nombre);
               this.notificarelimadmin();
@@ -706,22 +719,79 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   listar() {
-    
-    this.evidenciaService.getEvidenciasAdmin(this.user.id).subscribe(
-      listaEvi => {
+    this.dataSource3 = [];
+    this.spans =[];
+    this.evidenciaService.geteviadmin(this.user.id).subscribe(
+      (listaEvi:AsigEvidProjection[]) => {
         this.listaEvidencias = listaEvi; // Asignar la lista directamente
-        this.dataSource3.data = this.listaEvidencias;
-        console.log(listaEvi)
+        this.dataSource3 = this.listaEvidencias;
+        this.cacheSpan2('criterio', (d) => d.nombcri);
+        this.cacheSpan2('subcriterio', (d) => d.nombcri+d.nombsub);
+        this.cacheSpan2('indicador', (d) => d.nombcri+d.nombsub + d.nombind);
+        this.cacheSpan2('descripcion', (d) => d.nombcri+d.nombsub + d.nombind + d.descripc);
+        this.cacheSpan2('idevi', (d) => d.nombcri+d.nombsub + d.nombind +d.descripc+ d.idev);
+        console.log(listaEvi);
+        setTimeout(() => {
+          this.aplicar();
+        }, 0);
       }
     );
   }
 
+  aplicar() {
+    this.dataSource3.forEach(element => {
+      element.randomColor = this.generarColor();
+    });
+    this.dataSource3.forEach(element => {
+      element.Colores = this.generarColor2();
+    });
+    this.dataSource3.forEach(element => {
+      element.Color = this.generarColor3();
+    });
+  }
+  generarColor(): string {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+  generarColor2(): string {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+  generarColor3(): string {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+ //
+ cacheSpan2(key: string, accessor: (d: any) => any) {
+  for (let i = 0; i < this.dataSource3.length;) {
+    let currentValue = accessor(this.dataSource3[i]);
+    let count = 1;
+
+    for (let j = i + 1; j < this.dataSource3.length; j++) {
+      if (currentValue !== accessor(this.dataSource3[j])) {
+        break;
+      }
+      count++;
+    }
+
+    if (!this.spans[i]) {
+      this.spans[i] = {};
+    }
+
+    this.spans[i][key] = count;
+    i += count;
+  }
+}
 
 
-
-
-
-
-
+getRowSpan2(col: any, index: any) {
+  return this.spans[index] && this.spans[index][col];
+}
 
 }

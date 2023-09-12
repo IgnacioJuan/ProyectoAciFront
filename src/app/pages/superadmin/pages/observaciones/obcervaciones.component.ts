@@ -19,6 +19,7 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 export class ObcervacionesComponent implements OnInit {
 //tabla
   displayedColumns: string[] = ['file', 'uploadedBy', 'activity', 'startDate', 'endDate', 'sendMessage'];
+  displayedColumns2: string[] = ['cedula', 'nombre', 'apellido', 'celular', 'direccion', 'sendMessage'];
   spanningColumns = ['uploadedBy', 'activity', 'startDate', 'endDate'];
   spans: any[] = [];
   itemsPerPageLabel = 'Archivos por página';
@@ -45,19 +46,18 @@ export class ObcervacionesComponent implements OnInit {
   sent: boolean = false;
   toUser: string = "";
   subject: string = "";
-  message: string = " El archivo";
+  message: string = "";
   personas!: any[];
   arch!: ArchivoProjection[];
   combinedRows: { resp: string, activid: string, rowspans: number }[] = [];
 
   constructor(private archivo: ArchivoService,
-    private _snackBar: MatSnackBar,
+    private _snackBar: MatSnackBar,private serviceper:PersonaService,
     private paginatorIntl: MatPaginatorIntl,
-    private perservice3: PersonaService,
     private subiarchivo:ArchivoService,
     private emailService: EmailServiceService) { }
   ngOnInit(): void {
-    this.listar();
+    this.listarpersonas();
     this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
@@ -116,6 +116,22 @@ this.toUser=coreo;
       }
     );
   }
+
+  listarpersonas() {
+    
+    this.serviceper.getPersonas().subscribe(
+      (data: any) => {
+        console.log(JSON.stringify(data));
+        this.personas = data;
+        console.log("lista "+this.personas);
+        
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
 notificar(id:any){
   console.log("este es el id "+id);
 }
