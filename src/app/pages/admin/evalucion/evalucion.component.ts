@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { tap, catchError, throwError } from 'rxjs';
+import { AsigEvidProjection } from 'src/app/interface/AsigEvidProjection';
+import { AsignaProjection } from 'src/app/interface/AsignaProjection';
 import { ResponsableProjection } from 'src/app/interface/ResponsableProjection';
 import { Asigna_Evi } from 'src/app/models/Asignacion-Evidencia';
 import { Criterio } from 'src/app/models/Criterio';
@@ -30,10 +32,11 @@ let ELEMENT_DATA: Fenix[] = [];
 })
 export class EvalucionComponent implements OnInit {
   columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
-  columnasEvidencia: string[] = ['idevi', 'subcriterio', 'indicador', 'descripcion', 'actions'];
-  columnasEvidenciaAsignacion: string[] = ['idasigna',  'criterio', 'subcriterio','evidencia', 'usuario', 'descripcion', 'actions'];
+  columnasEvidencia: string[] = ['subcriterio', 'indicador', 'descripcion', 'idevi','actions'];
+  columnasEvidenciaAsignacion: string[] = ['usuario','criterio','subcriterio', 'evidencia',  'idasigna', 'ideviden','descripcion', 'actions'];
   rowspanArray: number[] = [];
   id_mod!:number;
+  spans2: any[] = [];
   titulocrite!:string;
   //Cambiar texto tabla
   itemsPerPageLabel = 'Datos por página';
@@ -57,15 +60,16 @@ export class EvalucionComponent implements OnInit {
   //
   usuarioGuardar = new Usuario2();
   dataSource2 = new MatTableDataSource<ResponsableProjection>();
-  dataSource3 = new MatTableDataSource<Evidencia>();
-  dataSource4 = new MatTableDataSource<any>();
+  dataSource3 :any[] = [];
+  spans: any[] = [];
+  dataSource4 :any[] = [];
   fenix: Fenix = new Fenix();
   listaPersonas: Persona2[] = [];
   listaUsuarios: ResponsableProjection[] = [];
   listaUsuariosResponsables: ResponsableProjection[] = [];
-  listaEvidencias: Evidencia[] = [];
+  listaEvidencias: AsigEvidProjection[] = [];
   selectedCriterio: number=0;
-  listaAsignaEvidencias: Asigna_Evi[] = [];
+  listaAsignaEvidencias: AsignaProjection[] = [];
   listacriterios:Criterio[] = [];
   filterPost = '';
   personaSele = new Persona2();
@@ -90,13 +94,19 @@ export class EvalucionComponent implements OnInit {
   idusuario:any=null;
   nombre:any=null;
   nombreasignado:any=null;
+  verSubcriterio=false;
+  verIndicador=true;
+  verDescripcion=true;
+  ocultar=false;
+  rowSpanValue: number = 0;
+  vernomIndicador=true;
   ngAfterViewInit() {
      // Usuarios
      this.dataSource2.paginator = this.paginator|| null
      // Evidencias
-     this.dataSource3.paginator = this.paginator2|| null
+    // this.dataSource3.paginator = this.paginator2|| null
      // Asignaciones
-     this.dataSource4.paginator = this.paginator3|| null
+    // this.dataSource4.paginator = this.paginator3|| null
     this.Listado();
   }
 
@@ -148,34 +158,63 @@ this.criteservice.getCriterios().subscribe(
     this.modeloMax();
   }
 
+  aplicar() {
+    this.dataSource3.forEach(element => {
+      element.randomColor = this.generarColor();
+    });
+    this.dataSource3.forEach(element => {
+      element.Colores = this.generarColor2();
+    });
+   
+  }
+  generarColor(): string {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+  generarColor2(): string {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+  
+ 
+  calcularRowSpanValue(index: number): void {
+    this.rowSpanValue = this.getRowSpan2('descripcion', index);
+  }
   modeloMax() {
     this.criteservice.getModeMaximo().subscribe((data) => {
       this.id_mod =data.id_modelo;})
     }
-  cacheSpan(key: string, accessor: (data: any) => any): void {
-    let prevValue: any = undefined;
-    let rowspan = 1;
-  
-    this.listaAsignaEvidencias.forEach((row: any, index: number) => {
-      const value = accessor(row);
-      if (index === 0) {
-        prevValue = value;
-      } else if (value === prevValue) {
-        rowspan++;
-      } else {
-        // Set the rowspan and reset the values for the next group of rows.
-        this.dataSource4.data[index - rowspan][key + '-rowspan'] = rowspan;
-        rowspan = 1;
-        prevValue = value;
-      }
-  
-      // Set rowspan for the last group of rows.
-      if (index === this.listaAsignaEvidencias.length - 1) {
-        this.dataSource4.data[index][key + '-rowspan'] = rowspan;
-      }
-    });
-  }
 
+  
+  cacheSpan2(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.dataSource3.length;) {
+      let currentValue = accessor(this.dataSource3[i]);
+      let count = 1;
+
+      for (let j = i + 1; j < this.dataSource3.length; j++) {
+        if (currentValue !== accessor(this.dataSource3[j])) {
+          break;
+        }
+        count++;
+      }
+  
+      if (!this.spans[i]) {
+        this.spans[i] = {};
+      }
+  
+      this.spans[i][key] = count;
+      i += count;
+    }
+  }
+  
+  
+  getRowSpan2(col: any, index: any) {
+    return this.spans[index] && this.spans[index][col];
+  }
   notificaruser() {
     this.noti.fecha = new Date();
     this.noti.rol = "";
@@ -384,8 +423,8 @@ this.criteservice.getCriterios().subscribe(
   }
 
   public AsignaUsuario(element: any) {
-    this.asignacion.evidencia.id_evidencia = element.id_evidencia;
-    this.nombreasignado=element.descripcion;
+    this.asignacion.evidencia.id_evidencia = element.idev;
+    this.nombreasignado=element.descripc;
     this.asignacion.usuario.id = this.usuarioSele.id;
     this.asignacion.id_modelo=this.id_mod;
     console.log(this.asignacion)
@@ -417,13 +456,25 @@ this.criteservice.getCriterios().subscribe(
         }
       );
   }
+
+  showSubcriterio() {
+    this.verSubcriterio = !this.verSubcriterio;
+  }
+  
+  showIndicador() {
+    this.verIndicador = !this.verIndicador;
+  }
+
   listar() {
     console.log("criterio a consultar "+this.selectedCriterio);
-    this.evidenciaService.getEvidenciaCrite(this.selectedCriterio).subscribe(
-      listaEvi => {
+    this.evidenciaService.getevitab(this.selectedCriterio).subscribe(
+      (listaEvi:AsigEvidProjection[]) => {
         this.listaEvidencias = listaEvi; // Asignar la lista directamente
-        this.dataSource3.data = this.listaEvidencias;
-        console.log("lista evidencias"+this.listaEvidencias);
+        this.dataSource3 = this.listaEvidencias;
+        console.log("Evidencasi "+JSON.stringify(this.dataSource3))
+        setTimeout(() => {
+          this.aplicar();
+        }, 0);
       }
     );
   }
@@ -436,36 +487,49 @@ this.criteservice.getCriterios().subscribe(
   }
 
  ListarAsignacion() {
-    this.asignarEvidenciaService.listarAsignarEvi().subscribe(
-      listaAsig => {
-        this.listaAsignaEvidencias = listaAsig;
-        this.dataSource4.data = this.listaAsignaEvidencias;
-        this.calculateRowSpan(); // Llamamos a la función para calcular rowspan
-      }
-    );
-  }
+  this.dataSource4 = [];
+    this.spans2 =[];
+  this.asignarEvidenciaService.getAsignacion().subscribe(
+    (listaAsig:AsignaProjection[]) => {
+      this.listaAsignaEvidencias = listaAsig;
+      this.dataSource4 = this.listaAsignaEvidencias;
+      console.log("DAtos as "+JSON.stringify(this.dataSource4));
+      //'idasigna', 'criterio','subcriterio', 'evidencia', 'usuario', 'descripcion', 'actions'
+      this.cacheSpan('usuario', (d) => d.respon);
+  this.cacheSpan('criterio', (d) => d.respon+d.crite);
+  this.cacheSpan('subcriterio', (d) => d.respon+d.crite + d.subcrite);
+  this.cacheSpan('evidencia', (d) => d.respon+d.crite + d.subcrite+d.indi);
+  this.cacheSpan('idasigna', (d) => d.respon+d.crite + d.subcrite+d.indi+d.idevid);
+  this.cacheSpan('ideviden', (d) => d.respon+d.crite + d.subcrite+d.indi+d.idevid+d.ideviden);
+  this.cacheSpan('descripcion', (d) =>d.respon+ d.crite + d.subcrite+d.indi+d.idevid+d.ideviden+d.descev);
+  })
+}
 
-  calculateRowSpan() {
-    this.rowspanArray = [];
-    const rowCount = this.dataSource4.data.length;
-
-    for (let i = 0; i < rowCount; i++) {
-      this.rowspanArray[i] = 1;
-      if (i > 0) {
-        const current = this.dataSource4.data[i].usuario.persona.primer_nombre;
-        const previous = this.dataSource4.data[i - 1].usuario.persona.primer_nombre;
-        if (current === previous) {
-          this.rowspanArray[i] = 0;
+  cacheSpan(key: string, accessor: (d: any) => any) {
+    for (let i = 0; i < this.dataSource4.length;) {
+      let currentValue = accessor(this.dataSource4[i]);
+      let count = 1;
+  
+      for (let j = i + 1; j < this.dataSource4.length; j++) {
+        if (currentValue !== accessor(this.dataSource4[j])) {
+          break;
         }
+        count++;
       }
-    }
-
-    for (let i = rowCount - 1; i >= 0; i--) {
-      if (this.rowspanArray[i] === 0 && i > 0) {
-        this.rowspanArray[i - 1] += 1;
+  
+      if (!this.spans2[i]) {
+        this.spans2[i] = {};
       }
+  
+      this.spans2[i][key] = count;
+      i += count;
     }
   }
+
+  getRowSpan(col: any, index: any) {
+    return this.spans2[index] && this.spans2[index][col];
+  }
+
   Listado() {
     this.responsableService.getResponsables().subscribe(
       listaUsua => {
@@ -621,7 +685,8 @@ this.criteservice.getCriterios().subscribe(
 
 
   eliminarAsignacion(element: any) {
-    const id = element.id_asignacion_evidencia;
+    const id = element.idevid;
+   
     Swal.fire({
       title: 'Desea eliminarlo la asignación?',
       text: "No podrá revertirlo!",
@@ -634,7 +699,7 @@ this.criteservice.getCriterios().subscribe(
     }).then((result) => {
       if (result.isConfirmed) {
         this.asignarEvidenciaService.eliminarAsignaLogic(id).subscribe((response) => {
-
+          this.nombreasignado = element.descev;
           this.ListarAsignacion();
           this.Listado();
           this.notificarelimadmin();
@@ -676,14 +741,25 @@ this.criteservice.getCriterios().subscribe(
   }
 
   criterioSeleccionado() {
-    
+    this.dataSource3 = [];
+    this.spans =[];
     if (this.selectedCriterio!=0) {
       const criterioSeleccionado = this.listacriterios.find(criterio => criterio.id_criterio === this.selectedCriterio);
       this.titulocrite = "Evidencias del criterio "+criterioSeleccionado?.nombre || '';
-      this.evidenciaService.getEvidenciaCrite(this.selectedCriterio).subscribe(
-        listaEvi => {
+      this.evidenciaService.getevitab(this.selectedCriterio).subscribe(
+        (listaEvi:AsigEvidProjection[]) => {
           this.listaEvidencias = listaEvi;
-          this.dataSource3.data = this.listaEvidencias;
+          this.dataSource3 = this.listaEvidencias;
+          this.cacheSpan2('subcriterio', (d) => d.nombsub);
+          this.cacheSpan2('indicador', (d) => d.nombsub + d.nombind);
+          this.cacheSpan2('descripcion', (d) => d.nombsub + d.nombind + d.descripc);
+          this.cacheSpan2('idevi', (d) => d.nombsub + d.nombind +d.descripc+ d.idev);
+            console.log("lista evidencias"+this.listaEvidencias);
+            setTimeout(() => {
+              this.aplicar();
+            }, 0);
+          
+          console.log("evidenica lisra"+JSON.stringify(this.dataSource3))
         }
       );
   } else {

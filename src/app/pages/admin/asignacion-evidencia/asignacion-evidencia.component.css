@@ -1,3 +1,25 @@
+.btn-tabs {
+  display: flex;
+}
+
+.btn-tab {
+  padding: 10px 20px;
+  border: none;
+  background-color: #dca500;
+  color: black;
+  font-weight: bold;
+  transform-origin: top right;
+  transform: skewX(-20deg);
+  margin-right: -10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.btn-tab.selected {
+  background-color: #044c9b;
+  color: white;
+}
+
 .modal-table {
     max-height: calc(100vh - 100px);
   }

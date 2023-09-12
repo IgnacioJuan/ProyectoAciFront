@@ -5,6 +5,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 import baserUrl from './helper';
 import { EvidenciasProjection } from '../interface/EvidenciasProjection';
 import { EvidenciaCalProjection } from '../interface/EvidenciaCalProjection';
+import { AsigEvidProjection } from '../interface/AsigEvidProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,14 @@ getEvidenciaCrite(idcriterio: number): Observable<Evidencia[]> {
 
   public getevical(id_evidencia:number,id_modelo:number): Observable<EvidenciaCalProjection> {
     return this.http.get<EvidenciaCalProjection>(`${baserUrl}/api/evidencia/evidenciacal/${id_evidencia}/${id_modelo}`);
+  }
+
+  public getevitab(idcriterio:number): Observable<AsigEvidProjection[]> {
+    return this.http.get<AsigEvidProjection[]>(`${baserUrl}/api/evidencia/eviasigtab/${idcriterio}`);
+  }
+
+  public geteviadmin(idUser:number): Observable<AsigEvidProjection[]> {
+    return this.http.get<AsigEvidProjection[]>(`${baserUrl}/api/evidencia/eviasigadmin/${idUser}`);
   }
   //LISTAR RESPONSABLE
   public listarUsuario(): Observable<any[]> {

@@ -6,6 +6,7 @@ import { Evidencia } from '../models/Evidencia';
 import { Asigna_Evi } from '../models/Asignacion-Evidencia';
 import { usuario } from '../models/Usuario';
 import { ResponsableProjection } from '../interface/ResponsableProjection';
+import { AsignaProjection } from '../interface/AsignaProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -76,5 +77,9 @@ export class AsignaEvidenciaService {
 
     public getAsignacionUsuario(user: String): Observable< Evidencia[]> {
       return this.httpClient.get<  Evidencia[]>(`${baserUrl}/api/asignacionevidencia/listarEviUsua/` + user);
+    }
+
+    public getAsignacion(): Observable<AsignaProjection[]> {
+      return this.httpClient.get<AsignaProjection[]>(`${baserUrl}/api/asignacionevidencia/listasignacion`);
     }
 }

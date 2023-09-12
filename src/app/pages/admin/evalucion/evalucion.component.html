@@ -394,41 +394,59 @@
             <div class="card-body">
               <div class= "table-responsive mat-elevation-z8" style="margin-bottom: 5%">
                 <table mat-table [dataSource]="dataSource4">
-                  <ng-container matColumnDef="idasigna">
-                    <th mat-header-cell *matHeaderCellDef>ID</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      {{ elemento.id_asignacion_evidencia}}
+                  <ng-container matColumnDef="usuario">
+                    <th mat-header-cell *matHeaderCellDef>RESPONSABLE</th>
+                    <td mat-cell *matCellDef="let elemento; let i = index"
+                    [attr.rowspan]="getRowSpan('usuario', i)" 
+                    [style.display]="getRowSpan('usuario', i) ? '' : 'none'">
+                      {{ elemento.respon }}
                     </td>
                   </ng-container>
-                  
+  
                   <ng-container matColumnDef="criterio">
                     <th mat-header-cell *matHeaderCellDef>CRITERIO</th>
-                    <td mat-cell *matCellDef="let elemento">{{ elemento.evidencia.indicador.subcriterio.criterio.nombre }}</td>
+                    <td mat-cell *matCellDef="let elemento; let i = index"
+                    [attr.rowspan]="getRowSpan('criterio', i)" 
+                    [style.display]="getRowSpan('criterio', i) ? '' : 'none'">{{ elemento.crite }}</td>
                   </ng-container>
   
                   <ng-container matColumnDef="subcriterio">
                     <th mat-header-cell *matHeaderCellDef>SUBCRITERIO</th>
-                    <td mat-cell *matCellDef="let elemento">{{ elemento.evidencia.indicador.subcriterio.nombre }}</td>
+                    <td mat-cell *matCellDef="let elemento; let i = index"
+                    [attr.rowspan]="getRowSpan('subcriterio', i)" 
+                    [style.display]="getRowSpan('subcriterio', i) ? '' : 'none'">{{ elemento.subcrite }}</td>
                   </ng-container>
                   
                   <ng-container matColumnDef="evidencia">
-                    <th mat-header-cell *matHeaderCellDef>EVIDENCIA</th>
-                    <td mat-cell *matCellDef="let elemento">{{ elemento.evidencia.indicador.nombre }}</td>
+                    <th mat-header-cell *matHeaderCellDef>INDICADOR</th>
+                    <td mat-cell *matCellDef="let elemento; let i = index"
+                    [attr.rowspan]="getRowSpan('evidencia', i)" 
+                    [style.display]="getRowSpan('evidencia', i) ? '' : 'none'">{{ elemento.indi }}</td>
                   </ng-container>
-
-                  <ng-container matColumnDef="usuario">
-                    <th mat-header-cell *matHeaderCellDef>USUARIO</th>
-                    <td mat-cell *matCellDef="let elemento; let i = index" [attr.rowspan]="rowspanArray[i]"
-                        [style.display]="rowspanArray[i] ? '' : 'none'">
-                      {{ elemento.usuario.persona.primer_nombre }}
-                      {{ elemento.usuario.persona.primer_apellido }}
+  
+                  
+                  <ng-container matColumnDef="idasigna">
+                    <th mat-header-cell *matHeaderCellDef [style.display]="ocultar ? '' : 'none'">ID</th>
+                    <td mat-cell *matCellDef="let elemento; let i = index"
+                    [attr.rowspan]="getRowSpan('idasigna', i)" 
+                    [style.display]="ocultar && getRowSpan('idasigna', i) ? '' : 'none'">
+                      {{ elemento.idevid}}
                     </td>
                   </ng-container>
-
+                  <ng-container matColumnDef="ideviden">
+                    <th mat-header-cell *matHeaderCellDef [style.display]="ocultar ? '' : 'none'">ID ev</th>
+                    <td mat-cell *matCellDef="let elemento; let i = index"
+                    [attr.rowspan]="getRowSpan('ideviden', i)" 
+                    [style.display]="ocultar && getRowSpan('ideviden', i) ? '' : 'none'">
+                      {{ elemento.ideviden}}
+                    </td>
+                  </ng-container>
                   <ng-container matColumnDef="descripcion">
                     <th mat-header-cell *matHeaderCellDef>DESCRIPCIÓN EVIDENCIA</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      {{ elemento.evidencia.descripcion }}
+                    <td mat-cell *matCellDef="let elemento; let i = index"
+                    [attr.rowspan]="getRowSpan('descripcion', i)" 
+                    [style.display]="getRowSpan('descripcion', i) ? '' : 'none'">
+                      {{ elemento.descev }}
                     </td>
                   </ng-container>
               
@@ -536,41 +554,62 @@
                             class="mat-elevation-z8"
                             style="margin-bottom: 10%"
                           >
+                          <div class="btn-tabs">
+            
+                            <button mat-button class="btn-tab" [ngClass]="verSubcriterio ? 'selected' : ''" (click)="showSubcriterio()">
+                            Subcriterio
+                            </button>
+                      
+                            <button mat-button class="btn-tab" [ngClass]="verIndicador ? 'selected' : ''" (click)="showIndicador()">
+                            Indicador
+                            </button>
+                        </div>
+                            
                             <table mat-table [dataSource]="dataSource3">
-                              <ng-container matColumnDef="idevi">
-                                <th mat-header-cell *matHeaderCellDef>ID</th>
-                                <td mat-cell *matCellDef="let elemento">
-                                  {{ elemento.id_evidencia }}
-                                </td>
-                              </ng-container>
+                              
   
                               <ng-container matColumnDef="subcriterio">
-                                <th mat-header-cell *matHeaderCellDef>
+                                <th mat-header-cell *matHeaderCellDef  [style.display]="verSubcriterio ? '' : 'none'">
                                   SUBCRITERIO
                                 </th>
-                                <td mat-cell *matCellDef="let elemento">
-                                  {{ elemento.indicador.subcriterio.nombre }}
+                                <td mat-cell *matCellDef="let elemento; let i = index"
+                                [attr.rowspan]="getRowSpan2('subcriterio', i)"
+                                [style.background-color]="elemento.randomColor"
+                                [style.display]="verSubcriterio && getRowSpan2('subcriterio', i) ? '' : 'none'">
+                                  {{ elemento.nombsub }}
                                 </td>
                               </ng-container>
 
                               <ng-container matColumnDef="indicador">
-                                <th mat-header-cell *matHeaderCellDef>
+                                <th mat-header-cell *matHeaderCellDef [style.display]="verIndicador ? '' : 'none'">
                                   INDICADOR
                                 </th>
-                                <td mat-cell *matCellDef="let elemento">
-                                  {{ elemento.indicador.nombre }}
+                                <td mat-cell *matCellDef="let elemento; let i = index"
+                                [attr.rowspan]="getRowSpan2('indicador', i)"
+                                [style.background-color]="elemento.Colores"
+                                [style.display]="verIndicador && getRowSpan2('indicador', i) ? '' : 'none'">
+                                  {{ elemento.nombind }}
+                                  
                                 </td>
                               </ng-container>
-
+                              
                               <ng-container matColumnDef="descripcion">
                                 <th mat-header-cell *matHeaderCellDef>
                                   DESCRIPCIÓN
                                 </th>
-                                <td mat-cell *matCellDef="let elemento">
-                                  {{ elemento.descripcion }}
+                                <td mat-cell *matCellDef="let elemento; let i = index"
+                                [attr.rowspan]="getRowSpan2('descripcion', i)"
+                                [style.display]="getRowSpan2('descripcion', i) ? '' : 'none'">
+                                  {{ elemento.descripc }}
                                 </td>
                               </ng-container>
-  
+                              <ng-container matColumnDef="idevi">
+                                <th mat-header-cell *matHeaderCellDef [style.display]="ocultar ? '' : 'none'">ID</th>
+                                <td mat-cell *matCellDef="let elemento;let i=index"
+                                [style.display]="ocultar && getRowSpan2('idevi', i) ? '' : 'none'">
+                                  {{ elemento.idev }}
+                                </td>
+                              </ng-container>
                               <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef>
                                   ASIGNAR
