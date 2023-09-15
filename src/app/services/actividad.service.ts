@@ -58,6 +58,9 @@ export class ActividadService {
   return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscarusuario/${user}`);
 }
 
+public getactivievid(username: string,id_evidencia:number): Observable<Actividades[]> {
+  return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/activevid/${username}/${id_evidencia}`);
+}
 //Observacion
   //Metodo para crear
   createObservacion(r: Observacion2): Observable<Observacion2> {

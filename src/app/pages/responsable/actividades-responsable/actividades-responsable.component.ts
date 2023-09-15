@@ -13,6 +13,7 @@ import { ModeloService } from 'src/app/services/modelo.service';
 import { Modelo } from 'src/app/models/Modelo';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
+import { EvidenciaService } from 'src/app/services/evidencia.service';
 
 
 @Component({
@@ -53,12 +54,13 @@ export class ActividadesResponsableComponent implements OnInit {
     'DESCRIPCIÓN',
     'FECHA DE INICIO',
     'FECHA FINALIZACION',
+    'ESTADO',
     'Subir evidencia',
     'ACCIÓN'
   ];
   constructor(
     private services: ActividadService,
-    private fb: FormBuilder,
+    private fb: FormBuilder,private evid:EvidenciaService,
     private router: Router,
     public login: LoginService,
     private modeloService: ModeloService,
@@ -75,7 +77,7 @@ export class ActividadesResponsableComponent implements OnInit {
     });
     this.paginatorIntl.nextPageLabel = 'Siguiente';
     this.paginatorIntl.lastPageLabel = 'Última';
-    this.paginatorIntl.itemsPerPageLabel = 'Ítems por página';
+    this.paginatorIntl.itemsPerPageLabel = 'Actividades por página';
     this.paginatorIntl.previousPageLabel = 'Anterior';
     this.paginatorIntl.firstPageLabel = 'Primera';
     // Además, puedes definir la función para la etiqueta de rango en español si es necesario
@@ -94,25 +96,22 @@ export class ActividadesResponsableComponent implements OnInit {
     };
   }
   evi: Evidencia = new Evidencia();
-  
+  idevi:number=0;
   ngOnInit(): void {
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
-   /* this.services.geteviasig(this.user.username).subscribe(data => {
-      this.Actividades = data;
-      this.dataSource.data = data;
-      this.dataSource.paginator = this.paginator; // Asigna el paginador aquí
-      // ...
-    });*/
     
     const data = history.state.data;
-    this.evi = data;
-    if (this.evi == undefined) {
+    this.idevi = data;
+    if (this.idevi == undefined) {
       this.router.navigate(['user-dashboard']);
       location.replace('/use/user-dashboard');
     }
 
-   
+    this.evid.buscar(this.idevi).subscribe((evidencia: Evidencia) => {
+      this.evi = evidencia;
+       this.listar();
+    });
     this.idusuario=this.user.id;
     console.log("usuar "+this.idusuario);
     this.login.loginStatusSubjec.asObservable().subscribe(
@@ -124,9 +123,22 @@ export class ActividadesResponsableComponent implements OnInit {
     )
     this.fechaminima();
     this.calcularfecha();
-    this.listar();
+   
   }
   
+  getColorEstado(estado: string): string {
+    switch (estado.toLowerCase()) {
+      case 'pendiente':
+        return 'estado-pendiente';
+      case 'aprobada':
+        return 'estado-aprobada';
+      case 'rechazada':
+        return 'estado-rechazada';
+      default:
+        return '';
+    }
+  }
+
   notificar() {
     this.noti.fecha = new Date();
     this.noti.rol = "SUPERADMIN";
@@ -183,7 +195,7 @@ export class ActividadesResponsableComponent implements OnInit {
     this.actividad = this.frmActividades.value;
     console.log("Nombre actividad: "+this.actividad.nombre);
     this.nombreacti=this.actividad.nombre;
-    this.actividad.evidencia = this.evi;
+    this.actividad.evidencia =this.evi;
     this.actividad.usuario = this.idusuario;
     this.actividad.estado = "pendiente"
     this.services.crear(this.actividad)
@@ -224,10 +236,10 @@ export class ActividadesResponsableComponent implements OnInit {
 
   listar(): void {
     const fechaActual = new Date();
-    this.services.geteviasig(this.user.username).subscribe(data => {
-      this.Actividades = data.filter(actividad => actividad.evidencia?.id_evidencia === this.evi.id_evidencia);
-      this.dataSource.data = data.filter(actividad => actividad.evidencia?.id_evidencia === this.evi.id_evidencia);
+    console.log("IDS: "+this.user.username+"id "+this.idevi+"idevidencia"+this.evi.id_evidencia);
+    this.services.getactivievid(this.user.username,this.idevi).subscribe(data => {
       this.dataSource.data = data;
+      console.log("actividades "+JSON.stringify(this.dataSource.data))
       this.dataSource.paginator = this.paginator;
     });
   }

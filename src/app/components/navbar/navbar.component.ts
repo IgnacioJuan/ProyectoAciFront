@@ -63,7 +63,7 @@ export class NavbarComponent implements OnInit {
       this.notificationService.getNotificaciones(id).subscribe(
         (data: Notificacion[]) => {
           this.notificaciones = data;
-          console.log("noti "+JSON.stringify(this.notificaciones));
+          //console.log("noti "+JSON.stringify(this.notificaciones));
           this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
         },
         (error: any) => {

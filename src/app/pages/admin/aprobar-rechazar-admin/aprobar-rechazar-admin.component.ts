@@ -18,6 +18,8 @@ import { Notificacion } from 'src/app/models/Notificacion';
 import { NotificacionService } from 'src/app/services/notificacion.service';
 import { proyeccionCriterio } from './proyecciones-testeo/proyeccionCriterio';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { CalificacionComponent } from '../../superadmin/modelo/matriz-evaluacion/calificacion/calificacion.component';
 
 @Component({
   selector: 'app-aprobar-rechazar-admin',
@@ -41,6 +43,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
   noRegistros: any;
   mostrarBoton = false;
   idUsuario: number = 0;
+  idevi!:number;
   usuarioResponsable: Usuario2[] = [];
   //idEvidencia: number = Number(localStorage.getItem('idUsuario'));
   idEvidencia: number = 0;
@@ -65,6 +68,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
   rol: any = null;
   noti = new Notificacion();
   idusuario: any = null;
+  id_modelo!:number;
   nombre: any = null;
   nombreev:any=null;
   aprobado: boolean=false;
@@ -86,7 +90,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
   
   constructor(
     private evidenciaService: EvidenciaService,
-    private router: Router,
+    private router: Router, private dialog: MatDialog,
     private emailService: EmailServiceService,
     public login: LoginService,
     private notificationService: NotificacionService,
@@ -107,9 +111,48 @@ export class AprobarRechazarAdminComponent implements OnInit {
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
-    
+    this.modeloMax();
   }
   
+  modeloMax() {
+    this.criteriosService.getModeMaximo().subscribe((data) => {
+
+      this.id_modelo =data.id_modelo;});
+    }
+
+  calificar(element:any){
+    this.idevi=element.id_evidencia;
+    this.evidenciaService.getevical(this.idevi,this.id_modelo).subscribe(data => {
+      console.log("Datos ev "+JSON.stringify(data));
+      const tipo:any = data.tipo;
+      const id: any = data.id_in;
+      const peso:any=data.peso;
+    
+      console.log("tipo "+tipo+" id ind "+id+" peso "+peso);
+      
+       this.evaluar(tipo,id,peso);
+    });  
+  }
+
+  evaluar(valor: any, id: any, peso: any): void {
+    console.log("tipo "+valor+" id ind "+id+" peso "+peso);
+    const dialogRef = this.dialog.open(CalificacionComponent, {
+      data: { valor, id, peso },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if (result.event == 'success') {
+        console.log(result);
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: 'Calificación registrada',
+          showConfirmButton: true,
+          timer: 1500
+        })
+      }
+    });
+  }
 
   applyFilter() {
     const filterValue = this.idFilter.value;

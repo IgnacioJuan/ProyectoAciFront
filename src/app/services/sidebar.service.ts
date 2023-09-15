@@ -14,11 +14,13 @@ export class SidebarService {
         { titulo: 'Asignar Evidencia', url: 'adm/asignaEvidencia', icono: 'fas fa-check-square' }
       ]
     },
+  
     {
-      icono: 'nav-icon fas fa-eye',
-      titulo: "Observación",
+      icono: 'nav-icon fas fa-file-alt',
+      titulo: "Evidencias",
       submenu: [
-        { titulo: ' Agregar observación ', url: 'sup/observaciones', icono: 'fas fa-cubes' }
+        { titulo: 'Evidencias asignadas', url: 'res/evidenasignada', icono: 'fas fa-file-contract' }
+
       ]
     },
     {
@@ -104,7 +106,14 @@ export class SidebarService {
 
       ]
     },
+    {
+      icono: 'nav-icon fas fa-file-alt',
+      titulo: "Evidencias",
+      submenu: [
+        { titulo: 'Evidencias asignadas', url: 'res/evidenasignada', icono: 'fas fa-file-contract' }
 
+      ]
+    },
     {
       icono: 'nav-icon fas fa-superscript',
       titulo: "Fórmula",
@@ -134,7 +143,7 @@ export class SidebarService {
       icono: 'nav-icon fas fa-file-alt',
       titulo: "Evidencias",
       submenu: [
-        { titulo: 'Evidencias asignadas', url: 'res/eviTareaAsina', icono: 'fas fa-file-contract' }
+        { titulo: 'Evidencias asignadas', url: 'res/evidenasignada', icono: 'fas fa-file-contract' }
 
       ]
     },

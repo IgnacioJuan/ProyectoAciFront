@@ -114,23 +114,21 @@ export class DetalleIndicadorComponent implements OnInit {
   recibeIndicador() {
     this.model = history.state.modelo;
     let id = history.state.data;
-    this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(this.model.id_modelo).subscribe((info) => {
-      this.indicadorservice.getIndicadors().subscribe((result) => {
-        this.dataSource.data = [];
-        this.asignacion = info;
-        this.dataSource.data = result.filter((indicador: any) => {
+    //this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(this.model.id_modelo).subscribe((info) => {
+      this.indicadorservice.getSubcrindica(id,this.model.id_modelo).subscribe((info) => {
+       /* this.dataSource.data = [];
+        this.asignacion = info;*/
+        this.dataSource.data = info;
+        /*result.filter((indicador: any) => {
           return info.some((asignacion: any) => {
             return (
               indicador.id_indicador === asignacion.indicador.id_indicador &&
               indicador.subcriterio?.id_subcriterio === id
             );
           });
-        });
+        });*/
         this.assignColorsToIndicators(this.dataSource.data);
-
-        // Guardar el estado actual antes de navegar a otra página
-        //sessionStorage.setItem('savedState', JSON.stringify(this.dataSource));
-      });
+     // });
     });
   }
 

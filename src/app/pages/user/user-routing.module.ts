@@ -25,7 +25,6 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   
-  
   {
     path: 'userprofile',
     component: UserProfileComponent,
@@ -40,6 +39,7 @@ const routes: Routes = [
     canActivate: [RoleguardGuard],
     data: { allowedRoles: ['RESPONSABLE', 'SUPERADMIN', 'ADMIN', 'AUTORIDAD'] }
   },
+  
   {
     path: 'pagenotfoud',
     component: PageNotFoundComponent

@@ -318,13 +318,15 @@ table {
   display: flex;
   align-items: center; 
 }
+
 .imagen img {
   max-width: 100%;  
   max-height: 100%; 
   width: auto;      
   height: auto;    
   display: block;   
-  margin: 0 auto;   
+  margin: 0 auto;
+  opacity: 0.5;   
 }
 .charts {
   display: grid;
@@ -427,7 +429,6 @@ table {
 
 body {
   font: 1em/1.618 Inter, sans-serif;
-
   display: flex;
   align-items: center;
   justify-content: center;

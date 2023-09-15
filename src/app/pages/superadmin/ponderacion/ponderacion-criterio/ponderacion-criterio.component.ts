@@ -45,7 +45,7 @@ export class PonderacionCriterioComponent implements OnInit {
         : startIndex + pageSize;
     return `${startIndex + 1} - ${endIndex} de ${length}`;
   };
-
+  nombre:string="";
   model: Modelo = new Modelo();
   archivos: Archivo[] = [];
   critrioClase = new Criterio();
@@ -90,18 +90,17 @@ export class PonderacionCriterioComponent implements OnInit {
   }
   ngOnInit(): void {
     this.llenar_datasource();
-    const tusDatos = this.tusDatosService.obtenerTusDatos();
-
-    this.dataSource.data = tusDatos; // Asigna los datos al dataSource
+  
   
   }
 
   llenar_datasource() {
-    this.criterio = history.state.criterio;
+    let id=history.state.criterio.idcriterio;
+    this.nombre=history.state.criterio.nombrecriterio;
     this.modelo = history.state.modelo;
     const id_criterio = 1; // Reemplaza con el ID de criterio correcto
     const id_modelo = 2; // Reemplaza con el ID de modelo correcto
-    this.indicadorservice.listarIndicadorPorCriterioModelo(this.criterio.id_criterio, this.modelo.id_modelo).subscribe(
+    this.indicadorservice.listarIndicadorPorCriterioModelo(id, this.modelo.id_modelo).subscribe(
       (data) => {
         const mappedData = data.map((indicador: any) => {
           return {

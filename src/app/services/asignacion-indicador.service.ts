@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 import { Observable, catchError } from "rxjs";
 import baserUrl from './helper';
 import { AsignacionIndicador } from "../models/AsignacionIndicador";
+import { AsignaIndicadorProjection } from "../interface/AsignaIndicadorProjection";
 
 @Injectable({
     providedIn: 'root'
@@ -36,6 +37,11 @@ export class AsignacionIndicadorService {
         return this.http.get<AsignacionIndicador[]>(`${baserUrl}/api/asignacion_indicador/listarasig_indi/${id}`);
       }
     
+
+      public getasignacriterio(id_modelo: number): Observable<AsignaIndicadorProjection[]> {
+        return this.http.get<AsignaIndicadorProjection[]>(`${baserUrl}/api/asignacion_indicador/asignacioncriterio/${id_modelo}`);
+      }
+
       getEliminaasig(id_modelo: number,id_asig:number): Observable<AsignacionIndicador> {
         return this.http.delete<AsignacionIndicador>(`${baserUrl}/api/asignacion_indicador/eliminarasi/${id_modelo}/${id_asig}`);
       }
