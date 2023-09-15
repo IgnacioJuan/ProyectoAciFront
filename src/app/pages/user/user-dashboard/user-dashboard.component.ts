@@ -10,6 +10,8 @@ import Swal from 'sweetalert2';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 import { BaseChartDirective } from 'ng2-charts';
 import { ValoresProjection } from 'src/app/interface/ValoresProjection';
+import { MatDialog } from '@angular/material/dialog';
+import { CalificacionComponent } from '../../superadmin/modelo/matriz-evaluacion/calificacion/calificacion.component';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -23,6 +25,8 @@ export class UserDashboardComponent implements OnInit {
   isLoggedIn = false;
   todosSeleccionados=false;
   verdash=false;
+  ocultar=false;
+  verTipo=true;
   rowSpanValue: number = 0;
   idmodel!:number;
   id_criterio!:number;
@@ -42,14 +46,14 @@ export class UserDashboardComponent implements OnInit {
   crite: any[] = [];
   datos: any[]=[];
   listain: IndicadorProjection[] = [];
-  displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos', 'Calificar'];
+  displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos','Idind','Tipo', 'Calificar'];
   datacrite: any[] = [];
   listaIndicadores: IndicadorProjection[] = [];
   valoresp:ValoresProjection[] = [];
   coloresTarjetas: string[] = [];
 borderStyles: string[] = [];
 id!:number;
-  constructor(public login:LoginService,private service:ModeloService,
+  constructor(public login:LoginService,private service:ModeloService,private dialog: MatDialog,
     private router: Router,private httpCriterios: CriteriosService) { 
     this.verdash = false;
   }
@@ -129,6 +133,10 @@ public chartHovered({
   active?: object[];
 }): void {
   console.log(event, active);
+}
+
+showTipo() {
+  this.verTipo = !this.verTipo;
 }
 
   showArchivo() {
@@ -318,16 +326,28 @@ public chartHovered({
     
     }
 
-    calificar(element: any) {
-      console.log("MODELO: "+this.idmodel+" idcriterio :"+this.id_criterio+"Criterio pres: "+element.criterionomj);
-      const datos = {
-        idCriterio: this.id_criterio,
-        modelo: this.idmodel
-      };
-    
-      localStorage.setItem('datopasado', JSON.stringify(datos));
-    
-      this.router.navigate(['/adm/apruebaAdmin']);
+    calificar(valor: any, id: any, peso: any): void {
+      console.log("tipo "+valor+" id ind "+id+" peso "+peso);
+      const dialogRef = this.dialog.open(CalificacionComponent, {
+        data: { valor, id, peso },
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log(result);
+        if (result.event == 'success') {
+          console.log(result);
+         this.listardatos();
+         this.cargarDatos();
+         this.listaind();
+         //this.aplicar();
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Calificación registrada',
+            showConfirmButton: true,
+            timer: 1500
+          })
+        }
+      });
      }
 listardatos(){
   this.service.getcriterioadmin(this.idmodel,this.id).subscribe((data: criteriosdesprojection[]) => {

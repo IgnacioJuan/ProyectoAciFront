@@ -4,11 +4,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
-import { Evidencia } from 'src/app/models/Evidencia';
 import Swal from 'sweetalert2';
 import { ModeloService } from 'src/app/services/modelo.service';
-import { Modelo } from 'src/app/models/Modelo';
+
 import { AsignaEvidenciaService } from 'src/app/services/asigna-evidencia.service';
+import { EvidenciaProjection } from 'src/app/interface/EvidenciaProjection';
 
 @Component({
   selector: 'app-evidencia-tareas-asginadas',
@@ -17,13 +17,14 @@ import { AsignaEvidenciaService } from 'src/app/services/asigna-evidencia.servic
 })
 export class EvidenciaTareasAsginadasComponent {
   // Propiedades y métodos anteriores
-  evidencias: Evidencia[] = []; // Declaración de la propiedad
+  evidencias: EvidenciaProjection[] = []; // Declaración de la propiedad
   isLoggedIn: boolean;
   user: any;
- 
+ verificar=false;
+ titulo="";
   botonDeshabilitado: boolean | undefined;
-  dataSource = new MatTableDataSource<Evidencia>();
-  displayedColumns: string[] = ['ID', 'Criterio', 'Subcriterio', 'Evidencia', 'Estado', 'Descripción', 'Actividad'];
+  dataSource = new MatTableDataSource<EvidenciaProjection>();
+  displayedColumns: string[] = ['ID', 'Criterio', 'Subcriterio', 'Indicador', 'Estado', 'Descripción', 'Actividad'];
 
   constructor(
     private asignaService: AsignaEvidenciaService,
@@ -54,6 +55,10 @@ export class EvidenciaTareasAsginadasComponent {
       return `${startIndex + 1} - ${endIndex} de ${length}`;
     };
   }
+
+  
+  
+
   ngAfterViewInit() {
     console.log('Paginator:', this.paginator);
     if (this.paginator) {
@@ -64,29 +69,36 @@ export class EvidenciaTareasAsginadasComponent {
   
 
   verDetalles(evidencia: any) {
-    this.router.navigate(['/res/ActividadesResponsable'], { state: { data: evidencia } });
+    this.router.navigate(['/res/ActividadesResponsable'], { state: { data: evidencia.id_evidencia } });
   }
   
 
   ngOnInit(): void {
     // this.evidenciaService.geteviasig(this.user.username).subscribe(data => {
-    //   this.evidencias = data;
-    //   this.dataSource.data = data;
+     //   this.evidencias = data;
+   //   this.dataSource.data = data;
     //   this.dataSource.paginator = this.paginator; // Asigna el paginador aquí
     //   // ...
     // });
-    this.evidenciaService.geteviasig(this.user.username).subscribe(data => {
+    this.evidenciaService.getevilist(this.user.username).subscribe(data => {
       // Filtrar duplicados utilizando un Set
-      const uniqueIds = new Set<number>();
+     /* const uniqueIds = new Set<number>();
       this.evidencias = data.filter(ev => {
         if (!uniqueIds.has(ev.id_evidencia)) {
           uniqueIds.add(ev.id_evidencia);
           return true;
         }
         return false;
-      });
+      });**/
 
-      this.dataSource.data = this.evidencias;
+      if(data.length!=0){
+        this.verificar=true;
+        this.titulo="EVIDENCIAS ASIGNADAS";
+      } else{
+        this.titulo="NO TIENES EVIDENCIAS ASIGNADAS";
+      }
+      this.dataSource.data = data;
+      console.log("datos evid "+JSON.stringify(this.dataSource.data));
       this.dataSource.paginator = this.paginator;
       // ...
     });
@@ -103,17 +115,17 @@ export class EvidenciaTareasAsginadasComponent {
         this.user = this.login.getUser();
   
         // Realiza la solicitud de datos solo una vez aquí
-        this.evidenciaService.geteviasig(this.user.username).subscribe(data => {
-          const uniqueIds = new Set<number>();
+        this.evidenciaService.getevilist(this.user.username).subscribe(data => {
+          /*const uniqueIds = new Set<number>();
           this.evidencias = data.filter(ev => {
             if (!uniqueIds.has(ev.id_evidencia)) {
               uniqueIds.add(ev.id_evidencia);
               return true;
             }
             return false;
-          });
+          });*/
   
-          this.dataSource.data = this.evidencias;
+          this.dataSource.data = data;
           this.dataSource.paginator = this.paginator;
         });
   
@@ -122,7 +134,7 @@ export class EvidenciaTareasAsginadasComponent {
       }
     );
     console.log(this.user.username);
-    this.evidenciaService.geteviasig(this.user.username).subscribe(data => {
+    this.evidenciaService.getevilist(this.user.username).subscribe(data => {
       this.evidencias = data;
       this.dataSource.data = data;
       this.dataSource.data = this.evidencias; // Actualizar el dataSource
@@ -131,6 +143,22 @@ export class EvidenciaTareasAsginadasComponent {
     this.verificarFechaLimite();
   }
 
+ 
+  
+  getColorEstado(estado: string): string {
+    switch (estado.toLowerCase()) {
+      case 'pendiente':
+        return 'estado-pendiente';
+      case 'aprobada':
+        return 'estado-aprobada';
+      case 'rechazada':
+        return 'estado-rechazada';
+      default:
+        return '';
+    }
+  }
+  
+  
   // Resto del código
 
   verificarFechaLimite() {

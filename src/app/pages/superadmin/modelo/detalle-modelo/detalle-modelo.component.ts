@@ -64,8 +64,8 @@ export class DetalleModeloComponent implements OnInit {
   
   dataSource = new MatTableDataSource<any>();
   public columnNames: ColumnNames = {
-    nombre: 'Nombre del Criterio',
-    descripcion: 'Descripción del Criterio'
+    nombrecriterio: 'Nombre del Criterio',
+    descripcio: 'Descripción del Criterio'
   };
 
   public ponderar: ponderar = {
@@ -75,7 +75,7 @@ export class DetalleModeloComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
   asignacion: any;
-  columnsToDisplay = ['nombre', 'descripcion'];
+  columnsToDisplay = ['nombrecriterio', 'descripcio'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'subcriterios', 'matriz', 'ponderacion', 'asignar'];
   expandedElement: any;
   model: Modelo = new Modelo();
@@ -181,26 +181,13 @@ idmodelo: number = 0;
             this.dataSourcePonderacion = fechas;
           }
         );
-      } else {
-        this.mostrarPrincipal = 1;
-        this.ocultarBoton = true;
-
-        this.ponderacionService.listarPonderacionPorModelo(Number(this.model.id_modelo)).subscribe(data => {
-          this.dataSourcePonderacion = data;
-              this.updateDataSource();
-        });
-
-      }
-      this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.model.id_modelo)).subscribe(info => {
-        this.criterioService.listarCriterio().subscribe(result => {
+      } 
+      this.asignacionIndicadorService.getasignacriterio(Number(this.model.id_modelo)).subscribe(info => {
+       
           this.dataSource.data = [];
           this.asignacion = info;
-          this.dataSource.data = result.filter((criterio: any) => {
-            return info.some((asignacion: any) => {
-              return criterio.id_criterio === asignacion.indicador.subcriterio.criterio.id_criterio;
-            });
-          });
-        });
+          this.dataSource.data = info;
+        console.log("datos "+JSON.stringify(this.dataSource.data))
       });
   }
 
@@ -216,7 +203,7 @@ idmodelo: number = 0;
 
   mostrar(element: any) {
    // this.sharedDataService.agregarIdCriterio(element.id_criterio);
-    this.router.navigate(['/sup/modelo/detalle-subcriterio'], { state: { data: element.id_criterio, modelo: this.model } });
+    this.router.navigate(['/sup/modelo/detalle-subcriterio'], { state: { data: element.idcriterio, modelo: this.model } });
   }
 
   evaluacion(event: Event, element: any) {
@@ -226,7 +213,7 @@ idmodelo: number = 0;
 
   ponderacion(event: Event, element: any) {
     event.stopPropagation();
-    this.sharedDataService.agregarIdCriterio(element.id_criterio);
+    this.sharedDataService.agregarIdCriterio(element.idcriterio);
   }
   pond(element:any) {
     let fecha=element.fechapo;
@@ -245,10 +232,10 @@ idmodelo: number = 0;
   asignar_criterio(event: Event, criterio: any) {
     event.stopPropagation();
     const id_modelo = localStorage.getItem('id');
-    console.log("Id modelo a asignar"+id_modelo+" id criterio "+criterio.id_criterio+" nombre "+criterio.nombre);
+    console.log("Id modelo a asignar"+id_modelo+" id criterio "+criterio.idcriterio+" nombre "+criterio.nombrecriterio);
     const dialogRef = this.dialog.open(AsignarCriterioComponent, {
       width: '45%',
-      data: { id: criterio.id_criterio,modelo:id_modelo,nombre:criterio.nombre }
+      data: { id: criterio.idcriterio,modelo:id_modelo,nombre:criterio.nombrecriterio }
     });
 
     dialogRef.afterClosed().subscribe(result => {

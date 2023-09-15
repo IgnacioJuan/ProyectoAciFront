@@ -104,6 +104,9 @@ export class IndicadoresService {
     return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/listar`);
   }
 
+  getSubcrindica(id_subcriterio:number,id_modelo:number): Observable<Indicador[]> {
+    return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/subcritindicador/${id_subcriterio}/${id_modelo}`);
+  }
   getIndicadorById(id_indicador: number): Observable<Indicador> {
     return this.http.get<Indicador>(`${baserUrl}/api/indicadores/buscar/id_indicador/${id_indicador}`);
   }

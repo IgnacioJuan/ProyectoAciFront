@@ -78,6 +78,7 @@ export class MatrizEvaluacionComponent implements OnInit {
   columnsToDisplay = ['nombre', 'descripcion', 'tipo', 'valor_obtenido'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay,'archivo', 'evaluar'];
   expandedElement: any;
+  nombre:string="";
   idcriterio: Criterio = new Criterio();
   idmodelo: Modelo = new Modelo();
   indicador: Indicador = new Indicador();
@@ -173,7 +174,10 @@ export class MatrizEvaluacionComponent implements OnInit {
 llenardatos(){
   this.idcriterio = history.state.criterio;
   this.idmodelo = history.state.modelo;
-  this.modelserv.getliscritemod(this.idcriterio.id_criterio, this.idmodelo.id_modelo).subscribe((data: criteriosdesprojection[]) => {
+  let id=history.state.criterio.idcriterio;
+  this.nombre=history.state.criterio.nombrecriterio;
+  console.log("nombrec"+history.state.criterio.nombrecriterio);
+  this.modelserv.getliscritemod(id, this.idmodelo.id_modelo).subscribe((data: criteriosdesprojection[]) => {
     this.datacrite = data;
     console.log("Datos mios "+"id mod "+this.idmodelo.id_modelo+"id crite "+this.idcriterio.id_criterio+" "+JSON.stringify(data));
     
@@ -222,15 +226,17 @@ llenardatos(){
       });
       
     }else{
-    this.idcriterio = history.state.criterio;
+   // this.idcriterio = history.state.criterio;
+   let id=history.state.criterio.idcriterio;
+   console.log("idcrit "+id);
     this.idmodelo = history.state.modelo;
 
-    this.indicadorService.listarIndicadorPorCriterioModelo(this.idcriterio.id_criterio, this.idmodelo.id_modelo).subscribe(data => {
+    this.indicadorService.listarIndicadorPorCriterioModelo(id, this.idmodelo.id_modelo).subscribe(data => {
       
       this.dataSource.data = data;
       if (data.length > 0) {
         data.forEach(indicador => {
-          this.archi.getarchivoindi(this.idcriterio.id_criterio, this.idmodelo.id_modelo, indicador.id_indicador).subscribe(
+          this.archi.getarchivoindi(id, this.idmodelo.id_modelo, indicador.id_indicador).subscribe(
             arch => {
               console.log("Archivos: " + JSON.stringify(arch));
               const enlaces = arch.map(archivo => archivo.enlace); // Obtener solo los enlaces

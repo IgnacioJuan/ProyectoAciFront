@@ -35,7 +35,7 @@ const routes: Routes = [{
   component: ObcervacionesComponent,
   pathMatch: 'full',
   canActivate: [RoleguardGuard],
-  data: { allowedRoles: ['SUPERADMIN', 'ADMIN'] }
+  data: { allowedRoles: ['SUPERADMIN'] }
 },
 
 {

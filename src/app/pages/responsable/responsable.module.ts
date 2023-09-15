@@ -9,9 +9,8 @@ import { ActividadCriterioModelo } from './actividad-criterio-modelo/actividad-c
 import { ActividadCriterioDetalle } from './actividad-criterio-detalle/actividad-criterio-detalle.component';
 import { ActividadCriterioSubcriterio } from './atividad-criterio-subcriterio/atividad-criterio-subcriterio.component';
 import { ActiviadDetalleIndicadorComponent } from './actividad-detalle-indicador/actividad-detalle-indicador.component';
-
-
 import { SharedModule } from 'src/app/shared/shared.module';
+
 
 @NgModule({
   declarations: [
@@ -25,8 +24,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
   ],
   imports: [
     CommonModule,
-    ResponsableRoutingModule,
-    
+    ResponsableRoutingModule, 
     SharedModule
   ]
 })

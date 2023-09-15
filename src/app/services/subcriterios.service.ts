@@ -17,7 +17,9 @@ export class SubcriteriosService {
   getSubcriterios(): Observable<Subcriterio[]> {
     return this.http.get<Subcriterio[]>(`${baserUrl}/api/subcriterio/listar`);
   }
-
+  getSubcritIndi(id_criterio:number,id_modelo:number): Observable<SubcriterioIndicadoresProjection[]> {
+    return this.http.get<SubcriterioIndicadoresProjection[]>(`${baserUrl}/api/subcriterio/subcritindi/${id_criterio}/${id_modelo}`);
+  }
   crear(r: Subcriterio): Observable<Subcriterio> {
     return this.http.post<Subcriterio>(`${baserUrl}/api/subcriterio/crear`, r).pipe(
       catchError((error) => {

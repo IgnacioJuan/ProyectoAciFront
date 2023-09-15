@@ -15,7 +15,6 @@ import { DialogoSubcriterioComponent } from '../dialogo-subcriterio/dialogo-subc
 import { Asignacion_Criterios } from 'src/app/models/Asignacion-Criterios';
 import { AsignacionCriterioService } from 'src/app/services/asignacion-criterio.service';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { forkJoin } from 'rxjs';
 
 let VALOR: any[] = [];
@@ -38,7 +37,7 @@ export class DialogoModeloComponent implements OnInit {
   listaIndicadores: Indicador[] = [];
 
   constructor(public login: LoginService, private asignacionIndicadorService: AsignacionIndicadorService, private dialogRef: MatDialogRef<DialogoModeloComponent>, private _formBuilder: FormBuilder, private dialog: MatDialog, private router: Router, private modelo_service: ModeloService, private sharedDataService: SharedDataService,
-    private asignacionAdminService: AsignacionCriterioService,private spinner: NgxSpinnerService,
+    private asignacionAdminService: AsignacionCriterioService,
     private indicadorService: IndicadoresService) {
 
   }
@@ -157,7 +156,6 @@ export class DialogoModeloComponent implements OnInit {
   
   copiarmodelo() {
     this.copiando = true;
-    this.spinner.show();
     this.secondFormGroup.get('secondCtrl')?.clearValidators();
     this.secondFormGroup.get('secondCtrl')?.updateValueAndValidity();
     console.log("id copiado "+this.idmax);
@@ -191,28 +189,24 @@ export class DialogoModeloComponent implements OnInit {
             forkJoin(asignacionObservables).subscribe(
               resultados => {
                 console.log("Todas las asignaciones creadas:", resultados);
-                this.spinner.hide();
                 this.copiando = false;
                 this.dialogRef.close();
                 Swal.fire('Éxito', 'El modelo se ha copiado correctamente', 'success');
               },
               error => {
                 console.error('Error al crear las asignaciones:', error);
-                this.spinner.hide();
                 this.copiando = false;
               }
             );
           },
           error => {
             console.error('Error al obtener asignaciones de indicadores:', error);
-            this.spinner.hide();
             this.copiando = false;
           }
         );
       },
       error => {
         console.error("Error al crear el nuevo modelo:", error);
-        this.spinner.hide();
         this.copiando = false;
       }
     );

@@ -47,7 +47,10 @@
           <th mat-header-cell *matHeaderCellDef>FECHA FINALIZACION</th>
           <td mat-cell *matCellDef="let acti">{{ acti.fecha_fin | date:'dd/MM/yyyy' }}</td>
         </ng-container>
-      
+        <ng-container matColumnDef="ESTADO">
+          <th mat-header-cell *matHeaderCellDef>ESTADO</th>
+          <td mat-cell *matCellDef="let acti" [ngClass]="getColorEstado(acti.estado)">{{ acti.estado.toUpperCase() }}</td>
+        </ng-container>
         <ng-container matColumnDef="Subir evidencia">
           <th mat-header-cell *matHeaderCellDef>Subir evidencia</th>
           <td mat-cell *matCellDef="let acti">

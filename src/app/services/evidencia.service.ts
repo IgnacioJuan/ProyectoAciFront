@@ -6,6 +6,7 @@ import baserUrl from './helper';
 import { EvidenciasProjection } from '../interface/EvidenciasProjection';
 import { EvidenciaCalProjection } from '../interface/EvidenciaCalProjection';
 import { AsigEvidProjection } from '../interface/AsigEvidProjection';
+import { EvidenciaProjection } from '../interface/EvidenciaProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,9 @@ getEvidenciaCrite(idcriterio: number): Observable<Evidencia[]> {
   public geteviasig(user: String): Observable<Evidencia[]> {
     return this.http.get<Evidencia[]>(`${baserUrl}/api/evidencia/buscarev/${user}`);
   }
-
+  public getevilist(username: String): Observable<EvidenciaProjection[]> {
+    return this.http.get<EvidenciaProjection[]>(`${baserUrl}/api/evidencia/evidenuser/${username}`);
+  }
   public getevical(id_evidencia:number,id_modelo:number): Observable<EvidenciaCalProjection> {
     return this.http.get<EvidenciaCalProjection>(`${baserUrl}/api/evidencia/evidenciacal/${id_evidencia}/${id_modelo}`);
   }
@@ -94,7 +97,9 @@ getEvidenciaCrite(idcriterio: number): Observable<Evidencia[]> {
   public getEvidenciaPorIndicador(id: number): Observable<Evidencia[]> {
     return this.http.get<Evidencia[]>(`${baserUrl}/api/evidencia/listarEvidenciaPorIndicador/${id}`);
   }
-
+  public buscar(id: number): Observable<Evidencia> {
+    return this.http.get<Evidencia>(`${baserUrl}/api/evidencia/buscar/${id}`);
+  }
   public listarUsuarioRes(): Observable<any[]> {
     return this.http.get<any[]>(`${baserUrl}/usuarios/listarResponsableAdmin`);
   }

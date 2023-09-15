@@ -8,27 +8,31 @@ import { ActividadCriterioDetalle } from './actividad-criterio-detalle/actividad
 import { ActividadCriterioSubcriterio } from './atividad-criterio-subcriterio/atividad-criterio-subcriterio.component';
 import { ActiviadDetalleIndicadorComponent } from './actividad-detalle-indicador/actividad-detalle-indicador.component';
 import { NormalGuard } from 'src/app/services/Guards/normal.guard';
+import { RoleguardGuard } from 'src/app/services/Guards/roleguard.guard';
 
 const routes: Routes = [
   {
     path: 'ActividadesResponsable',
     component: ActividadesResponsableComponent,
     pathMatch: 'full',
-    canActivate: [NormalGuard]
+    canActivate: [RoleguardGuard],
+    data: { allowedRoles: ['RESPONSABLE', 'SUPERADMIN', 'ADMIN'] }
   }
   ,
   {
     path: 'evidenciaResponsable',
     component: EvidenciasResponComponent,
     pathMatch: 'full',
-    canActivate: [NormalGuard]
+    canActivate: [RoleguardGuard],
+    data: { allowedRoles: ['RESPONSABLE', 'SUPERADMIN', 'ADMIN'] }
   },
 
   {
-    path: 'eviTareaAsina',
+    path: 'evidenasignada',
     component: EvidenciaTareasAsginadasComponent,
     pathMatch: 'full',
-    canActivate: [NormalGuard]
+    canActivate: [RoleguardGuard],
+    data: { allowedRoles: ['RESPONSABLE', 'SUPERADMIN', 'ADMIN'] }
   },
   {
     path: 'actividadCriterio',

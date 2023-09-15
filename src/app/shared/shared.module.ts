@@ -37,8 +37,8 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { ResponsablePipe } from '../pages/admin/asignacion-evidencia/responsable.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FiltrarEvidenciasPorIDPipe } from '../pages/admin/aprobar-rechazar-admin/filtro-prueba.pipe';
-import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatSortModule } from '@angular/material/sort';
+
 @NgModule({
   declarations: [BuscarPipe,BuscarUsuarioPipe,PageNotFoundComponent,
     FiltrarEvidenciasPorIDPipe, ResponsablePipe,
@@ -77,7 +77,6 @@ import { MatSortModule } from '@angular/material/sort';
     NgxChartsModule,
     CdkTableModule,
     MatTooltipModule,
-    NgxSpinnerModule,
     MatSortModule
   ],
   exports: [
@@ -118,7 +117,6 @@ import { MatSortModule } from '@angular/material/sort';
     FullCalendarModule,
     NgxChartsModule,
     MatTabsModule,
-    NgxSpinnerModule,
     MatSortModule
   ],
 })

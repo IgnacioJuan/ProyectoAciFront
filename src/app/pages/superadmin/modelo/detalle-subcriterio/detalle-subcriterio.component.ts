@@ -1,9 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Criterio } from 'src/app/models/Criterio';
-import { Subcriterio } from 'src/app/models/Subcriterio';
-import { IndicadoresService } from 'src/app/services/indicadores.service';
+import { Router } from '@angular/router';
 import { SubcriteriosService } from 'src/app/services/subcriterios.service';
 import { SharedDataService } from 'src/app/services/shared-data.service';
 import { Modelo } from 'src/app/models/Modelo';
@@ -80,18 +76,9 @@ export class DetalleSubcriterioComponent {
     this.modelo = history.state.modelo;
     let id_criterio = history.state.data;
     this.model = history.state.modelo;
-    this.asignacionIndicadorService.getAsignacionIndicadorByIdModelo(Number(this.modelo.id_modelo)).subscribe(info => {
-      this.subcriterioservice.getSubcriterios().subscribe(result => {
-        this.dataSource.data = [];
-        this.asignacion = info;
-        this.dataSource.data = result.filter((subcriterio: any) => {
-          return info.some((asignacion: any) => {
-            return subcriterio.id_subcriterio === asignacion.indicador.subcriterio.id_subcriterio
-              && subcriterio.criterio?.id_criterio === id_criterio;
-
-          });
-        });
-      });
+    this.subcriterioservice.getSubcritIndi(id_criterio,Number(this.modelo.id_modelo)).subscribe(info => {
+      this.dataSource.data =info;
+     
     });
   }
 
