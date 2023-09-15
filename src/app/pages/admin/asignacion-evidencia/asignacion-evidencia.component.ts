@@ -32,7 +32,7 @@ let ELEMENT_DATA: Fenix[] = [];
   styleUrls: ['./asignacion-evidencia.component.css']
 })
 export class AsignacionEvidenciaComponent implements OnInit {
-  columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'rol', 'usuario','evidencia', 'fechainicio','fechafin', 'actions'];
   columnasEvidencia: string[] = ['criterio','subcriterio','indicador', 'descripcion','idev', 'actions'];
   columnasEvidenciaAsignacion: string[] = ['usuario','criterio','subcriterio', 'evidencia',  'idasigna', 'ideviden','descripcion', 'actions'];
   rowspanArray: number[] = [];

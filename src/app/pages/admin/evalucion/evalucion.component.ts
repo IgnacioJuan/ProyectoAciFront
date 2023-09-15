@@ -31,7 +31,7 @@ let ELEMENT_DATA: Fenix[] = [];
   styleUrls: ['./evalucion.component.css']
 })
 export class EvalucionComponent implements OnInit {
-  columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'rol', 'usuario','evidencia', 'fechainicio','fechafin', 'actions'];
   columnasEvidencia: string[] = ['subcriterio', 'indicador', 'descripcion', 'idevi','actions'];
   columnasEvidenciaAsignacion: string[] = ['usuario','criterio','subcriterio', 'evidencia',  'idasigna', 'ideviden','descripcion', 'actions'];
   rowspanArray: number[] = [];
