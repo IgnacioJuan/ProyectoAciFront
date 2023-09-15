@@ -50,6 +50,7 @@ export class ActividadesResponsableComponent implements OnInit {
   displayedColumns: string[] = [
     'ID',
     'NOMBRE',
+    'ESTADO',    
     'DESCRIPCIÓN',
     'FECHA DE INICIO',
     'FECHA FINALIZACION',
