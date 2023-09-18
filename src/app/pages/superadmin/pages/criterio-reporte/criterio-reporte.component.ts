@@ -120,9 +120,10 @@ export class CriterioReporteComponent {
      }
    }
    tablaExpandida: 'tablaGeneral' | 'tablaCualitativa' | 'tablaCuantitativa' = 'tablaGeneral';
-   alternarTabla(tabla: 'tablaGeneral' | 'tablaCualitativa' | 'tablaCuantitativa') {
-    this.tablaExpandida = tabla;
-  }
+
+alternarTabla(tabla: 'tablaGeneral' | 'tablaCualitativa' | 'tablaCuantitativa') {
+  this.tablaExpandida = tabla;
+}
    generarInformeTotal(): void {
      const content = [];
    // Agrega la fecha de generación del PDF

@@ -38,6 +38,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   rowspanArray: number[] = [];
   spans: any[] = [];
   spans2: any[] = [];
+  public mostrarBotonEditarFecha: boolean = false;
   //Cambiar texto tabla
   itemsPerPageLabel = 'Datos por página';
   nextPageLabel = 'Siguiente';
@@ -294,6 +295,20 @@ export class AsignacionEvidenciaComponent implements OnInit {
         console.log(this.dataSource);
       }
     )
+  }
+
+  // Supongamos que elemento.fecha_fin contiene la fecha de finalización.
+  // Debes calcular si la fecha de finalización ha pasado.
+  public isFechaPasada(elemento: any): boolean {
+    const fechaFin = new Date(elemento.fecha_fin);
+    const fechaActual = new Date();
+    return fechaFin < fechaActual;
+  }
+
+
+  public editarFecha(elemento: any): void {
+    // Aquí puedes implementar la lógica para editar la fecha
+    // Puedes mostrar un cuadro de diálogo o redirigir a una página de edición de fecha.
   }
 
   //consumir servicio de fenix para obtener datos de la persona por primer_apellido

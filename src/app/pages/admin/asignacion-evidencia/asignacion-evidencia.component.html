@@ -315,6 +315,7 @@
                 {{ elemento.fechafin | date:'dd/MM/yyyy' }}
               </td>
             </ng-container>
+            <!-- [disabled]="isFechaPasada(elemento)" -->
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
               <td mat-cell *matCellDef="let elemento">
@@ -323,10 +324,11 @@
                   style="background-color: red"
                   (click)="eliminar(elemento)"
                   style="margin-right: 5%"
+                  
                 >
                   <i class="fas fa-user-times"></i>
                 </button>
-           
+           <!-- [disabled]="isFechaPasada(elemento)" -->
                 <button
                   type="button"
                   style="margin-left: 6%"
@@ -335,8 +337,18 @@
                   data-bs-toggle="modal"
                   data-bs-target="#exampleModal4"
                   (click)="seleccionarUsuario(elemento)"
+                  
                 >
                   <i class="fas fa-plus-circle"></i>
+                </button>
+                <!-- Nuevo botón para editar la fecha -->
+                <button
+                  type="button"
+                  class="btn btn-warning" 
+                  *ngIf="mostrarBotonEditarFecha" 
+                  (click)="editarFecha(elemento)"
+                >
+                  <i class="fas fa-calendar-alt"></i> Editar
                 </button>
               </td>
             </ng-container>
@@ -624,6 +636,16 @@
                               {{ elemento.idev }}
                             </td>
                           </ng-container>
+                          <!-- <ng-container matColumnDef="fechaSeleccionada">
+                            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                            <td mat-cell *matCellDef="let element">
+                              <mat-form-field>
+                                <input matInput [matDatepicker]="picker" [(ngModel)]="element.fechaSeleccionada" name="fechaSeleccionada">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                              </mat-form-field>
+                            </td>
+                          </ng-container> -->
                           <ng-container matColumnDef="actions">
                             <th mat-header-cell *matHeaderCellDef>
                               ASIGNAR
@@ -639,7 +661,7 @@
                               </button>
                             </td>
                           </ng-container>
-
+                          
                           <tr
                             mat-header-row
                             *matHeaderRowDef="columnasEvidencia"

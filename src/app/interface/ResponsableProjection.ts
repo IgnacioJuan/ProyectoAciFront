@@ -2,8 +2,8 @@ export interface ResponsableProjection{
     id:number;
     nombres: string;
     rol: String;
-    fechainicio: Date;
-    fechafin: Date;
+    fecha_fin: String;
+    fecha_inicio: String;
     usua: string;
     evidencias:string;
 }
