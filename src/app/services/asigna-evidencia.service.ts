@@ -48,7 +48,9 @@ export class AsignaEvidenciaService {
     console.log(asigna.id_asignacion_evidencia);
     return this.httpClient.put<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/actualizar/` + asigna.id_asignacion_evidencia, asigna);
   }
-
+  public editarAsigna(asigna: Asigna_Evi) {
+    return this.httpClient.put<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/editar/` + asigna.id_asignacion_evidencia, asigna);
+  }
   //ELIMINAR ASIGNACION
   public deleteAsigna(asigna: Asigna_Evi) {
     return this.httpClient.put<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/eliminarlogic/` + asigna.id_asignacion_evidencia,asigna);

@@ -6,4 +6,6 @@ export interface AsignaProjection{
     indi:string;
     respon:string;
     descev:string;
+    ini:Date;
+    fini:Date;
 }
