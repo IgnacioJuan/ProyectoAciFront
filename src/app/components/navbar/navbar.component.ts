@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { Notificacion } from 'src/app/models/Notificacion';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -19,8 +20,9 @@ export class NavbarComponent implements OnInit {
   user: any = null;
   noti = new Notificacion();
   notificaciones: Notificacion[] = [];
-
-  constructor(public login: LoginService, private notificationService: NotificacionService, private dialog: MatDialog) {
+  idactividad:any;
+  constructor(public login: LoginService, private notificationService: NotificacionService,
+    private dialog: MatDialog,private router: Router) {
     this.rol = this.login.getUserRole();
   }
 
@@ -34,6 +36,7 @@ export class NavbarComponent implements OnInit {
       }
     );
     this.listarnot(this.user.id);
+   
   }
 
   listarnot(id: any) {
@@ -49,6 +52,7 @@ export class NavbarComponent implements OnInit {
             (dataPropias: Notificacion[]) => {
               this.notificaciones = this.notificaciones.concat(dataPropias);
               this.numNotificacionesSinLeer += dataPropias.filter(n => !n.visto).length;
+              //this.ir();
             },
             (errorPropias: any) => {
               console.error('No se pudieron listar las notificaciones propias');
@@ -63,7 +67,7 @@ export class NavbarComponent implements OnInit {
       this.notificationService.getNotificaciones(id).subscribe(
         (data: Notificacion[]) => {
           this.notificaciones = data;
-          //console.log("noti "+JSON.stringify(this.notificaciones));
+          //
           this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
         },
         (error: any) => {
@@ -73,7 +77,15 @@ export class NavbarComponent implements OnInit {
     }
   }
   
-
+ir(noti:any){
+  noti.url;
+  if(noti.idactividad!=0){
+    console.log("id ev"+noti.idactividad);
+    this.router.navigate([noti.url], { state: { datos: noti.idactividad } });
+  }  else {
+    this.router.navigate([noti.url]);
+  }
+}
   public logout() {
     this.login.logout();
     location.replace('/use/login');

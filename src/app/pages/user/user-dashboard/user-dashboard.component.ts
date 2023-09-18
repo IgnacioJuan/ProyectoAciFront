@@ -48,6 +48,7 @@ export class UserDashboardComponent implements OnInit {
   listain: IndicadorProjection[] = [];
   displayedColumns3: string[] = ['Criterio', 'Subcriterio', 'Indicador','Evidencia','Peso','Obtenido','Utilidad','Valor','Archivos','Idind','Tipo', 'Calificar'];
   datacrite: any[] = [];
+  cali=true;
   listaIndicadores: IndicadorProjection[] = [];
   valoresp:ValoresProjection[] = [];
   coloresTarjetas: string[] = [];
@@ -63,7 +64,7 @@ id!:number;
 this.id=this.user.id;
 console.log("id user "+this.id);
 
-    this.modeloMax();
+    
     this.login.loginStatusSubjec.asObservable().subscribe(
       data => {
         this.isLoggedIn = this.login.isLoggedIn();
@@ -72,6 +73,8 @@ console.log("id user "+this.id);
     )
     setInterval(() => this.updateClock(), 1000);
     this.rol = this.login.getUserRole();
+    console.log("ROL "+this.rol);
+    this.modeloMax();
   }
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
@@ -173,17 +176,39 @@ showTipo() {
   }
 
   cargarDatos(): void {
-    console.log("Id modelo a verificar "+this.idmodel);
-    this.httpCriterios.getvalorad(this.idmodel,this.id).subscribe((valores: ValoresProjection[]) => {
-      //cambiar valoresresp por la variable creada
-      this.valoresp = valores;
-      console.log("Valores de tabla"+JSON.stringify(this.valoresp))
-      this.barChartData.labels = this.valoresp.map(val => val.nomcriterio);
-      this.barChartData.datasets[0].data = this.valoresp.map(val => val.vlObtenido);
-      this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);
-  
-      this.barChartData = { ...this.barChartData };
-    });
+    if(this.rol==="ADMIN"){
+      this.valoresadmin();
+     } else if(this.rol==="RESPONSABLE"){
+      this.valoresresp();
+     } else{
+      this.verdash = false;
+     }
+      }
+
+      valoresadmin(){
+        console.log("Id modelo a verificar "+this.idmodel);
+        this.httpCriterios.getvalorad(this.idmodel,this.id).subscribe((valores: ValoresProjection[]) => {
+          //cambiar valoresresp por la variable creada
+          this.valoresp = valores;
+          console.log("Valores de tabla"+JSON.stringify(this.valoresp))
+          this.barChartData.labels = this.valoresp.map(val => val.nomcriterio);
+          this.barChartData.datasets[0].data = this.valoresp.map(val => val.vlObtenido);
+          this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);
+      
+          this.barChartData = { ...this.barChartData };
+        });
+      }
+      valoresresp(){
+        this.httpCriterios.getvaloresponsable(this.idmodel,this.id).subscribe((valores: ValoresProjection[]) => {
+          //cambiar valoresresp por la variable creada
+          this.valoresp = valores;
+          console.log("Valores de tabla"+JSON.stringify(this.valoresp))
+          this.barChartData.labels = this.valoresp.map(val => val.nomcriterio);
+          this.barChartData.datasets[0].data = this.valoresp.map(val => val.vlObtenido);
+          this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);
+      
+          this.barChartData = { ...this.barChartData };
+        });
       }
   modeloMax() {
     this.service.getModeMaximo().subscribe((data) => {
@@ -194,6 +219,17 @@ showTipo() {
     })}
 
     listaind(){
+      
+      if(this.rol==="ADMIN"){
+        this.indicadoresadmin();
+       } else if(this.rol==="RESPONSABLE"){
+        this.indicadoresresp();
+       } else{
+        this.verdash = false;
+       }
+    }
+
+    indicadoresadmin(){
       this.httpCriterios.getIndicadorad(this.idmodel,this.id).subscribe(
         (data: IndicadorProjection[]) => {
           this.listain=data;
@@ -202,7 +238,17 @@ showTipo() {
             this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
           });
         });
+    }
 
+    indicadoresresp(){
+      this.httpCriterios.getIndicadorresponsable(this.idmodel,this.id).subscribe(
+        (data: IndicadorProjection[]) => {
+          this.listain=data;
+          this.listain.forEach((item)=>{
+            this.coloresTarjetas.push(this.getRandomColor());
+            this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
+          });
+        });
     }
 
     getRandomColor(): string {
@@ -350,8 +396,18 @@ showTipo() {
       });
      }
 listardatos(){
+ if(this.rol==="ADMIN"){
+  this.veradmin();
+ } else if(this.rol==="RESPONSABLE"){
+  this.verresponsable();
+ } else{
+  this.verdash = false;
+ }
+}
+veradmin(){
+  this.cali=true;
   this.service.getcriterioadmin(this.idmodel,this.id).subscribe((data: criteriosdesprojection[]) => {
-    console.log("data: "+data+" Datos sesion "+JSON.stringify(data))
+    //console.log("data: "+data+" Datos sesion "+JSON.stringify(data))
     if (data == null || data.length === 0) {
       this.verdash = false;
     } else {
@@ -376,11 +432,42 @@ listardatos(){
     setTimeout(() => {
       this.aplicar();
     }, 0);
-    console.log("verdash:", this.verdash);
+    
   }
 });
 }
-
+verresponsable(){
+  this.cali=false;
+  this.service.getcriterioresp(this.idmodel,this.id).subscribe((data: criteriosdesprojection[]) => {
+    //console.log("data: "+data+" Datos sesion "+JSON.stringify(data))
+    if (data == null || data.length === 0) {
+      this.verdash = false;
+    } else {
+    this.verdash=true;
+    this.datacrite = data;
+    this.datacrite.forEach(item => {
+      if (typeof this.seleccionados[item.criterionomj] === 'undefined') {
+        this.seleccionados[item.criterionomj] = false;
+      }
+    });
+  
+    // Generar la jerarquía de celdas
+    this.cacheSpan3('Criterio', (d) => d.criterionomj);
+    this.cacheSpan3('Subcriterio', (d) => d.criterionomj + d.subcrierioj);
+    this.cacheSpan3('Indicador', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej);
+    this.cacheSpan3('Peso', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes);
+    this.cacheSpan3('Obtenido', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt);
+    this.cacheSpan3('Utilidad', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti);
+    this.cacheSpan3('Valor', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti+d.val);
+    this.cacheSpan3('Evidencia', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej+d.pes+d.obt+d.uti+d.val+d.descrip);
+    this.cacheSpan3('Archivos', (d) => d.criterionomj + d.subcrierioj + d.ind_nombrej +d.pes+d.obt+d.uti+d.val+d.descrip+ d.archivo_enlace);
+    setTimeout(() => {
+      this.aplicar();
+    }, 0);
+    
+  }
+});
+}
 aplicar() {
   this.datacrite.forEach(element => {
     element.randomCelda = this.generarC();

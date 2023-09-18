@@ -15,7 +15,12 @@ export class LoginComponent implements OnInit {
     "username": '',
     "password": '',
   }
-
+mision=false;
+vision=false;
+prin=false;
+sobre=false;
+sobre2=false;
+sobre3=false;
   constructor(private _snack: MatSnackBar, private loginService: LoginService, private router: Router) { }
 
   ngOnInit(): void {
@@ -24,7 +29,30 @@ export class LoginComponent implements OnInit {
       location.replace('/use/user-dashboard');
     }
   }
-  
+  abrir(){
+    this.sobre= true
+    this.mision=true;
+  }
+cerrar(){
+  this.sobre= false;
+  this.mision=false;
+}
+abrir2(){
+  this.sobre2= true;
+  this.vision=true;
+}
+cerrar2(){
+  this.sobre2= false;
+this.vision=false;
+}
+abrir3(){
+  this.sobre3= true;
+  this.prin=true;
+}
+cerrar3(){
+  this.sobre3= false;
+this.prin=false;
+}
   formSubmit() {
     if (this.loginData.username.trim() == '' || this.loginData.username.trim() == null) {
       // this._snack.open('El username de usuario es requerido !!', 'Aceptar')

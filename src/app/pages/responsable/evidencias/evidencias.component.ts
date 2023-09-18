@@ -52,7 +52,7 @@ export class EvidenciasResponComponent implements OnInit {
  displayedColumns: string[] = ['Id', 'Evidencia', 'Borrar'];
  @ViewChild(MatPaginator)
  paginator!: MatPaginator;
-
+idevidencia!:number;
  ngAfterViewInit() {
   console.log('Paginator:', this.paginator);
   if (this.paginator) {
@@ -86,6 +86,11 @@ export class EvidenciasResponComponent implements OnInit {
   ngOnInit(): void {
     const data = history.state.data;
     this.activ = data;
+    if(this.activ?.evidencia?.id_evidencia!=null){
+    this.idevidencia=this.activ.evidencia.id_evidencia;
+    console.log("acti recibido "+this.idevidencia);
+  }
+    
     if (this.activ == undefined) {
       this.router.navigate(['user-dashboard']);
       location.replace('/use/user-dashboard');
@@ -124,12 +129,13 @@ export class EvidenciasResponComponent implements OnInit {
   notificar() {
     this.noti.fecha = new Date();
     this.noti.rol = "SUPERADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido una evidencia "
+    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido un archivo "
     +"para la actividad "+ this.activ.nombre;
 
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/sup/detalle";
+    this.noti.idactividad=this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -144,11 +150,12 @@ export class EvidenciasResponComponent implements OnInit {
   notificaradmin() {
     this.noti.fecha = new Date();
     this.noti.rol = "ADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido una evidencia "
+    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido un archivo "
     +"para la actividad "+ this.activ.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;

@@ -173,7 +173,8 @@ export class AprobarRechazarAdminComponent implements OnInit {
       ' de ' +
       nombres;
     this.noti.usuario = 0;
-
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -195,6 +196,8 @@ export class AprobarRechazarAdminComponent implements OnInit {
       ' ha rechazado tu evidencia ' 
       +this.descripcionSeleccionada;
     this.noti.visto = false;
+    this.noti.url="/res/evidenasignada";
+this.noti.idactividad=0;
     const idUsuarioString = localStorage.getItem('idUsuario');
     const idUsuario = Number(idUsuarioString);
     this.noti.usuario = idUsuario;
@@ -224,7 +227,8 @@ export class AprobarRechazarAdminComponent implements OnInit {
       nombres;
     this.noti.visto = false;
     this.noti.usuario = 0;
-
+    this.noti.url="/adm/apruebaAdmin";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -250,7 +254,8 @@ notificaraprob() {
     ' de ' +
     nombres;
   this.noti.usuario = 0;
-
+  this.noti.url="/sup/aprobaciones";
+  this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -272,6 +277,8 @@ notificaraprobuser() {
     ' ha aprobado tu evidencia ' 
     +this.descripcionSeleccionada;
   this.noti.visto = false;
+  this.noti.url="/res/evidenasignada";
+this.noti.idactividad=0;
   const idUsuarioString = localStorage.getItem('idUsuario');
   const idUsuario = Number(idUsuarioString);
   this.noti.usuario = idUsuario;
@@ -301,7 +308,8 @@ notificaraprobadmin() {
     nombres;
   this.noti.visto = false;
   this.noti.usuario = 0;
-
+this.noti.url="/adm/apruebaAdmin";
+this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -346,22 +354,11 @@ notificaraprobadmin() {
   }
 
   verDetalles(evidencia: any) {
+    console.log("id ev "+evidencia.id_evidencia);
     this.router.navigate(['/adm/detalleAprobarRechazar'], {
       state: { data: evidencia, usuarioEnviar: this.usuarioSeleccionado },
     });
-    // if (evidencia.estado === 'pendiente') {
-    //   this.disableVerDetalles = true;
-    //   Swal.fire({
-    //     title: 'Alerta',
-    //     text: 'No se puede ver los detalles de esta tarea mientras  no sea evaluada ',
-    //     icon: 'warning',
-    //   });
-    // } else {
-    //   console.log(evidencia);
-    //   this.router.navigate(['/detalleAprobarRechazar'], {
-    //     state: { data: evidencia, usuarioEnviar: this.usuarioSeleccionado },
-    //   });
-    // }
+   
   }
 
 
@@ -490,8 +487,9 @@ enviarNotificacion(notificacion: any) {
   }
 
   Aprobado(descripcion:any) {
-    this.descripcionSeleccionada = descripcion;
-    this.aprobado = true;
+    this.descripcionSeleccionada = descripcion.descripcion;
+    console.log("id Evidencia "+descripcion.id_evidencia);
+   this.aprobado = true;
     this.verificar=true;
     Swal.fire({
       icon: 'success',
@@ -509,7 +507,7 @@ enviarNotificacion(notificacion: any) {
 
   Rechazado(descripcion:any) {
     this.aprobado = false;
-    this.descripcionSeleccionada = descripcion;
+    this.descripcionSeleccionada = descripcion.descripcion;
     Swal.fire({
       icon: 'error',
       title: 'La tarea ha sido rechazada.',

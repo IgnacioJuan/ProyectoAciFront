@@ -158,9 +158,9 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="Calificar">
-         <th mat-header-cell *matHeaderCellDef>Calificar</th>
+         <th mat-header-cell *matHeaderCellDef  [style.display]="cali ? '' : 'none'">Calificar</th>
          <td mat-cell *matCellDef="let element" [attr.rowspan]="rowSpanValue"
-         [style.display]="rowSpanValue ? '' : 'none'">
+         [style.display]="cali && rowSpanValue ? '' : 'none'">
            
            <button mat-icon-button (click)="calificar(element.tip, element.id_indicardorj, element.pes)" class="boton">
              <mat-icon class="iconoB">open_in_new</mat-icon>

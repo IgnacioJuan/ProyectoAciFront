@@ -221,7 +221,8 @@ this.criteservice.getCriterios().subscribe(
     this.noti.mensaje = this.user?.persona?.primer_nombre+" "+this.user?.persona?.primer_apellido+" te ha asignado la evidencia " + this.nombreasignado;
     this.noti.visto = false;
     this.noti.usuario =  this.idusuario;
-
+    this.noti.url="/res/evidenasignada";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -240,7 +241,8 @@ this.criteservice.getCriterios().subscribe(
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -258,7 +260,8 @@ this.criteservice.getCriterios().subscribe(
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -276,7 +279,8 @@ this.criteservice.getCriterios().subscribe(
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -294,7 +298,8 @@ this.criteservice.getCriterios().subscribe(
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;

@@ -64,8 +64,9 @@ export class EvidenciaAtrasadaComponent implements OnInit {
       "rol": this.rol,
       "mensaje": noti.mensaje,
       "visto": true,
-      "usuario": this.user.id
-
+      "usuario": this.user.id,
+      "url":"",
+      "idactividad":0
     }
     this.notificacion.crear(this.notifi).subscribe
       (data => {

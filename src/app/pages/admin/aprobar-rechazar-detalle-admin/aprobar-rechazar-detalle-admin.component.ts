@@ -84,6 +84,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   user: any = null;
   noti = new Notificacion();
   idusuario: any = null;
+  id_ev!:number;
   nombre: any = null;
   correoEnviar = '';
   disableEvaluar: boolean = false;
@@ -115,10 +116,11 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
-
+ 
     const data = history.state.data;
     const usuarioResponsable = history.state.usuarioEnviar;
     this.evidencia = data;
+    this.id_ev=this.evidencia.id_evidencia;
     this.usuarioCorreo = usuarioResponsable;
     this.correoEnviar = this.usuarioCorreo.persona.correo;
     this.toUser = this.correoEnviar;
@@ -140,7 +142,6 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   seleccionarArchivo(element: any) {
     this.archivoSeleccionado = element.nombre;
     this.actividadSeleccionada = element;
-    console.log(this.actividadSeleccionada);
   }
 
   //
@@ -152,12 +153,13 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.user.persona.primer_nombre +
       ' ' +
       this.user.persona.primer_apellido +
-      ' ha rechazado la evidencia ' +
+      ' ha rechazado la actividad ' +
       this.archivoSeleccionado +
       ' de ' +
       nombres;
     this.noti.usuario = 0;
-
+    this.noti.url="/sup/detalle";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -176,9 +178,11 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.user.persona.primer_nombre +
       ' ' +
       this.user.persona.primer_apellido +
-      ' ha rechazado tu evidencia ' +
+      ' ha rechazado tu actividad ' +
       this.archivoSeleccionado;
     this.noti.visto = false;
+    this.noti.url="/res/ActividadesResponsable";
+    this.noti.idactividad=this.id_ev;
     const idUsuarioString = localStorage.getItem('idUsuario');
     const idUsuario = Number(idUsuarioString);
     this.noti.usuario = idUsuario;
@@ -201,13 +205,14 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.user.persona.primer_nombre +
       ' ' +
       this.user.persona.primer_apellido +
-      ' ha rechazado la evidencia ' +
+      ' ha rechazado la actividad ' +
       this.archivoSeleccionado +
       ' de ' +
       nombres;
     this.noti.visto = false;
     this.noti.usuario = 0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -227,12 +232,13 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.user.persona.primer_nombre +
       ' ' +
       this.user.persona.primer_apellido +
-      ' ha aprobado la evidencia ' +
+      ' ha aprobado la actividad ' +
       this.archivoSeleccionado +
       ' de ' +
       nombres;
     this.noti.usuario = 0;
-
+    this.noti.url="/sup/detalle";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -251,9 +257,11 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.user.persona.primer_nombre +
       ' ' +
       this.user.persona.primer_apellido +
-      ' aprobo tu evidencia ' +
+      ' aprobo tu actividad ' +
       this.archivoSeleccionado;
     this.noti.visto = false;
+    this.noti.url="/res/ActividadesResponsable";
+    this.noti.idactividad=this.id_ev;
     const idUsuarioString = localStorage.getItem('idUsuario');
     const idUsuario = Number(idUsuarioString);
     this.noti.usuario = idUsuario;
@@ -277,13 +285,14 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.user.persona.primer_nombre +
       ' ' +
       this.user.persona.primer_apellido +
-      ' ha aprobado la evidencia ' +
+      ' ha aprobado la actividad ' +
       this.archivoSeleccionado +
       ' de ' +
       nombres;
     this.noti.visto = false;
     this.noti.usuario = 0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -303,12 +312,13 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.user.persona.primer_nombre +
       ' ' +
       this.user.persona.primer_apellido +
-      ' ha aprobado la evidencia ' +
+      ' ha aprobado la actividad ' +
       this.archivoSeleccionado +
       ' de ' +
       nombres;
     this.noti.usuario = 0;
-
+    this.noti.url="/sup/detalle";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -333,7 +343,8 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
     const idUsuarioString = localStorage.getItem('idUsuario');
     const idUsuario = Number(idUsuarioString);
     this.noti.usuario = idUsuario;
-
+    this.noti.url="/res/ActividadesResponsable";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -359,7 +370,8 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       nombres;
     this.noti.visto = false;
     this.noti.usuario = 0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;

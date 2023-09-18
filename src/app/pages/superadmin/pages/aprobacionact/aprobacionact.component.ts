@@ -216,7 +216,8 @@ notificaraprob() {
     ' de ' +
     nombres;
   this.noti.usuario = 0;
-
+  this.noti.url="/sup/aprobaciones";
+  this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -241,6 +242,8 @@ notificaraprobuser() {
   const idUsuarioString = localStorage.getItem('idUsuario');
   const idUsuario = Number(idUsuarioString);
   this.noti.usuario = idUsuario;
+  this.noti.url="/res/evidenasignada";
+this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -267,7 +270,8 @@ notificaraprobadmin() {
     nombres;
   this.noti.visto = false;
   this.noti.usuario = 0;
-
+  this.noti.url="/adm/apruebaAdmin";
+  this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -429,7 +433,7 @@ Listar(){
   }
 
   Aprobado(descripcion:any) {
-    this.descripcionSeleccionada = descripcion;
+    this.descripcionSeleccionada = descripcion.descripcion;
     this.aprobado = true;
     Swal.fire({
       icon: 'success',
@@ -448,7 +452,7 @@ Listar(){
 
   Rechazado(descripcion:any) {
     this.aprobado = false;
-    this.descripcionSeleccionada = descripcion;
+    this.descripcionSeleccionada = descripcion.descripcion;
     Swal.fire({
       icon: 'error',
       title: 'La tarea ha sido rechazada.',

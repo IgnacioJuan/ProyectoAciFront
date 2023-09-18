@@ -32,6 +32,7 @@ export class ActividadesResponsableComponent implements OnInit {
   nombreacti!:string;
   noti = new Notificacion();
   user: any = null;
+  idevidencia!:number;
   idusuario: any = null;
   nombre: any = null;
   nombreact: any = null;
@@ -49,8 +50,7 @@ export class ActividadesResponsableComponent implements OnInit {
  // Encabezados de la tabla
   displayedColumns: string[] = [
     'ID',
-    'NOMBRE',
-    'ESTADO',    
+    'NOMBRE',   
     'DESCRIPCIÓN',
     'FECHA DE INICIO',
     'FECHA FINALIZACION',
@@ -97,21 +97,34 @@ export class ActividadesResponsableComponent implements OnInit {
   }
   evi: Evidencia = new Evidencia();
   idevi:number=0;
+  evide:number=0;
   ngOnInit(): void {
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
-    
+    const datos=history.state.datos;
+    this.evide=datos;
     const data = history.state.data;
     this.idevi = data;
-    if (this.idevi == undefined) {
+    
+    console.log("evide: "+this.evide+" idevi: "+this.idevi);
+   /* if (this.idevi == undefined) {
       this.router.navigate(['user-dashboard']);
       location.replace('/use/user-dashboard');
-    }
+    }*/
+if(this.evide==undefined){
+  this.evid.buscar(this.idevi).subscribe((evidencia: Evidencia) => {
+    this.evi = evidencia;
+     this.listar();
+  });
+}else {
+  this.idevi=this.evide;
+  this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
+    this.evi = evidencia;
+     this.listar();
+  });
 
-    this.evid.buscar(this.idevi).subscribe((evidencia: Evidencia) => {
-      this.evi = evidencia;
-       this.listar();
-    });
+    
+  }
     this.idusuario=this.user.id;
     console.log("usuar "+this.idusuario);
     this.login.loginStatusSubjec.asObservable().subscribe(
@@ -145,7 +158,8 @@ export class ActividadesResponsableComponent implements OnInit {
     this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.nombreacti;
     this.noti.visto = false;
     this.noti.usuario = 0;
-
+    this.noti.url="/sup/detalle";
+    this.noti.idactividad=this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -163,7 +177,8 @@ export class ActividadesResponsableComponent implements OnInit {
     this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.nombreacti;
     this.noti.visto = false;
     this.noti.usuario = 0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -196,6 +211,7 @@ export class ActividadesResponsableComponent implements OnInit {
     console.log("Nombre actividad: "+this.actividad.nombre);
     this.nombreacti=this.actividad.nombre;
     this.actividad.evidencia =this.evi;
+    this.idevidencia=this.evi.id_evidencia;
     this.actividad.usuario = this.idusuario;
     this.actividad.estado = "pendiente"
     this.services.crear(this.actividad)
@@ -301,6 +317,8 @@ export class ActividadesResponsableComponent implements OnInit {
   archivo: Archivo = new Archivo();
 
   verDetalles(archivos: any) {
+    archivos.evidencia.id_evidencia;
+    console.log("acti arc "+archivos.evidencia.id_evidencia);
     this.router.navigate(['/res/evidenciaResponsable'], { state: { data: archivos } });
   }
   calcularfecha() {
