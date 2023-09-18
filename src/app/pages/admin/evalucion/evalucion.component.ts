@@ -31,13 +31,14 @@ let ELEMENT_DATA: Fenix[] = [];
   styleUrls: ['./evalucion.component.css']
 })
 export class EvalucionComponent implements OnInit {
-  columnas: string[] = ['id', 'nombre', 'usuario','evidencia', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'rol', 'usuario','evidencia', 'fechainicio','fechafin', 'actions'];
   columnasEvidencia: string[] = ['subcriterio', 'indicador', 'descripcion', 'idevi','actions'];
   columnasEvidenciaAsignacion: string[] = ['usuario','criterio','subcriterio', 'evidencia',  'idasigna', 'ideviden','descripcion', 'actions'];
   rowspanArray: number[] = [];
   id_mod!:number;
   spans2: any[] = [];
   titulocrite!:string;
+  public mostrarBotonEditarFecha: boolean = false;
   //Cambiar texto tabla
   itemsPerPageLabel = 'Datos por página';
   nextPageLabel = 'Siguiente';
@@ -461,7 +462,20 @@ this.criteservice.getCriterios().subscribe(
         }
       );
   }
+  // Supongamos que elemento.fecha_fin contiene la fecha de finalización.
+  // Debes calcular si la fecha de finalización ha pasado.
+  public isFechaPasada(elemento: any): boolean {
+    const fechaFin = new Date(elemento.fecha_fin);
+    const fechaActual = new Date();
+    return fechaFin < fechaActual;
+  }
 
+
+  public editarFecha(elemento: any): void {
+    // Aquí puedes implementar la lógica para editar la fecha
+    // Puedes mostrar un cuadro de diálogo o redirigir a una página de edición de fecha.
+  }
+  
   showSubcriterio() {
     this.verSubcriterio = !this.verSubcriterio;
   }
