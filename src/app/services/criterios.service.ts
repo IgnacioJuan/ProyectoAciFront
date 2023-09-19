@@ -11,6 +11,7 @@ import { proyeccionCriterio } from '../pages/admin/aprobar-rechazar-admin/proyec
 import { IndicadorProjection } from '../interface/IndicadorProjection';
 import { ValoresProjection } from '../interface/ValoresProjection';
 import { IdCriterioProjection } from '../interface/IdCriterioProjection';
+import { CorreoProjection } from '../interface/CorreoProjection';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,11 @@ export class CriteriosService {
   getCriterioById(id: number): Observable<Criterio> {
     return this.http.get<Criterio>(`${baserUrl}/api/criterio/buscar/${id}`);
   }
+
+  getCorreo(id_modelo: number,id_evidencia:number): Observable<CorreoProjection> {
+    return this.http.get<CorreoProjection>(`${baserUrl}/api/criterio/correo/${id_modelo}/${id_evidencia}`);
+  }
+
   public listarCriterio(): Observable<Criterio[]> {
     return this.http
       .get(`${baserUrl}/api/criterio/listar`)

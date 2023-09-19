@@ -57,8 +57,8 @@ export class AsignaEvidenciaService {
   }
 
   //BUSCAR POR ID
-  public getAsignacionId(id: number): Observable<Asigna_Evi> {
-    return this.httpClient.get<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/buscar/` + id);
+  public getbuscarAsignacion(id: number): Observable<Asigna_Evi> {
+    return this.httpClient.get<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/buscar/${id}`);
   }
 
 

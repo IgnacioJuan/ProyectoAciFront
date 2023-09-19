@@ -98,33 +98,11 @@ export class ActividadesResponsableComponent implements OnInit {
   evi: Evidencia = new Evidencia();
   idevi:number=0;
   evide:number=0;
+  id_ev!:number;
   ngOnInit(): void {
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
-    const datos=history.state.datos;
-    this.evide=datos;
-    const data = history.state.data;
-    this.idevi = data;
-    
-    console.log("evide: "+this.evide+" idevi: "+this.idevi);
-   /* if (this.idevi == undefined) {
-      this.router.navigate(['user-dashboard']);
-      location.replace('/use/user-dashboard');
-    }*/
-if(this.evide==undefined){
-  this.evid.buscar(this.idevi).subscribe((evidencia: Evidencia) => {
-    this.evi = evidencia;
-     this.listar();
-  });
-}else {
-  this.idevi=this.evide;
-  this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
-    this.evi = evidencia;
-     this.listar();
-  });
 
-    
-  }
     this.idusuario=this.user.id;
     console.log("usuar "+this.idusuario);
     this.login.loginStatusSubjec.asObservable().subscribe(
@@ -133,12 +111,36 @@ if(this.evide==undefined){
         this.user = this.login.getUser();
 
       }
-    )
+    );
+    const idEvidencia = localStorage.getItem("eviden");
+    this.id_ev=Number(idEvidencia);
+    console.log("traido ev "+idEvidencia);
     this.fechaminima();
     this.calcularfecha();
-   
+    this.inicio();
   }
   
+
+  inicio(){
+    if (this.id_ev!=0) {
+      this.evide=this.id_ev;
+      console.log("evid "+this.id_ev);
+      this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
+        this.evi = evidencia;
+         this.listar();
+      });
+    }else{
+    const data = history.state.data;
+    this.idevi = data;
+      this.evide=this.idevi;
+      console.log("ID evi"+this.evide)
+      this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
+        this.evi = evidencia;
+         this.listar();
+      });
+    }
+  }
+
   getColorEstado(estado: string): string {
     switch (estado.toLowerCase()) {
       case 'pendiente':

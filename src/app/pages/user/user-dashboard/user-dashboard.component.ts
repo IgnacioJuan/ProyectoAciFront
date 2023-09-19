@@ -197,6 +197,9 @@ showTipo() {
       
           this.barChartData = { ...this.barChartData };
         });
+        if(this.valoresp.length==0){
+          this.valoresresp();
+        }
       }
       valoresresp(){
         this.httpCriterios.getvaloresponsable(this.idmodel,this.id).subscribe((valores: ValoresProjection[]) => {
@@ -238,6 +241,9 @@ showTipo() {
             this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
           });
         });
+        if(this.listain.length==0){
+          this.indicadoresresp();
+        }
     }
 
     indicadoresresp(){
@@ -435,6 +441,9 @@ veradmin(){
     
   }
 });
+if(this.datacrite.length==0){
+  this.verresponsable();
+}
 }
 verresponsable(){
   this.cali=false;

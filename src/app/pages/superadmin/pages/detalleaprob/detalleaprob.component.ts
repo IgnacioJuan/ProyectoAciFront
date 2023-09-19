@@ -607,7 +607,7 @@ export class DetalleaprobComponent implements OnInit {
   enviar() {
     const startTime = new Date();
     this.isSending = true;
-    this.verificar=true;
+    
     this.spinnerInterval = setInterval(() => {
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
@@ -625,16 +625,17 @@ export class DetalleaprobComponent implements OnInit {
           this.isSending = false;
           const endTime = new Date(); // Obtener hora actual después de enviar el correo
           const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000; // Calcular diferencia de tiempo en segundos
+          this.verificar=true;
           console.log(
             'Email sent successfully! Time taken:',
             timeDiff,
             'seconds'
           );
-          
-          console.log('Email sent successfully!');
           this.notificarrechazo();
           this.notificarrechazoadmin();
           this.notificarrechazouser();
+          console.log('Email sent successfully!');
+          
           Swal.fire({
             title: 'El correo se ha enviado con éxito',
             timer: 2000,

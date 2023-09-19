@@ -60,6 +60,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   maxTime: number = 30; 
   mostrarbotonDetalle = false;
   evidencia: Evidencia = new Evidencia();
+  evidencia2: Evidencia = new Evidencia();
   dataSource = new MatTableDataSource<Actividades>();
   dataSource2 = new MatTableDataSource<Archivo>();
   dataSource3 = new MatTableDataSource<Observacion2>();
@@ -90,10 +91,12 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   disableEvaluar: boolean = false;
   observaciones: Observacion2 = new Observacion2();
   observacion = '';
+  idEviden = '';
+  id_modelo!:number;
   actividadSeleccionada: Actividades = new Actividades();
   public actividad = new Actividades();
   listadoObservaciones: Observacion2[] = [];
-
+evid!:number;
   constructor(
     private services: ActividadService,
     private router: Router,
@@ -102,7 +105,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
     private archivo: ArchivoService,
     public login: LoginService,
     private notificationService: NotificacionService,
-    private serviceObser: CriteriosService
+    private criteriosService: CriteriosService
   ) {}
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
@@ -116,7 +119,31 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
- 
+    const idEvidencia = localStorage.getItem("eviden");
+    this.id_ev=Number(idEvidencia);
+    console.log("traido ev "+idEvidencia);
+    this.modeloMax();
+    
+  }
+  modeloMax() {
+    this.criteriosService.getModeMaximo().subscribe((data) => {
+      this.id_modelo =data.id_modelo;
+    this.inicio();
+    });
+    }
+
+  inicio(){
+    if (this.id_ev!=0) {
+      
+      console.log("evid "+this.id_ev);
+      this.criteriosService.getCorreo(this.id_modelo,this.id_ev).subscribe((data) => {
+        this.correoEnviar = data.correo;
+        this.toUser = this.correoEnviar;
+        this.listar();
+      });
+     
+    }else{
+     
     const data = history.state.data;
     const usuarioResponsable = history.state.usuarioEnviar;
     this.evidencia = data;
@@ -124,7 +151,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
     this.usuarioCorreo = usuarioResponsable;
     this.correoEnviar = this.usuarioCorreo.persona.correo;
     this.toUser = this.correoEnviar;
-
+  
     if (this.evidencia == undefined) {
       this.router.navigate(['user-dashboard']);
       location.replace('/use/user-dashboard');
@@ -134,10 +161,9 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
       this.router.navigate(['user-dashboard']);
       location.replace('/use/user-dashboard');
     }
-
     this.listar();
   }
-
+  }
   //
   seleccionarArchivo(element: any) {
     this.archivoSeleccionado = element.nombre;
@@ -399,7 +425,8 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
     }
   }
   listar(): void {
-    this.services.getEviAsig(this.evidencia.id_evidencia).subscribe((data) => {
+    console.log("evid a listar"+this.id_ev);
+    this.services.getEviAsig(this.id_ev).subscribe((data) => {
       this.listadoActividad = data;
       console.log(this.listadoActividad);
       this.dataSource.data = this.listadoActividad;
@@ -607,12 +634,10 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   }
 
   enviar() {
-    this.notificarrechazo();
-    this.notificarrechazoadmin();
-    this.notificarrechazouser();
+    
     const startTime = new Date();
     this.isSending = true;
-    this.verificar=true;
+    
     this.spinnerInterval = setInterval(() => {
       const endTime = new Date();
       const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000;
@@ -630,12 +655,16 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
           this.isSending = false;
           const endTime = new Date(); // Obtener hora actual después de enviar el correo
           const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000; // Calcular diferencia de tiempo en segundos
+          this.notificarrechazo();
+          this.notificarrechazoadmin();
+          this.notificarrechazouser();
           console.log(
             'Email sent successfully! Time taken:',
             timeDiff,
             'seconds'
           );
           console.log('Email sent successfully!');
+          this.verificar=true;
           Swal.fire({
             title: 'El correo se ha enviado con éxito',
             timer: 2000,

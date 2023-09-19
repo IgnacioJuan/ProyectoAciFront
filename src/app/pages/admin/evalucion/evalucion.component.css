@@ -5,11 +5,8 @@
 }
 
 .date-field {
-  flex-basis: calc(33.33% - 10px); /* Ajusta el ancho de los campos de fecha */
+  flex-basis: calc(33.33% - 10px);
   width:  calc(33.33% - 10px);
-  /* Distribuye el espacio disponible de manera uniforme entre los campos de fecha */
-  
-  /* Añade un margen derecho entre los campos de fecha */
 }
 
 ::ng-deep .cdk-overlay-container{
@@ -19,19 +16,19 @@
 .btn-tabs {
   display: flex;
 }
+
 .date-edits {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra horizontalmente */
-  justify-content: center; /* Centra verticalmente */
-  height: 100%; /* Ajusta la altura según tus necesidades */
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
-/* Estilos adicionales para el mat-form-field si es necesario */
 .date-edit {
-  width: 100%; /* O ajusta el ancho según tus necesidades */
-  max-width: 300px; /* Ancho máximo del mat-form-field */
-  margin: 10px; /* Espacio entre los mat-form-fields */
+  width: 100%; 
+  max-width: 300px;
+  margin: 10px;
 }
 
 .btn-tab {

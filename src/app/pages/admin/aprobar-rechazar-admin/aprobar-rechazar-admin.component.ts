@@ -112,6 +112,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
       this.user = this.login.getUser();
     });
     this.modeloMax();
+    localStorage.removeItem("eviden");
   }
   
   modeloMax() {
@@ -387,12 +388,9 @@ this.noti.idactividad=0;
 
 Listar(){
   this.noRegistros = null;
-
-  this.detalleEvaluaService
-  .getDetalleEvi(this.evidDetalle.id_evidencia)
+  this.detalleEvaluaService.getDetalleEvi(this.evidDetalle.id_evidencia)
   .subscribe(
     (detalles) => {
-    
        if(detalles.length>0)
        {
         this.listadodetalleEval = detalles;   
@@ -402,9 +400,6 @@ Listar(){
          this.noRegistros = 'No hay registros disponibles.';
  
        }
-
-
-
     },
     (error) => {
       console.log(error);
@@ -413,7 +408,7 @@ Listar(){
 }
 
 enviar() {
-  this.verificar=true;
+  
   this.notificarrechazo();
     this.notificarrechazoadmin();
     this.notificarrechazouser();
@@ -446,6 +441,7 @@ enviarNotificacion(notificacion: any) {
 
   this.notificationService.crear(notificacion).subscribe(
     (data: any) => {
+      this.verificar=true;
       console.log('Notificación enviada con éxito');
       // Realiza cualquier otra acción necesaria después de enviar la notificación
     },

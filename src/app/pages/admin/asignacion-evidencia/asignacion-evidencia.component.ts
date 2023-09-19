@@ -218,7 +218,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -236,7 +237,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" te ha asignado la evidencia " + this.nombreasignado;
     this.noti.visto = false;
     this.noti.usuario =  this.idusuario;
-
+    this.noti.url="/res/evidenasignada";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -255,7 +257,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/apruebaAdmin";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -422,21 +425,22 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.asignacion.id_modelo=this.id_modelo;
     this.asignacion.fecha_inicio=this.asignar.fecha_inicio;
     this.asignacion.fecha_fin=this.asignar.fecha_fin;
-    this.asignacion.usuario.id = this.usuarioSele.id
+    this.asignacion.usuario.id = this.usuarioSele.id;
     console.log("Asigna: "+JSON.stringify(this.asignacion));
     this.asignarEvidenciaService.createAsigna(this.asignacion)
       .subscribe(
         (response) => {
-
+          this.idusuario=this.usuarioSele.id;
+          console.log("Nombre asignado "+this.nombreasignado+ " Nombre "+this.nombre+" id: "+this.idusuario);
+          this.notificaruser();
+          this.notificar();
+          this.notificaradmin();
           this.listar();
           this.ListarAsignacion();
           this.Listado();
           
-          this.idusuario=this.usuarioSele.id;
-          console.log("Nombre asignado "+this.nombreasignado+ " Nombre "+this.nombre+" id: "+this.idusuario);
-          this.notificar();
-          this.notificaradmin();
-          this.notificaruser();
+          
+          
           Swal.fire(
             'Exitoso',
             'Se ha completado la asignación con exito',
@@ -731,7 +735,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -749,6 +754,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
 
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {

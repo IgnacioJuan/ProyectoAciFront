@@ -607,7 +607,7 @@ this.detalleEvi.estado=true;
   }
   enviar() {
     this.enviado=true;
-    this.verificar=true;
+    
     const startTime = new Date(); // Obtener hora actual antes de enviar el correo
     this.isSending = true;
     this.spinnerInterval = setInterval(() => {
@@ -628,6 +628,7 @@ this.detalleEvi.estado=true;
           this.isSending = false;
           const endTime = new Date(); // Obtener hora actual después de enviar el correo
           const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000; // Calcular diferencia de tiempo en segundos
+          this.verificar=true;
           console.log(
             'Email sent successfully! Time taken:',
             timeDiff,

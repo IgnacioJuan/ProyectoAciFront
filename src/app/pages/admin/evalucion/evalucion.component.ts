@@ -457,15 +457,15 @@ this.criteservice.getCriterios().subscribe(
     this.asignarEvidenciaService.createAsigna(this.asignacion)
       .subscribe(
         (response) => {
-
-         this.listar();
-          this.Listado();
-this.ListarAsignacion();
           this.idusuario=this.usuarioSele.id;
           console.log("Nombre asignado "+this.nombreasignado+ " Nombre "+this.nombre+" id: "+this.idusuario);
           this.notificaradmin();
           this.notificarsuperadmin();
           this.notificaruser();
+          this.listar();
+          this.Listado();
+          this.ListarAsignacion();
+          
           Swal.fire(
             'Exitoso',
             'Se ha completado la asignación con exito',
