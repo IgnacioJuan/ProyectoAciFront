@@ -7,6 +7,8 @@ export class Asigna_Evi {
   usuario: Usuario2 = new Usuario2();
   visible: boolean = true;
   id_modelo: number = 0;
+  fecha_inicio!: Date;
+  fecha_fin!: Date;
 }
 /*
 interface Evidencia{

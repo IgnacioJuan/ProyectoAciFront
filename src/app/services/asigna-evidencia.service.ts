@@ -43,20 +43,26 @@ export class AsignaEvidenciaService {
       pipe(map((response) => response as Asigna_Evi[]));
   }
 
+  public getfechaAsignacion(id_evidencia: number,id_modelo:number): Observable<Asigna_Evi> {
+    return this.httpClient.get<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/fecha/${id_evidencia}/${id_modelo}`);
+  }
+
   //EDITAR ASIGNACION
   public updateAsigna(asigna: Asigna_Evi) {
     console.log(asigna.id_asignacion_evidencia);
     return this.httpClient.put<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/actualizar/` + asigna.id_asignacion_evidencia, asigna);
   }
-
+  public editarAsigna(asigna: Asigna_Evi) {
+    return this.httpClient.put<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/editar/` + asigna.id_asignacion_evidencia, asigna);
+  }
   //ELIMINAR ASIGNACION
   public deleteAsigna(asigna: Asigna_Evi) {
     return this.httpClient.put<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/eliminarlogic/` + asigna.id_asignacion_evidencia,asigna);
   }
 
   //BUSCAR POR ID
-  public getAsignacionId(id: number): Observable<Asigna_Evi> {
-    return this.httpClient.get<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/buscar/` + id);
+  public getbuscarAsignacion(id: number): Observable<Asigna_Evi> {
+    return this.httpClient.get<Asigna_Evi>(`${baserUrl}/api/asignacionevidencia/buscar/${id}`);
   }
 
 

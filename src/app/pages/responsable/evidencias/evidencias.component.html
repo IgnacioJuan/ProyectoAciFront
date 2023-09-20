@@ -1,7 +1,7 @@
 <body>
   <div class="card">
     <h1 style="padding: 10px; text-align: center">
-      <strong>Listado de Evidencias</strong>
+      <strong>Listado de Archivos</strong>
     </h1>
     <div class="card-body">
       <div role="search" id="buscar">
@@ -18,8 +18,8 @@
         <div class="col-md-8">
           <mat-table [dataSource]="dataSource | buscar : filterPost " class="mat-elevation-z8">
             <ng-container matColumnDef="Id">
-              <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
-              <mat-cell *matCellDef="let file">{{ file.id_archivo }}</mat-cell>
+              <mat-header-cell *matHeaderCellDef  [style.display]="ocultar? '' : 'none'">Id</mat-header-cell>
+              <mat-cell *matCellDef="let file"  [style.display]="ocultar? '' : 'none'">{{ file.id_archivo }}</mat-cell>
             </ng-container>
           
             <ng-container matColumnDef="Evidencia">
@@ -30,8 +30,8 @@
             </ng-container>
           
             <ng-container matColumnDef="Borrar">
-              <mat-header-cell *matHeaderCellDef>Borrar</mat-header-cell>
-              <mat-cell *matCellDef="let file">
+              <mat-header-cell *matHeaderCellDef  [style.display]="veri? '' : 'none'">Borrar</mat-header-cell>
+              <mat-cell *matCellDef="let file"  [style.display]="veri? '' : 'none'">
                 <button class="btn btn-danger" style="background-color: red; margin-right: 5%" role="button"
                 (click)="elim(file.nombre,file)">
                 <i class="fa fa-trash"></i>

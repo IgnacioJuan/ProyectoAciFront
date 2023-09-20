@@ -43,6 +43,7 @@ export class SiderbarComponent implements OnInit {
   }
 
   public logout() {
+    localStorage.removeItem("eviden");
     this.login.logout();
     location.replace('/use/login');
   }

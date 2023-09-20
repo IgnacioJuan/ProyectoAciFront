@@ -1,6 +1,10 @@
 .mat-select-panel.mat-select-panel-right {
   margin-left: auto !important;
 }
+.no-asignado {
+  color: gray; /* Cambia el color de texto a gris u otro color deseado */
+  font-style: italic; /* Puede usar cursiva para denotar que es un valor predeterminado */
+}
 
 input:disabled,
 mat-label {

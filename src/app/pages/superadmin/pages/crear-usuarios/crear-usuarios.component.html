@@ -289,8 +289,9 @@
         >
           <table mat-table [dataSource]="dataSource2">
             <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef>ID</th>
-              <td mat-cell *matCellDef="let elemento">
+              <th mat-header-cell *matHeaderCellDef [style.display]="ocultar ? '' : 'none'">ID</th>
+              <td mat-cell *matCellDef="let elemento"
+              [style.display]="ocultar  ? '' : 'none'">
                 {{ elemento.usuario.id }}
               </td>
             </ng-container>
@@ -313,6 +314,34 @@
                 {{ elemento.rol.rolNombre }}
               </td>
             </ng-container>
+<!-- Columna de Criterios -->
+<ng-container matColumnDef="criterio">
+  <th mat-header-cell *matHeaderCellDef>Criterios</th>
+  <td mat-cell *matCellDef="let elemento">
+    <div *ngFor="let criterio of elemento.criterio">
+      {{ criterio }}
+    </div>
+  </td>
+</ng-container>
+<!-- Columna de Evidencias -->
+<!-- <ng-container matColumnDef="evidencia">
+  <th mat-header-cell *matHeaderCellDef>Evidencias</th>
+  <td mat-cell *matCellDef="let elemento">
+      <div *ngFor="let evidencia of elemento.evidencia">
+        {{ evidencia }}
+      </div>
+  </td>
+</ng-container> -->
+<!-- Columna de Evidencias -->
+<ng-container matColumnDef="evidencia">
+  <th mat-header-cell *matHeaderCellDef>Evidencias</th>
+  <td mat-cell *matCellDef="let elemento">
+      <div *ngFor="let evidencia of elemento.evidencia">
+        {{ evidencia }}
+      </div>
+  </td>
+</ng-container>
+
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>ACCIONES</th>
               <td mat-cell *matCellDef="let element">
@@ -355,7 +384,7 @@
           tabindex="-1"
           aria-labelledby="exampleModalLabel"
           aria-hidden="true"
-        >
+          >
           <div class="modal-dialog">
             <div class="modal-content">
               <div

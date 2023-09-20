@@ -64,6 +64,8 @@ export class AsignarCriterioComponent implements OnInit {
     this.noti.mensaje = this.user?.persona?.primer_nombre + " " + this.user?.persona?.primer_apellido + " te ha asignado el criterio " + this.data.nombre;
     this.noti.visto = false;
     this.noti.usuario = this.idusuario;
+    this.noti.url="/use/user-dashboard";
+    this.noti.idactividad=0;
     console.log("El nombre es " + this.nombre)
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {

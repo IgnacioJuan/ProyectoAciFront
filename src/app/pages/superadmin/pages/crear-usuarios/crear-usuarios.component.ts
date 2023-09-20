@@ -13,6 +13,8 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { catchError, tap, throwError } from 'rxjs';
 import { Usuario2 } from 'src/app/models/Usuario2';
 import { Persona2 } from 'src/app/models/Persona2';
+import { CriteriosService } from 'src/app/services/criterios.service';
+import { CriteUsuarioProjection } from 'src/app/interface/CriteUsuarioProjection';
 
 let ELEMENT_DATA: Fenix[] = [];
 
@@ -68,15 +70,17 @@ export class CrearUsuariosComponent implements OnInit {
     password: ''
   }
   public rol = 0;
+  ocultar=false;
+  idmodel!:number;
   formulario: FormGroup;
   dataSource2 = new MatTableDataSource<Usuario2>();
-  columnasUsuario: string[] = ['id', 'nombre', 'usuario', 'rol', 'actions'];
+  columnasUsuario: string[] = ['id', 'nombre', 'usuario', 'rol','criterio','evidencia', 'actions'];
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
   @ViewChild('modal') modal: any;
   constructor(
     private personaService: PersonaService,
     private usuariosService: UsuarioService,
-    private userService: UserService,
+    private userService: UserService,private httpCriterios: CriteriosService,
     private fenix_service: FenixService,
     private formBuilder: FormBuilder,
     private paginatorIntl: MatPaginatorIntl,
@@ -106,22 +110,41 @@ export class CrearUsuariosComponent implements OnInit {
     this.personaService.getPersonas().subscribe(
       listaPerso => this.listaPersonas = listaPerso);
 
-
-    this.Listado();
+this.modeloMax();
+    
   }
 
+  modeloMax() {
+    this.httpCriterios.getModeMaximo().subscribe((data) => {
+      this.idmodel =data.id_modelo;
+      this.Listado();
+    });
+  }
 
   Listado() {
     this.usuariorolservice.getusuarios().subscribe(
-      (listaAsig: any[]) => {
-        this.listaUsuarios = listaAsig;
-        this.dataSource2.data = this.listaUsuarios;
-        console.log(listaAsig)
+      (usuarios: any[]) => {
+        const usuariosData = usuarios;
+        console.log("usuarios "+JSON.stringify(usuarios))
+          usuariosData.forEach((usuario) => {
+            console.log("usuario id "+JSON.stringify(usuario.usuario.id))
+          this.usuariorolservice.getcriterios(usuario.usuario.id, this.idmodel).subscribe(
+            (criterios: CriteUsuarioProjection[]) => {
+              usuario.criterio = criterios.map((c) => c.criterio);
+              usuario.evidencia = criterios.map((c) => c.evidencia);
+      
+              if (usuariosData.every((u) => u.criterio && u.criterio.length > 0)) {
+                this.dataSource2.data = usuariosData;
+                console.log("criterios v " + JSON.stringify(this.dataSource2.data));
+            }
+            
+            }
+          );
+        });
       }
     );
-
-
   }
+  
 
   aplicarFiltroPorRol() {
     if (this.selectedRole) {
@@ -167,7 +190,7 @@ export class CrearUsuariosComponent implements OnInit {
       Swal.fire('Error', 'Debe ingresar una cedula', 'error');
       return;
     }
-    console.log('si entra');
+    
     this.fenix_service.getDocenteByCedula(this.fenix.cedula).subscribe(
       (result) => {
         this.dataSource = result;

@@ -17,8 +17,8 @@
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource | buscar : filterPost">
           <ng-container matColumnDef="Id">
-            <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let element; let i = index">
+            <th mat-header-cell *matHeaderCellDef [style.display]="ocultar? '' : 'none'">ID</th>
+            <td mat-cell *matCellDef="let element; let i = index" [style.display]="ocultar? '' : 'none'">
               {{ element.id }}
             </td>
           </ng-container>

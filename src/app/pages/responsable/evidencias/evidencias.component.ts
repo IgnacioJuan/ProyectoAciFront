@@ -52,7 +52,8 @@ export class EvidenciasResponComponent implements OnInit {
  displayedColumns: string[] = ['Id', 'Evidencia', 'Borrar'];
  @ViewChild(MatPaginator)
  paginator!: MatPaginator;
-
+idevidencia!:number;
+ocultar=true;
  ngAfterViewInit() {
   console.log('Paginator:', this.paginator);
   if (this.paginator) {
@@ -60,13 +61,9 @@ export class EvidenciasResponComponent implements OnInit {
   }
 }
   constructor(private archivo: ArchivoService,
-    private _snackBar: MatSnackBar,
-    private services: ActividadService,
     public login: LoginService,
     private notificationService:NotificacionService,
-    private evidenciaservice: EvidenciaService,
-    private fb: FormBuilder,
-    private router: Router
+    private fb: FormBuilder, private router: Router
   ) {
 
     this.formulario = this.fb.group({
@@ -82,10 +79,21 @@ export class EvidenciasResponComponent implements OnInit {
   }
   @ViewChild('fileInput') fileInput!: ElementRef;
   activ: Actividades = new Actividades();
-  archi: Archivo = new Archivo()
+  archi: Archivo = new Archivo();
+  estad='';
+  veri=true;
   ngOnInit(): void {
     const data = history.state.data;
     this.activ = data;
+    if(this.activ?.evidencia?.id_evidencia!=null){
+    this.idevidencia=this.activ.evidencia.id_evidencia;
+    this.estad=this.activ.estado;
+    if(this.estad=='Aprobado'){
+      this.veri=false;
+    }
+    console.log("acti recibido "+this.idevidencia+" estado "+this.estad);
+  }
+    
     if (this.activ == undefined) {
       this.router.navigate(['user-dashboard']);
       location.replace('/use/user-dashboard');
@@ -124,12 +132,13 @@ export class EvidenciasResponComponent implements OnInit {
   notificar() {
     this.noti.fecha = new Date();
     this.noti.rol = "SUPERADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido una evidencia "
+    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido un archivo "
     +"para la actividad "+ this.activ.nombre;
 
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/sup/detalle";
+    this.noti.idactividad=this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -144,11 +153,12 @@ export class EvidenciasResponComponent implements OnInit {
   notificaradmin() {
     this.noti.fecha = new Date();
     this.noti.rol = "ADMIN";
-    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido una evidencia "
+    this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" ha subido un archivo "
     +"para la actividad "+ this.activ.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;

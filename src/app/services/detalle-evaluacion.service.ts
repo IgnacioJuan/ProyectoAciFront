@@ -52,6 +52,9 @@ export class DetalleEvaluacionService {
   actualizar(id: any, detalle: any): Observable<any> {
     return this.http.put(`${baserUrl}/api/detalle_evaluacion/actualizar/${id}`, detalle);
   }
-
+  public getObservaciones(id_evidencia: number,id_modelo:number): Observable<detalleEvaluacion[]> {
+    return this.http.get<detalleEvaluacion[]>(`${baserUrl}/api/detalle_evaluacion/observaciones/${id_evidencia}/${id_modelo}`);
+    
+  }
   
 }

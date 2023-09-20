@@ -66,6 +66,7 @@ export class AprobacionactComponent implements OnInit {
   isLoggedIn = false;
   user: any = null;
   rol: any = null;
+  ocultar=false;
   noti = new Notificacion();
   idusuario: any = null;
   nombre: any = null;
@@ -111,6 +112,7 @@ verificar:boolean=false;
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
+    localStorage.removeItem("eviden");
     this.modeloMax();
   }
   
@@ -216,7 +218,8 @@ notificaraprob() {
     ' de ' +
     nombres;
   this.noti.usuario = 0;
-
+  this.noti.url="/sup/aprobaciones";
+  this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -241,6 +244,8 @@ notificaraprobuser() {
   const idUsuarioString = localStorage.getItem('idUsuario');
   const idUsuario = Number(idUsuarioString);
   this.noti.usuario = idUsuario;
+  this.noti.url="/res/evidenasignada";
+this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -267,7 +272,8 @@ notificaraprobadmin() {
     nombres;
   this.noti.visto = false;
   this.noti.usuario = 0;
-
+  this.noti.url="/adm/apruebaAdmin";
+  this.noti.idactividad=0;
   this.notificationService.crear(this.noti).subscribe(
     (data: Notificacion) => {
       this.noti = data;
@@ -429,7 +435,7 @@ Listar(){
   }
 
   Aprobado(descripcion:any) {
-    this.descripcionSeleccionada = descripcion;
+    this.descripcionSeleccionada = descripcion.descripcion;
     this.aprobado = true;
     Swal.fire({
       icon: 'success',
@@ -448,7 +454,7 @@ Listar(){
 
   Rechazado(descripcion:any) {
     this.aprobado = false;
-    this.descripcionSeleccionada = descripcion;
+    this.descripcionSeleccionada = descripcion.descripcion;
     Swal.fire({
       icon: 'error',
       title: 'La tarea ha sido rechazada.',
@@ -603,7 +609,7 @@ this.detalleEvi.estado=true;
   }
   enviar() {
     this.enviado=true;
-    this.verificar=true;
+    
     const startTime = new Date(); // Obtener hora actual antes de enviar el correo
     this.isSending = true;
     this.spinnerInterval = setInterval(() => {
@@ -624,6 +630,7 @@ this.detalleEvi.estado=true;
           this.isSending = false;
           const endTime = new Date(); // Obtener hora actual después de enviar el correo
           const timeDiff = (endTime.getTime() - startTime.getTime()) / 1000; // Calcular diferencia de tiempo en segundos
+          this.verificar=true;
           console.log(
             'Email sent successfully! Time taken:',
             timeDiff,

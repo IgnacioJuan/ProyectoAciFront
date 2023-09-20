@@ -107,7 +107,7 @@
     <h2  style="margin-top: 10px;margin-left: 25px;position: sticky;">Notificaciones</h2>
     <mat-dialog-content style="padding: 10px">
       <ul *ngIf="notificaciones && notificaciones.length > 0">
-        <li *ngFor="let notificacion of notificaciones">
+        <li *ngFor="let notificacion of notificaciones" (click)="ir(notificacion)">
           <div>
             {{ notificacion.mensaje }}
           </div>
@@ -124,5 +124,4 @@
         No hay notificaciones
       </p>
     </mat-dialog-content>
-  </mat-dialog></mat-dialog-content
->
+  </mat-dialog></mat-dialog-content>

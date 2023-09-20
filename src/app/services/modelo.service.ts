@@ -79,4 +79,7 @@ export class ModeloService {
   getcriterioadmin(id_modelo:number,id:number): Observable<criteriosdesprojection[]> {
     return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/listcriterioadmin/${id_modelo}/${id}`)
   }
+  getcriterioresp(id_modelo:number,id:number): Observable<criteriosdesprojection[]> {
+    return this.http.get<criteriosdesprojection[]>(`${baserUrl}/api/modelo/criterespon/${id_modelo}/${id}`)
+  }
 }

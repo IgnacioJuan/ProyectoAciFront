@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { Notificacion } from 'src/app/models/Notificacion';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -19,8 +20,10 @@ export class NavbarComponent implements OnInit {
   user: any = null;
   noti = new Notificacion();
   notificaciones: Notificacion[] = [];
-
-  constructor(public login: LoginService, private notificationService: NotificacionService, private dialog: MatDialog) {
+  notificaciones2: Notificacion[] = [];
+  idactividad:any;
+  constructor(public login: LoginService, private notificationService: NotificacionService,
+    private dialog: MatDialog,private router: Router) {
     this.rol = this.login.getUserRole();
   }
 
@@ -34,47 +37,53 @@ export class NavbarComponent implements OnInit {
       }
     );
     this.listarnot(this.user.id);
+   
   }
 
   listarnot(id: any) {
-    console.log("id ver "+id);
-    if (this.rol == "ADMIN" || this.rol == "SUPERADMIN") {
-      // Cargar notificaciones del rol ADMIN
-      this.notificationService.allnotificacion(this.rol).subscribe(
-        (data: Notificacion[]) => {
-          this.notificaciones = data;
-          this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
-          // Cargar notificaciones propias por id
-          this.notificationService.getNotificaciones(id).subscribe(
-            (dataPropias: Notificacion[]) => {
-              this.notificaciones = this.notificaciones.concat(dataPropias);
-              this.numNotificacionesSinLeer += dataPropias.filter(n => !n.visto).length;
+    console.log("id ver " + id);
+    // Cargar notificaciones propias por id
+    this.notificationService.getNotificaciones(id).subscribe(
+      (dataPropias: Notificacion[]) => {
+        this.notificaciones = dataPropias;
+        this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
+        // Verifica si es ADMIN o SUPERADMIN
+        if (this.rol == "ADMIN" || this.rol == "SUPERADMIN") {
+          // Cargar notificaciones del rol ADMIN
+          this.notificationService.allnotificacion(this.rol).subscribe(
+            (dataRol: Notificacion[]) => {
+              this.notificaciones = this.notificaciones.concat(dataRol);
+              this.numNotificacionesSinLeer += dataRol.filter(n => !n.visto).length;
+              // Ordenar las notificaciones por fecha (de más reciente a más antigua)
+              this.notificaciones.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
             },
-            (errorPropias: any) => {
-              console.error('No se pudieron listar las notificaciones propias');
+            (errorRol: any) => {
+              console.error('No se pudieron listar las notificaciones por rol');
             }
           );
-        },
-        (error: any) => {
-          console.error('No se pudieron listar las notificaciones');
         }
-      );
-    } else {
-      this.notificationService.getNotificaciones(id).subscribe(
-        (data: Notificacion[]) => {
-          this.notificaciones = data;
-          //console.log("noti "+JSON.stringify(this.notificaciones));
-          this.numNotificacionesSinLeer = this.notificaciones.filter(n => !n.visto).length;
-        },
-        (error: any) => {
-          console.error('No se pudieron listar las notificaciones');
-        }
-      );
-    }
+      },
+      (errorPropias: any) => {
+        console.error('No se pudieron listar las notificaciones propias');
+      }
+    );
   }
   
-
+  
+  
+ir(noti:any){
+  noti.url;
+  if(noti.idactividad!=0){
+ 
+    localStorage.setItem("eviden",noti.idactividad)
+    this.router.navigate([noti.url]);
+     window.location.reload();
+  }  else {
+    this.router.navigate([noti.url]);
+  }
+}
   public logout() {
+    localStorage.removeItem("eviden");
     this.login.logout();
     location.replace('/use/login');
   }

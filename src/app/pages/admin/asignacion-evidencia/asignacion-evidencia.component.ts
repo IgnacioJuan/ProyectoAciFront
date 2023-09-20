@@ -32,9 +32,9 @@ let ELEMENT_DATA: Fenix[] = [];
   styleUrls: ['./asignacion-evidencia.component.css']
 })
 export class AsignacionEvidenciaComponent implements OnInit {
-  columnas: string[] = ['id', 'nombre', 'rol', 'usuario','evidencia', 'fechainicio','fechafin', 'actions'];
+  columnas: string[] = ['id', 'nombre', 'rol', 'usuario','evidencia', 'actions'];
   columnasEvidencia: string[] = ['criterio','subcriterio','indicador', 'descripcion','idev', 'actions'];
-  columnasEvidenciaAsignacion: string[] = ['usuario','criterio','subcriterio', 'evidencia',  'idasigna', 'ideviden','descripcion', 'actions'];
+  columnasEvidenciaAsignacion: string[] = ['usuario','criterio','subcriterio', 'evidencia',  'idasigna', 'ideviden','descripcion','inicio','fin', 'actions'];
   rowspanArray: number[] = [];
   spans: any[] = [];
   spans2: any[] = [];
@@ -82,6 +82,12 @@ export class AsignacionEvidenciaComponent implements OnInit {
   usuariosEdit = new Usuario2();
   usuariosEditGuar = new Usuario2();
   asignacion = new Asigna_Evi();
+  asignar: Asigna_Evi = new Asigna_Evi();
+  idasigna!:number;
+  asignar2: Asigna_Evi = new Asigna_Evi();
+  asigedit = new Asigna_Evi();
+  inicio:any;
+  fin:any;
   formulario: FormGroup;
   roles = [
     { rolId: 3, rolNombre: 'RESPONSABLE' },
@@ -200,7 +206,11 @@ export class AsignacionEvidenciaComponent implements OnInit {
     return this.spans2[index] && this.spans2[index][col];
   }
 
-
+  EditarAsigna(element: any){
+    this.idasigna= element.idevid;
+    this.asignar2.fecha_inicio=element.ini;
+    this.asignar2.fecha_fin=element.fini;
+  }
   notificar() {
     this.noti.fecha = new Date();
     this.noti.rol = "SUPERADMIN";
@@ -208,7 +218,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -226,7 +237,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     this.noti.mensaje = this.user.persona.primer_nombre+" "+this.user.persona.primer_apellido+" te ha asignado la evidencia " + this.nombreasignado;
     this.noti.visto = false;
     this.noti.usuario =  this.idusuario;
-
+    this.noti.url="/res/evidenasignada";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -245,7 +257,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/apruebaAdmin";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -398,25 +411,36 @@ export class AsignacionEvidenciaComponent implements OnInit {
   }
 
   public AsignaUsuario(element: any) {
-  
+    if (this.asignar.fecha_inicio == null || this.asignar.fecha_fin == null) {
+      Swal.fire('Error', `Debe llenar todos los campos`, 'error');
+      return;
+    }
+
+    if (this.asignar.fecha_inicio >= this.asignar.fecha_fin) {
+      Swal.fire('Error', `La fecha de inicio no puede ser mayor a la fecha fin`, 'error');
+      return;
+    }
     this.asignacion.evidencia.id_evidencia = element.idev;
     this.nombreasignado=element.descripc;
     this.asignacion.id_modelo=this.id_modelo;
-    this.asignacion.usuario.id = this.usuarioSele.id
+    this.asignacion.fecha_inicio=this.asignar.fecha_inicio;
+    this.asignacion.fecha_fin=this.asignar.fecha_fin;
+    this.asignacion.usuario.id = this.usuarioSele.id;
     console.log("Asigna: "+JSON.stringify(this.asignacion));
     this.asignarEvidenciaService.createAsigna(this.asignacion)
       .subscribe(
         (response) => {
-
+          this.idusuario=this.usuarioSele.id;
+          console.log("Nombre asignado "+this.nombreasignado+ " Nombre "+this.nombre+" id: "+this.idusuario);
+          this.notificaruser();
+          this.notificar();
+          this.notificaradmin();
           this.listar();
           this.ListarAsignacion();
           this.Listado();
           
-          this.idusuario=this.usuarioSele.id;
-          console.log("Nombre asignado "+this.nombreasignado+ " Nombre "+this.nombre+" id: "+this.idusuario);
-          this.notificar();
-          this.notificaradmin();
-          this.notificaruser();
+          
+          
           Swal.fire(
             'Exitoso',
             'Se ha completado la asignación con exito',
@@ -466,7 +490,41 @@ export class AsignacionEvidenciaComponent implements OnInit {
     );
   }
 
+  Actualizarfecha(){
+    if (this.asignar2.fecha_inicio == null || this.asignar2.fecha_fin == null) {
+      Swal.fire('Error', `Debe llenar todos los campos`, 'error');
+      return;
+    }
   
+    if (this.asignar2.fecha_inicio >= this.asignar2.fecha_fin) {
+      Swal.fire('Error', `La fecha de inicio no puede ser mayor a la fecha fin`, 'error');
+      return;
+    }
+    Swal.fire({
+      title: 'Actualizar',
+      text: "Se cambiaran las fechas de esta asignación",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Guardar',
+      cancelButtonText:'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.asigedit.id_asignacion_evidencia=this.idasigna;
+        this.asigedit.fecha_inicio=this.asignar2.fecha_inicio;
+        this.asigedit.fecha_fin=this.asignar2.fecha_fin;
+        console.log("Datos actualizar "+JSON.stringify(this.asigedit));
+    this.asignarEvidenciaService.editarAsigna(this.asigedit).subscribe((response) => {
+      this.Listado();
+      this.listar();
+      this.ListarAsignacion();
+    });
+
+    Swal.fire('Actualizado!', 'Se cambiaron las fechas de las asignaciones.', 'success');
+  }
+});
+  }
   Listado() {
     this.responsableService.getResponsables().subscribe(
       listaUsua => {
@@ -596,7 +654,10 @@ export class AsignacionEvidenciaComponent implements OnInit {
 
   modeloMax() {
     this.criteservice.getModeMaximo().subscribe((data) => {
-      this.id_modelo =data.id_modelo;})
+      this.id_modelo =data.id_modelo;
+      this.inicio=data.fecha_inicio;
+      this.fin=data.fecha_fin;
+      })
     }
 
 
@@ -674,7 +735,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
-
+    this.noti.url="/adm/detalleAprobarRechazar";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -692,6 +754,8 @@ export class AsignacionEvidenciaComponent implements OnInit {
     +" a "+this.nombre;
     this.noti.visto = false;
     this.noti.usuario =  0;
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
 
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
