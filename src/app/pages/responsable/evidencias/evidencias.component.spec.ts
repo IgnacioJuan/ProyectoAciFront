@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { EvidenciasComponent } from '../../superadmin/pages/evidencias/evidencias.component';
 
-import { EvidenciasComponent } from './evidencias.component';
 
 describe('EvidenciasComponent', () => {
   let component: EvidenciasComponent;

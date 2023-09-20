@@ -53,6 +53,7 @@ export class EvidenciasResponComponent implements OnInit {
  @ViewChild(MatPaginator)
  paginator!: MatPaginator;
 idevidencia!:number;
+ocultar=true;
  ngAfterViewInit() {
   console.log('Paginator:', this.paginator);
   if (this.paginator) {
@@ -60,13 +61,9 @@ idevidencia!:number;
   }
 }
   constructor(private archivo: ArchivoService,
-    private _snackBar: MatSnackBar,
-    private services: ActividadService,
     public login: LoginService,
     private notificationService:NotificacionService,
-    private evidenciaservice: EvidenciaService,
-    private fb: FormBuilder,
-    private router: Router
+    private fb: FormBuilder, private router: Router
   ) {
 
     this.formulario = this.fb.group({
@@ -82,13 +79,19 @@ idevidencia!:number;
   }
   @ViewChild('fileInput') fileInput!: ElementRef;
   activ: Actividades = new Actividades();
-  archi: Archivo = new Archivo()
+  archi: Archivo = new Archivo();
+  estad='';
+  veri=true;
   ngOnInit(): void {
     const data = history.state.data;
     this.activ = data;
     if(this.activ?.evidencia?.id_evidencia!=null){
     this.idevidencia=this.activ.evidencia.id_evidencia;
-    console.log("acti recibido "+this.idevidencia);
+    this.estad=this.activ.estado;
+    if(this.estad=='Aprobado'){
+      this.veri=false;
+    }
+    console.log("acti recibido "+this.idevidencia+" estado "+this.estad);
   }
     
     if (this.activ == undefined) {

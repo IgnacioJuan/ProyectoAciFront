@@ -319,13 +319,8 @@
   <th mat-header-cell *matHeaderCellDef>Criterios</th>
   <td mat-cell *matCellDef="let elemento">
     <div *ngFor="let criterio of elemento.criterio">
-      <div *ngIf="criterio!==''; else noAsignado">
       {{ criterio }}
     </div>
-    </div>
-    <ng-template #noAsignado>
-      No asignado
-    </ng-template>
   </td>
 </ng-container>
 <!-- Columna de Evidencias -->
@@ -341,15 +336,9 @@
 <ng-container matColumnDef="evidencia">
   <th mat-header-cell *matHeaderCellDef>Evidencias</th>
   <td mat-cell *matCellDef="let elemento">
-   
       <div *ngFor="let evidencia of elemento.evidencia">
-        <div *ngIf="evidencia!==''; else noAsignado">
         {{ evidencia }}
       </div>
-    </div>
-    <ng-template #noAsignado>
-      No asignada
-    </ng-template>
   </td>
 </ng-container>
 

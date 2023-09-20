@@ -16,7 +16,7 @@ export class Historial_notifiComponent implements OnInit, AfterViewInit {
   rol: any = null;
   displayedColumns: string[] = ['Id', 'Fecha', 'Mensaje'];
   dataSource = new MatTableDataSource<Notificacion>();
-  
+  ocultar=false;
   isLoggedIn = false;
   user: any = null;
   numNotificacionesSinLeer: number = 0;

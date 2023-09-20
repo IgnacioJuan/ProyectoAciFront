@@ -89,4 +89,9 @@ public getActUsu(idEvi: number): Observable<Actividades[]> {
   return this.http.get<Actividades[]>(`${baserUrl}/api/actividad/buscaractiv/${idEvi}`);
   
 }
+
+public getObservaciones(id_actividad: number): Observable<Observacion2[]> {
+  return this.http.get<Observacion2[]>(`${baserUrl}/api/observacion/obseractividad/${id_actividad}`);
+  
+}
 }

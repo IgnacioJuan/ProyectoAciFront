@@ -56,6 +56,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
   filterPost = '';
   isSending = false;
   spinnerValue = 0;
+  ocultar=false;
   spinnerInterval: any;
   mostrar = false;
   maxTime: number = 30;
@@ -523,6 +524,7 @@ enviarNotificacion(notificacion: any) {
     this.detalleEvi.evidencia.id_evidencia = this.evid.id_evidencia;
     this.detalleEvi.usuario.id = this.user.id;
     this.detalleEvi.observacion=this.observacion;
+    this.detalleEvi.id_modelo=this.id_modelo;
     if (this.aprobado) {
       this.evid.estado = this.estadoEvi;
       if(this.evid.estado=='Aprobada'){

@@ -66,6 +66,7 @@ export class AprobacionactComponent implements OnInit {
   isLoggedIn = false;
   user: any = null;
   rol: any = null;
+  ocultar=false;
   noti = new Notificacion();
   idusuario: any = null;
   nombre: any = null;
@@ -111,6 +112,7 @@ verificar:boolean=false;
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
     });
+    localStorage.removeItem("eviden");
     this.modeloMax();
   }
   

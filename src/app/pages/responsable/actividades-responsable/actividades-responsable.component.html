@@ -16,7 +16,8 @@
       />
       </div>
       <br />
-      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#materiaModal">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#materiaModal"
+      *ngIf="crear">
         CREAR NUEVA ACTIVIDAD
       </button>
       <br />
@@ -24,8 +25,10 @@
       <table  mat-table [dataSource]="dataSource | buscar : filterPost" class="mat-elevation-z8">
         <!-- Encabezados de la tabla -->
         <ng-container matColumnDef="ID">
-          <th mat-header-cell *matHeaderCellDef>ID</th>
-          <td mat-cell *matCellDef="let acti">{{ acti.id_actividad }}</td>
+          <th mat-header-cell *matHeaderCellDef
+          [style.display]="ocultar? '' : 'none'">ID</th>
+          <td mat-cell *matCellDef="let acti"
+          [style.display]="ocultar? '' : 'none'">{{ acti.id_actividad }}</td>
         </ng-container>
 
         <ng-container matColumnDef="NOMBRE">
@@ -50,6 +53,14 @@
         <ng-container matColumnDef="ESTADO">
           <th mat-header-cell *matHeaderCellDef>ESTADO</th>
           <td mat-cell *matCellDef="let acti" [ngClass]="getColorEstado(acti.estado)">{{ acti.estado.toUpperCase() }}</td>
+        </ng-container>
+        <ng-container matColumnDef="observacion">
+          <th mat-header-cell *matHeaderCellDef>Observación</th>
+          <td mat-cell *matCellDef="let elemento">
+            <div *ngFor="let observacion of elemento.observacion">
+              {{ observacion }}
+            </div>
+          </td>
         </ng-container>
         <ng-container matColumnDef="Subir evidencia">
           <th mat-header-cell *matHeaderCellDef>Subir evidencia</th>

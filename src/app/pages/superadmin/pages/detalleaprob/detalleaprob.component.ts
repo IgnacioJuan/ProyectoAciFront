@@ -94,7 +94,7 @@ export class DetalleaprobComponent implements OnInit {
   public actividad = new Actividades();
   listadoObservaciones: Observacion2[] = [];
   aprobado: boolean=false;
-
+  id_modelo!:number;
   constructor(
     private services: ActividadService,
     private router: Router,
@@ -103,7 +103,7 @@ export class DetalleaprobComponent implements OnInit {
     private archivo: ArchivoService,
     public login: LoginService,
     private notificationService: NotificacionService,
-    private serviceObser: CriteriosService
+    private criteriosService: CriteriosService
   ) {}
 
   @ViewChild(MatPaginator, { static: false }) paginator?: MatPaginator;
@@ -118,27 +118,52 @@ export class DetalleaprobComponent implements OnInit {
       this.user = this.login.getUser();
     });
 
-    const data = history.state.data;
-    const usuarioResponsable = history.state.usuarioEnviar;
-    this.evidencia = data;
-    this.id_ev=this.evidencia.id_evidencia;
-    this.usuarioCorreo = usuarioResponsable;
-    this.correoEnviar = this.usuarioCorreo.persona.correo;
-    this.toUser = this.correoEnviar;
+    const idEvidencia = localStorage.getItem("eviden");
+    this.id_ev=Number(idEvidencia);
+    console.log("traido ev "+idEvidencia);
+    this.modeloMax();
 
-    if (this.evidencia == undefined) {
-      this.router.navigate(['sup/dashboard']);
-      location.replace('/sup/dashboard');
-    }
-
-    if (this.usuarioCorreo == undefined) {
-      this.router.navigate(['sup/dashboard']);
-      location.replace('/sup/dashboard');
-    }
-
+    //this.listar();
+  }
+//
+modeloMax() {
+  this.criteriosService.getModeMaximo().subscribe((data) => {
+    this.id_modelo =data.id_modelo;
+  this.inicio();
+  });
+  }
+  inicio(){
+    if (this.id_ev!=0) {
+      
+      console.log("evid "+this.id_ev);
+      this.criteriosService.getCorreo(this.id_modelo,this.id_ev).subscribe((data) => {
+        this.correoEnviar = data.correo;
+        this.toUser = this.correoEnviar;
+        this.listar();
+      });
+     
+    }else{
+      const data = history.state.data;
+      const usuarioResponsable = history.state.usuarioEnviar;
+      this.evidencia = data;
+      this.id_ev=this.evidencia.id_evidencia;
+      this.usuarioCorreo = usuarioResponsable;
+      this.correoEnviar = this.usuarioCorreo.persona.correo;
+      this.toUser = this.correoEnviar;
+  
+      if (this.evidencia == undefined) {
+        this.router.navigate(['sup/dashboard']);
+        location.replace('/sup/dashboard');
+      }
+  
+      if (this.usuarioCorreo == undefined) {
+        this.router.navigate(['sup/dashboard']);
+        location.replace('/sup/dashboard');
+      }
+  
     this.listar();
   }
-
+  }
   //
   seleccionarArchivo(element: any) {
     this.archivoSeleccionado = element.nombre;
@@ -383,7 +408,7 @@ export class DetalleaprobComponent implements OnInit {
   }
 
   listar(): void {
-    this.services.getEviAsig(this.evidencia.id_evidencia).subscribe((data) => {
+    this.services.getEviAsig(this.id_ev).subscribe((data) => {
       this.listadoActividad = data;
       console.log(this.listadoActividad);
       this.dataSource.data = this.listadoActividad;

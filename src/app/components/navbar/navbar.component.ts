@@ -74,14 +74,16 @@ export class NavbarComponent implements OnInit {
 ir(noti:any){
   noti.url;
   if(noti.idactividad!=0){
-    console.log("id ev"+noti.idactividad);
+ 
     localStorage.setItem("eviden",noti.idactividad)
     this.router.navigate([noti.url]);
+     window.location.reload();
   }  else {
     this.router.navigate([noti.url]);
   }
 }
   public logout() {
+    localStorage.removeItem("eviden");
     this.login.logout();
     location.replace('/use/login');
   }

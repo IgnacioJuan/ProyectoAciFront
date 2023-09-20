@@ -97,6 +97,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
   public actividad = new Actividades();
   listadoObservaciones: Observacion2[] = [];
 evid!:number;
+compa!:number;
   constructor(
     private services: ActividadService,
     private router: Router,
@@ -122,6 +123,10 @@ evid!:number;
     const idEvidencia = localStorage.getItem("eviden");
     this.id_ev=Number(idEvidencia);
     console.log("traido ev "+idEvidencia);
+    if(this.compa!=this.id_ev){
+      this.compa=this.id_ev;
+      this.modeloMax();
+    }
     this.modeloMax();
     
   }
@@ -164,6 +169,7 @@ evid!:number;
     this.listar();
   }
   }
+  
   //
   seleccionarArchivo(element: any) {
     this.archivoSeleccionado = element.nombre;

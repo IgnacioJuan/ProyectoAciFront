@@ -9,6 +9,10 @@ import { ModeloService } from 'src/app/services/modelo.service';
 
 import { AsignaEvidenciaService } from 'src/app/services/asigna-evidencia.service';
 import { EvidenciaProjection } from 'src/app/interface/EvidenciaProjection';
+import { DetalleEvaluacionService } from 'src/app/services/detalle-evaluacion.service';
+import { CriteriosService } from 'src/app/services/criterios.service';
+import { Observacion2 } from 'src/app/models/Observaciones2';
+import { detalleEvaluacion } from 'src/app/models/DetalleEvaluacion';
 
 @Component({
   selector: 'app-evidencia-tareas-asginadas',
@@ -22,13 +26,14 @@ export class EvidenciaTareasAsginadasComponent {
   user: any;
  verificar=false;
  titulo="";
+ ocultar=false;
   botonDeshabilitado: boolean | undefined;
   dataSource = new MatTableDataSource<EvidenciaProjection>();
-  displayedColumns: string[] = ['ID', 'Criterio', 'Subcriterio', 'Indicador', 'Estado', 'Descripción', 'Actividad'];
-
+  displayedColumns: string[] = ['ID', 'Criterio', 'Subcriterio', 'Indicador', 'Estado', 'Descripción','observacion', 'Actividad'];
+  id_modelo!:number;
   constructor(
-    private asignaService: AsignaEvidenciaService,
-    private login: LoginService,
+    private detaeva: DetalleEvaluacionService,
+    private login: LoginService,private httpCriterios: CriteriosService,
     private evidenciaService: EvidenciaService,
     private modeloService: ModeloService,
     private router: Router,
@@ -74,76 +79,57 @@ export class EvidenciaTareasAsginadasComponent {
   
 
   ngOnInit(): void {
-    // this.evidenciaService.geteviasig(this.user.username).subscribe(data => {
-     //   this.evidencias = data;
-   //   this.dataSource.data = data;
-    //   this.dataSource.paginator = this.paginator; // Asigna el paginador aquí
-    //   // ...
-    // });
-    this.evidenciaService.getevilist(this.user.username).subscribe(data => {
-      // Filtrar duplicados utilizando un Set
-     /* const uniqueIds = new Set<number>();
-      this.evidencias = data.filter(ev => {
-        if (!uniqueIds.has(ev.id_evidencia)) {
-          uniqueIds.add(ev.id_evidencia);
-          return true;
-        }
-        return false;
-      });**/
-
-      if(data.length!=0){
-        this.verificar=true;
-        this.titulo="EVIDENCIAS ASIGNADAS";
-      } else{
-        this.titulo="NO TIENES EVIDENCIAS ASIGNADAS";
-      }
-      this.dataSource.data = data;
-      console.log("datos evid "+JSON.stringify(this.dataSource.data));
-      this.dataSource.paginator = this.paginator;
-      // ...
-    });
-    // ...
-    // this.login.loginStatusSubjec.asObservable().subscribe(
-    //   data => {
-    //     this.isLoggedIn = this.login.isLoggedIn();
-    //     this.user = this.login.getUser();
-    //   }
-    // );
+    localStorage.removeItem("eviden");
+    
+ 
     this.login.loginStatusSubjec.asObservable().subscribe(
       data => {
         this.isLoggedIn = this.login.isLoggedIn();
         this.user = this.login.getUser();
-  
-        // Realiza la solicitud de datos solo una vez aquí
-        this.evidenciaService.getevilist(this.user.username).subscribe(data => {
-          /*const uniqueIds = new Set<number>();
-          this.evidencias = data.filter(ev => {
-            if (!uniqueIds.has(ev.id_evidencia)) {
-              uniqueIds.add(ev.id_evidencia);
-              return true;
-            }
-            return false;
-          });*/
-  
-          this.dataSource.data = data;
-          this.dataSource.paginator = this.paginator;
-        });
-  
-        // Verifica la fecha límite después de obtener los datos
-        this.verificarFechaLimite();
       }
     );
-    console.log(this.user.username);
-    this.evidenciaService.getevilist(this.user.username).subscribe(data => {
-      this.evidencias = data;
-      this.dataSource.data = data;
-      this.dataSource.data = this.evidencias; // Actualizar el dataSource
-    });
 
-    this.verificarFechaLimite();
+    console.log(this.user.username);
+    
+      this.httpCriterios.getModeMaximo().subscribe((data) => {
+        this.id_modelo =data.id_modelo;
+        this.Listado();
+      });
+    
+        
+        // Verifica la fecha límite después de obtener los datos
+       // this.verificarFechaLimite();
+   
   }
 
- 
+  Listado() {
+    this.evidenciaService.getevilist(this.user.username).subscribe((data: any[]) => {
+      if (data.length != 0) {
+        this.verificar = true;
+        this.titulo = "EVIDENCIAS ASIGNADAS";
+        const evidata: any[] = data; // Anotación de tipo para evidata
+        this.evidencias = evidata;
+  
+        // Iterar a través de las evidencias y obtener las observaciones
+        evidata.forEach(evidencia => {
+          this.detaeva.getObservaciones(evidencia.id_evidencia, this.id_modelo).subscribe(
+            (observac: detalleEvaluacion[]) => { // Asegúrate de que observac tenga el tipo adecuado
+              // Asignar las observaciones al elemento de evidencia
+              evidencia.observacion = observac.map((c) =>c.observacion);
+            }
+          );
+        });
+  
+        this.dataSource.data = this.evidencias; // Actualizar el dataSource
+        this.dataSource.paginator = this.paginator;
+      } else {
+        this.titulo = "NO TIENES EVIDENCIAS ASIGNADAS";
+      }
+    });
+  }
+  
+  
+  
   
   getColorEstado(estado: string): string {
     switch (estado.toLowerCase()) {

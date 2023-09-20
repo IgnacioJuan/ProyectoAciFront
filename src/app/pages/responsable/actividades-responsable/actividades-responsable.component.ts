@@ -14,6 +14,9 @@ import { Modelo } from 'src/app/models/Modelo';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { EvidenciaService } from 'src/app/services/evidencia.service';
+import { AsignaEvidenciaService } from 'src/app/services/asigna-evidencia.service';
+import { CriteriosService } from 'src/app/services/criterios.service';
+import { Observacion2 } from 'src/app/models/Observaciones2';
 
 
 @Component({
@@ -26,7 +29,8 @@ export class ActividadesResponsableComponent implements OnInit {
   @ViewChild('datosModalRef') datosModalRef: any;
   miModal!: ElementRef;
   public actividad = new Actividades();
-  Actividades: any[] = [];
+
+  Actividades:Actividades[] = [];
   guardadoExitoso: boolean = false;
   frmActividades: FormGroup;
   nombreacti!:string;
@@ -36,6 +40,9 @@ export class ActividadesResponsableComponent implements OnInit {
   idusuario: any = null;
   nombre: any = null;
   nombreact: any = null;
+  id_modelo!:number;
+  crear=true;
+  ocultar=false;
   isLoggedIn = false;
    // Crear una fuente de datos para la tabla
    dataSource = new MatTableDataSource<Actividades>();
@@ -55,19 +62,20 @@ export class ActividadesResponsableComponent implements OnInit {
     'FECHA DE INICIO',
     'FECHA FINALIZACION',
     'ESTADO',
+    'observacion',
     'Subir evidencia',
     'ACCIÓN'
   ];
   constructor(
     private services: ActividadService,
     private fb: FormBuilder,private evid:EvidenciaService,
-    private router: Router,
-    public login: LoginService,
+    private router: Router,private asigna:AsignaEvidenciaService,
+    public login: LoginService,private criteriosService: CriteriosService,
     private modeloService: ModeloService,
     private notificationService: NotificacionService,
     private paginatorIntl: MatPaginatorIntl,
   ) {
-    this.fechaminima();
+    
     this.frmActividades = fb.group({
       nombre: ['', Validators.required],
       descripcion: ['', [Validators.required, Validators.maxLength(250)]],
@@ -115,28 +123,40 @@ export class ActividadesResponsableComponent implements OnInit {
     const idEvidencia = localStorage.getItem("eviden");
     this.id_ev=Number(idEvidencia);
     console.log("traido ev "+idEvidencia);
-    this.fechaminima();
-    this.calcularfecha();
+   this.modeloMax();
     this.inicio();
+    setInterval(() => {
+      this.calcularfecha();
+    }, 3600000);
+    
   }
-  
+  modeloMax() {
+    this.criteriosService.getModeMaximo().subscribe((data) => {
+      this.id_modelo =data.id_modelo;
+    
+    });
+    }
 
   inicio(){
     if (this.id_ev!=0) {
       this.evide=this.id_ev;
-      console.log("evid "+this.id_ev);
+      this.idevi=this.evide;
+      console.log("evid "+this.evide);
       this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
         this.evi = evidencia;
          this.listar();
+         this.fechaminima();
       });
     }else{
     const data = history.state.data;
     this.idevi = data;
       this.evide=this.idevi;
-      console.log("ID evi"+this.evide)
+      this.id_ev=this.idevi;
+      console.log("ID evi"+ this.id_ev)
       this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
         this.evi = evidencia;
          this.listar();
+         this.fechaminima();
       });
     }
   }
@@ -191,6 +211,7 @@ export class ActividadesResponsableComponent implements OnInit {
       }
     );
   }
+
   validarFechas(): void {
     const fechaInicio = this.frmActividades.get('fecha_inicio')?.value as string;
     const fechaFin = this.frmActividades.get('fecha_fin')?.value as string;
@@ -253,14 +274,38 @@ export class ActividadesResponsableComponent implements OnInit {
   }
 
   listar(): void {
-    const fechaActual = new Date();
-    console.log("IDS: "+this.user.username+"id "+this.idevi+"idevidencia"+this.evi.id_evidencia);
-    this.services.getactivievid(this.user.username,this.idevi).subscribe(data => {
-      this.dataSource.data = data;
-      console.log("actividades "+JSON.stringify(this.dataSource.data))
+    console.log("IDS: " + this.user.username + " id " + this.idevi + " idevidencia " + this.evi.id_evidencia);
+    
+    // Obtener las actividades relacionadas con this.user.username y this.idevi
+    this.services.getactivievid(this.user.username, this.idevi).subscribe((data: any[]) => {
+      const actidata: any[] = data;
+  
+      // Iterar a través de las actividades
+      actidata.forEach(activi => {
+        // Obtener las observaciones relacionadas con cada actividad
+        this.services.getObservaciones(activi.id_actividad).subscribe(
+          (obser: Observacion2[]) => {
+            activi.observacion = obser.map((c) =>c.observacion);
+          },
+          (error) => {
+            console.error("Error al obtener observaciones:", error);
+            // Manejar el error de forma adecuada, por ejemplo, mostrar un mensaje al usuario
+          }
+        );
+      });
+  
+      // Asignar las actividades a this.Actividades
+      this.Actividades = actidata;
+  
+      // Actualizar el dataSource
+      this.dataSource.data = this.Actividades;
       this.dataSource.paginator = this.paginator;
+    }, (error) => {
+      console.error("Error al obtener actividades:", error);
+      // Manejar el error de forma adecuada, por ejemplo, mostrar un mensaje al usuario
     });
   }
+  
 
 
   eliminar(act: any) {
@@ -323,23 +368,20 @@ export class ActividadesResponsableComponent implements OnInit {
     console.log("acti arc "+archivos.evidencia.id_evidencia);
     this.router.navigate(['/res/evidenciaResponsable'], { state: { data: archivos } });
   }
+  
   calcularfecha() {
     this.services.geteviasig(this.user.username).subscribe(data => {
       this.Actividades = data;
-
       // Obtener la fecha actual
       const fechaActual = new Date();
-
       // Iterar sobre las actividades y verificar la fecha
       this.Actividades.forEach(actividad => {
         const fechaFinActividad = new Date(actividad.fecha_fin);
-
         // Verificar si la fecha de finalización de la actividad es mayor o igual a la fecha actual
         if (fechaFinActividad >= fechaActual) {
           // Calcular la diferencia en días entre la fecha actual y la fecha de finalización de la actividad
           const tiempoRestante = fechaFinActividad.getTime() - fechaActual.getTime();
           const diasRestantes = Math.ceil(tiempoRestante / (1000 * 3600 * 24));
-
           // Verificar si quedan 3 días o menos para la fecha de finalización de la actividad
           if (diasRestantes <= 3) {
             // Mostrar la notificación individual con SweetAlert
@@ -371,15 +413,18 @@ export class ActividadesResponsableComponent implements OnInit {
 
   datasource: Modelo[] = [];
   fechaminima() {
-    this.modeloService.getModeMaximo().subscribe(data => {
-
+    let fechaactual=new Date();
+    console.log("Evidencia "+this.id_ev+" modelo "+this.id_modelo);
+    this.asigna.getfechaAsignacion(this.id_ev,this.id_modelo).subscribe(data => {
+console.log("FEcha "+JSON.stringify(data));
       const fechaInicio = new Date(data.fecha_inicio);
       this.fechaMinima = fechaInicio.toISOString().split('T')[0];
 
-      const fechaactividad = new Date(data.fecha_final_act);
+      const fechaactividad = new Date(data.fecha_fin);
       this.fechaMax = fechaactividad.toISOString().split('T')[0];
-
-
+if(fechaactual>data.fecha_fin){
+this.crear=false;
+}
     });
   }
   filterPost = '';
