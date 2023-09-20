@@ -5,6 +5,7 @@ import { CriteriosService } from 'src/app/services/criterios.service';
 import { IndicadoresService } from 'src/app/services/indicadores.service';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { MatPaginator } from '@angular/material/paginator';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
@@ -16,7 +17,22 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 export class CriterioReporteComponent {
   criteriosCuali: any[] = [];
   criteriosCuanti: any[] = [];
+  rango:any= (page: number, pageSize: number, length: number) => {
+    if (length == 0 || pageSize == 0) {
+      return `0 de ${length}`;
+    }
+  
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex =
+      startIndex < length
+        ? Math.min(startIndex + pageSize, length)
+        : startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${length}`;
+  };
+  //
   mostrarVistaGeneral: boolean = false;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   modoVisualizacion: 'cualitativo' | 'cuantitativo' = 'cualitativo'; // Inicialmente, muestra los datos cualitativos
   modoVista: 'general' | 'cualitativo' | 'cuantitativo' = 'general'; // Inicialmente, muestra la vista general
   searchText = '';

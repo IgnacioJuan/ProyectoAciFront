@@ -101,6 +101,15 @@
                 </tr>
               </tbody>
             </table>
+            <mat-paginator
+            #paginator
+              [pageSizeOptions]="[5, 15, 30]"
+              [pageSize]="5" 
+              [pageIndex]="0"
+              showFirstLastButtons
+              aria-label="Seleccione"
+            >
+            </mat-paginator>
           </div>
         </ng-container>
         <!-- Tabla de Indicadores (Combinada) -->
@@ -142,6 +151,15 @@
               </ng-template>
             </tbody>
           </table>
+          <mat-paginator
+            #paginator
+              [pageSizeOptions]="[5, 15, 30]"
+              [pageSize]="5" 
+              [pageIndex]="0"
+              showFirstLastButtons
+              aria-label="Seleccione"
+            >
+            </mat-paginator>
         </div>
         
       </div>
