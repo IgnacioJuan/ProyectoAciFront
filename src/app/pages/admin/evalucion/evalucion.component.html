@@ -316,7 +316,7 @@
                     style="background-color: red"
                     (click)="eliminar(elemento)"
                     style="margin-right: 5%"
-                    [disabled]="isFechaPasada(elemento)"
+                
                   >
                     <i class="fas fa-user-times"></i>
                   </button>
@@ -329,7 +329,7 @@
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal4"
                     (click)="seleccionarUsuario(elemento)"
-                    [disabled]="isFechaPasada(elemento)"
+                    
                   >
                     <i class="fas fa-plus-circle"></i>
                   </button>
@@ -395,6 +395,7 @@
               </figure>
             </div>
             <div class="card-body">
+              
               <div class="tabla-container">
               <div class= "table-responsive mat-elevation-z8" style="margin-bottom: 5%">
                 <table mat-table [dataSource]="dataSource4">
@@ -551,7 +552,7 @@
                               </div>
                             </div> 
                             <div>
-                              <h2>Seleccione un criterio para cargar las evidencias</h2>
+                              <h2>Seleccione un criterio:</h2>
                               <mat-form-field class="mat-select-field">
                                 <mat-label>Criterios</mat-label>
                                 <mat-select [(value)]="selectedCriterio" (selectionChange)="criterioSeleccionado()">

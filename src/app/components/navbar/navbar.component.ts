@@ -77,7 +77,7 @@ ir(noti:any){
  
     localStorage.setItem("eviden",noti.idactividad)
     this.router.navigate([noti.url]);
-     window.location.reload();
+     /*window.location.reload();*/
   }  else {
     this.router.navigate([noti.url]);
   }
