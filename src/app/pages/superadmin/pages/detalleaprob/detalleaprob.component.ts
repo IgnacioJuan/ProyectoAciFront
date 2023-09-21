@@ -132,6 +132,7 @@ modeloMax() {
   this.inicio();
   });
   }
+  
   inicio(){
     if (this.id_ev!=0) {
       

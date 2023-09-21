@@ -77,13 +77,15 @@ ir(noti:any){
  
     localStorage.setItem("eviden",noti.idactividad)
     this.router.navigate([noti.url]);
-     window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
   }  else {
     this.router.navigate([noti.url]);
   }
 }
   public logout() {
-    localStorage.removeItem("eviden");
+    localStorage.clear();
     this.login.logout();
     location.replace('/use/login');
   }

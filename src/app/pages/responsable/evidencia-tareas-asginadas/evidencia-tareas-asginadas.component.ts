@@ -109,9 +109,10 @@ export class EvidenciaTareasAsginadasComponent {
         this.titulo = "EVIDENCIAS ASIGNADAS";
         const evidata: any[] = data; // Anotación de tipo para evidata
         this.evidencias = evidata;
-  
+        
         // Iterar a través de las evidencias y obtener las observaciones
         evidata.forEach(evidencia => {
+          console.log("tareas evidencia" + evidencia.id_evidencia + " modelo en for " + this.id_modelo);
           this.detaeva.getObservaciones(evidencia.id_evidencia, this.id_modelo).subscribe(
             (observac: detalleEvaluacion[]) => { // Asegúrate de que observac tenga el tipo adecuado
               // Asignar las observaciones al elemento de evidencia

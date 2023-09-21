@@ -88,7 +88,7 @@ ocultar=true;
     if(this.activ?.evidencia?.id_evidencia!=null){
     this.idevidencia=this.activ.evidencia.id_evidencia;
     this.estad=this.activ.estado;
-    if(this.estad=='Aprobado'){
+    if(this.estad=='Aprobada'){
       this.veri=false;
     }
     console.log("acti recibido "+this.idevidencia+" estado "+this.estad);

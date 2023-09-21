@@ -279,10 +279,11 @@ export class ActividadesResponsableComponent implements OnInit {
     // Obtener las actividades relacionadas con this.user.username y this.idevi
     this.services.getactivievid(this.user.username, this.idevi).subscribe((data: any[]) => {
       const actidata: any[] = data;
-  
+      this.Actividades = actidata;
       // Iterar a través de las actividades
       actidata.forEach(activi => {
         // Obtener las observaciones relacionadas con cada actividad
+        console.log("Id actividad en tabla "+activi.id_actividad)
         this.services.getObservaciones(activi.id_actividad).subscribe(
           (obser: Observacion2[]) => {
             activi.observacion = obser.map((c) =>c.observacion);
@@ -293,9 +294,6 @@ export class ActividadesResponsableComponent implements OnInit {
           }
         );
       });
-  
-      // Asignar las actividades a this.Actividades
-      this.Actividades = actidata;
   
       // Actualizar el dataSource
       this.dataSource.data = this.Actividades;

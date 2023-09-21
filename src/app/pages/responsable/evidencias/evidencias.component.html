@@ -18,7 +18,7 @@
         <div class="col-md-8">
           <mat-table [dataSource]="dataSource | buscar : filterPost " class="mat-elevation-z8">
             <ng-container matColumnDef="Id">
-              <mat-header-cell *matHeaderCellDef  [style.display]="ocultar? '' : 'none'">Id</mat-header-cell>
+              <mat-header-cell *matHeaderCellDef  [style.display]="ocultar? '' : 'none'">ID</mat-header-cell>
               <mat-cell *matCellDef="let file"  [style.display]="ocultar? '' : 'none'">{{ file.id_archivo }}</mat-cell>
             </ng-container>
           
@@ -62,7 +62,7 @@
               <label for="descripcion">Descripción:</label>
               <textarea id="descripcion" class="form-control" [(ngModel)]="descripcion"></textarea>
             </div>
-            <button class="btn btn-primary" type="button" (click)="onUpload()" [disabled]="!filearchivo">
+            <button class="btn btn-primary" type="button" (click)="onUpload()" *ngIf="veri" [disabled]="!filearchivo">
               Subir archivo
             </button>
           </div>
