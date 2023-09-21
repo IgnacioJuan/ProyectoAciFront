@@ -106,3 +106,12 @@ body {
     padding: 30px;
     color: #224;
   }
+
+  ::ng-deep .cdk-overlay-container{
+    z-index:2000;
+  }
+
+  .tabla-container {
+    max-height: 350px;
+    overflow-y: auto;
+  }

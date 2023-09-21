@@ -49,7 +49,7 @@ export class EvidenciasResponComponent implements OnInit {
  dataSource = new MatTableDataSource<Archivo>();
 
  // Encabezados de la tabla
- displayedColumns: string[] = ['Id', 'Evidencia', 'Borrar'];
+ displayedColumns: string[] = ['Id', 'Evidencia', 'Descripcion','Borrar'];
  @ViewChild(MatPaginator)
  paginator!: MatPaginator;
 idevidencia!:number;

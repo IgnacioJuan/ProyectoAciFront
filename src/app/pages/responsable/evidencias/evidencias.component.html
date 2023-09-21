@@ -29,6 +29,11 @@
               </mat-cell>
             </ng-container>
           
+            <ng-container matColumnDef="Descripcion">
+              <mat-header-cell *matHeaderCellDef>Descripcion</mat-header-cell>
+              <mat-cell *matCellDef="let file">{{ file.descripcion }}</mat-cell>
+            </ng-container>
+
             <ng-container matColumnDef="Borrar">
               <mat-header-cell *matHeaderCellDef  [style.display]="veri? '' : 'none'">Borrar</mat-header-cell>
               <mat-cell *matCellDef="let file"  [style.display]="veri? '' : 'none'">

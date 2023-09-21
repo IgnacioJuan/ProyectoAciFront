@@ -74,7 +74,6 @@ export class NavbarComponent implements OnInit {
 ir(noti:any){
   noti.url;
   if(noti.idactividad!=0){
- 
     localStorage.setItem("eviden",noti.idactividad)
     this.router.navigate([noti.url]);
     setTimeout(() => {

@@ -753,8 +753,6 @@ this.criteservice.getCriterios().subscribe(
         this.asigedit.fecha_fin=this.asignar2.fecha_fin;
         console.log("Datos actualizar "+JSON.stringify(this.asigedit));
     this.asignarEvidenciaService.editarAsigna(this.asigedit).subscribe((response) => {
-      this.Listado();
-      this.listar();
       this.ListarAsignacion();
     });
 
@@ -777,12 +775,11 @@ this.criteservice.getCriterios().subscribe(
       cancelButtonText:'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
+        this.notificarelimadmin();
+          this.notificarelsupern();
         this.asignarEvidenciaService.eliminarAsignaLogic(id).subscribe((response) => {
           this.nombreasignado = element.descev;
           this.ListarAsignacion();
-          this.Listado();
-          this.notificarelimadmin();
-          this.notificarelsupern();
         });
 
         Swal.fire('Eliminado!', 'Registro eliminado.', 'success');

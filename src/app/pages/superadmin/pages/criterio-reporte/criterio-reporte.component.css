@@ -11,4 +11,9 @@ body {
     color: #224;
 
   }
+
+  .tabla-container {
+    max-height: 550px;
+    overflow-y: auto;
+  }
   
