@@ -141,7 +141,8 @@ verificar:boolean=false;
       ' de ' +
       nombres;
     this.noti.usuario = 0;
-
+    this.noti.url="/sup/aprobaciones";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -163,6 +164,8 @@ verificar:boolean=false;
       ' ha rechazado tu evidencia ' 
       +this.descripcionSeleccionada;
     this.noti.visto = false;
+    this.noti.url="/res/evidenasignada";
+    this.noti.idactividad=0;
     const idUsuarioString = localStorage.getItem('idUsuario');
     const idUsuario = Number(idUsuarioString);
     this.noti.usuario = idUsuario;
@@ -192,7 +195,8 @@ verificar:boolean=false;
       nombres;
     this.noti.visto = false;
     this.noti.usuario = 0;
-
+    this.noti.url="/adm/apruebaAdmin";
+    this.noti.idactividad=0;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;

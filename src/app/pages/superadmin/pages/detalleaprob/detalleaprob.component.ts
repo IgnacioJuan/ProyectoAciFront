@@ -370,7 +370,8 @@ modeloMax() {
     const idUsuarioString = localStorage.getItem('idUsuario');
     const idUsuario = Number(idUsuarioString);
     this.noti.usuario = idUsuario;
-
+    this.noti.url="/res/ActividadesResponsable";
+    this.noti.idactividad=this.id_ev;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
