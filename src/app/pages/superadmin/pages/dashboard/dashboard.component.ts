@@ -324,7 +324,7 @@ constructor(private services: ActividadService,private paginatorIntl: MatPaginat
   public login: LoginService, private notificationService: NotificacionService,
   private httpCriterios: CriteriosService,private indi:IndicadoresService) {
     this.colorScheme = {
-      domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5'],
+      domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5','#000080','#32CD32','#FF69B4','#FFD700'],
     };
     
     this.rol = this.login.getUserRole();
@@ -739,13 +739,12 @@ obtenerActividades(id_modelo:number) {
   this.services.getAc(id_modelo).subscribe(
     (actividades: ActividadesProjection[]) => {
       this.listact = actividades;
-      console.log("Avances de base:", JSON.stringify(this.listact, null, 2));
+     
       this.avances = this.listact.map(item => ({
         name: item.nombres,
         value: item.avance
       }));
 
-      console.log("Avances:", JSON.stringify(this.avances, null, 2));
     },
     (error) => {
       console.error('Error al obtener las actividades:', error);
@@ -1224,19 +1223,19 @@ listarevarech(id_modelo:number){
       });
   }
   cargarDatos(): void {
-    console.log("Id modelo a verificar "+this.idmodel);
+  
     this.httpCriterios.getIndicador(this.idmodel).subscribe(
         (data: IndicadorProjection[]) => {
           this.listaIndicadores = data;
           this.datos = this.listaIndicadores.map(item => ({
             name: item.nombre,
-            value: item.total
+            value: (item.total / item.faltante)*100
           }));
 //ordenar valores
           this.listaIndicadores.sort((a, b) => b.total - a.total);
           this.crite = this.listaIndicadores.map(item => ({
           name: item.nombre,
-        value: item.total*100
+          value: (item.total / item.faltante)*100
         }));
        
         this.listaIndicadores.forEach((item) => {

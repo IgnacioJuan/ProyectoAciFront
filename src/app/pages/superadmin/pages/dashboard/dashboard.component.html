@@ -323,14 +323,14 @@ class="chart"
         </div>
 
         <div class="barra" style="flex-basis: 30%; margin-top: 5%">
-          <ngx-charts-bar-horizontal [view]="[200, 200]" [scheme]="colorScheme" [results]="crite" [xAxis]="true"
+          <ngx-charts-bar-horizontal [view]="[400, 200]" [scheme]="colorScheme" [results]="crite" [xAxis]="true"
             [yAxis]="true" [showXAxisLabel]="true" [showYAxisLabel]="false" [xAxisLabel]="titulo" [showDataLabel]="true"
-            [barPadding]="4" [roundEdges]="true" (select)="onSelect($event)">
+            [barPadding]="4" [roundEdges]="true" (select)="onSelect($event)" [xScaleMax]="100">
             <ng-template #tooltipTemplate let-model="model">
               <div class="custom-tooltip">
                 <span>{{ model.name }}</span>
                 <br />
-                <span>{{ model.value/100 }}</span>
+                <span>{{ model.value/100| number: '1.2-4' }}</span>
               </div>
             </ng-template>
           </ngx-charts-bar-horizontal>
