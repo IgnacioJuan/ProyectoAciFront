@@ -76,6 +76,7 @@ export class AsignacionEvidenciaComponent implements OnInit {
   ocultar=false;
   listaAsignaEvidencias: AsignaProjection[] = [];
   filterPost = '';
+  buscar='';
   personaSele = new Persona2();
   evidenciaSele = new Evidencia();
   usuarioSele = new Usuario2();

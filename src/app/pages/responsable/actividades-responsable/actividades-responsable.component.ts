@@ -17,6 +17,7 @@ import { EvidenciaService } from 'src/app/services/evidencia.service';
 import { AsignaEvidenciaService } from 'src/app/services/asigna-evidencia.service';
 import { CriteriosService } from 'src/app/services/criterios.service';
 import { Observacion2 } from 'src/app/models/Observaciones2';
+import { of, switchMap } from 'rxjs';
 
 
 @Component({
@@ -30,34 +31,34 @@ export class ActividadesResponsableComponent implements OnInit {
   miModal!: ElementRef;
   public actividad = new Actividades();
 
-  Actividades:Actividades[] = [];
+  Actividades: Actividades[] = [];
   guardadoExitoso: boolean = false;
   frmActividades: FormGroup;
-  nombreacti!:string;
+  nombreacti!: string;
   noti = new Notificacion();
   user: any = null;
-  idevidencia!:number;
+  idevidencia!: number;
   idusuario: any = null;
   nombre: any = null;
   nombreact: any = null;
-  id_modelo!:number;
-  crear=true;
-  ocultar=false;
+  id_modelo!: number;
+  crear = true;
+  ocultar = false;
   isLoggedIn = false;
-   // Crear una fuente de datos para la tabla
-   dataSource = new MatTableDataSource<Actividades>();
+  // Crear una fuente de datos para la tabla
+  dataSource = new MatTableDataSource<Actividades>();
 
-   ngAfterViewInit() {
-    console.log('Paginator:', this.paginator);
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
-  }
+  /*ngAfterViewInit() {
+   console.log('Paginator:', this.paginator);
+   if (this.paginator) {
+     this.dataSource.paginator = this.paginator;
+   }
+ }*/
   @ViewChild(MatPaginator) paginator!: MatPaginator;
- // Encabezados de la tabla
+  // Encabezados de la tabla
   displayedColumns: string[] = [
     'ID',
-    'NOMBRE',   
+    'NOMBRE',
     'DESCRIPCIÓN',
     'FECHA DE INICIO',
     'FECHA FINALIZACION',
@@ -68,14 +69,13 @@ export class ActividadesResponsableComponent implements OnInit {
   ];
   constructor(
     private services: ActividadService,
-    private fb: FormBuilder,private evid:EvidenciaService,
-    private router: Router,private asigna:AsignaEvidenciaService,
-    public login: LoginService,private criteriosService: CriteriosService,
-    private modeloService: ModeloService,
+    private fb: FormBuilder, private evid: EvidenciaService,
+    private router: Router, private asigna: AsignaEvidenciaService,
+    public login: LoginService, private criteriosService: CriteriosService,
     private notificationService: NotificacionService,
     private paginatorIntl: MatPaginatorIntl,
   ) {
-    
+
     this.frmActividades = fb.group({
       nombre: ['', Validators.required],
       descripcion: ['', [Validators.required, Validators.maxLength(250)]],
@@ -104,15 +104,24 @@ export class ActividadesResponsableComponent implements OnInit {
     };
   }
   evi: Evidencia = new Evidencia();
-  idevi:number=0;
-  evide:number=0;
-  id_ev!:number;
+  idevi: number = 0;
+  evide: number = 0;
+  id_ev!: number;
   ngOnInit(): void {
+    const idEvidencia = localStorage.getItem("eviden");
+    this.id_ev = Number(idEvidencia);
+    console.log("traido ev " + idEvidencia);
+    this.modeloMax();
+
+    setInterval(() => {
+      this.calcularfecha();
+    }, 3600000);
+
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
 
-    this.idusuario=this.user.id;
-    console.log("usuar "+this.idusuario);
+    this.idusuario = this.user.id;
+    console.log("usuar " + this.idusuario);
     this.login.loginStatusSubjec.asObservable().subscribe(
       data => {
         this.isLoggedIn = this.login.isLoggedIn();
@@ -120,43 +129,32 @@ export class ActividadesResponsableComponent implements OnInit {
 
       }
     );
-    const idEvidencia = localStorage.getItem("eviden");
-    this.id_ev=Number(idEvidencia);
-    console.log("traido ev "+idEvidencia);
-   this.modeloMax();
-    this.inicio();
-    setInterval(() => {
-      this.calcularfecha();
-    }, 3600000);
-    
   }
+
   modeloMax() {
     this.criteriosService.getModeMaximo().subscribe((data) => {
-      this.id_modelo =data.id_modelo;
-    
+      this.id_modelo = data.id_modelo;
+      this.inicio();
     });
-    }
+  }
 
-  inicio(){
-    if (this.id_ev!=0) {
-      this.evide=this.id_ev;
-      this.idevi=this.evide;
-      console.log("evid "+this.evide);
-      this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
+  inicio() {
+    if (this.id_ev != 0) {
+      //this.evide = this.id_ev;
+     // console.log("evid " + this.evide);
+      this.evid.buscar(this.id_ev).subscribe((evidencia: Evidencia) => {
         this.evi = evidencia;
-         this.listar();
-         this.fechaminima();
+        this.listar();
+        this.fechaminima();
       });
-    }else{
-    const data = history.state.data;
-    this.idevi = data;
-      this.evide=this.idevi;
-      this.id_ev=this.idevi;
-      console.log("ID evi"+ this.id_ev)
-      this.evid.buscar(this.evide).subscribe((evidencia: Evidencia) => {
+    } else {
+      const data = history.state.data;
+      this.id_ev = data;
+      //this.evide = this.id_ev;
+      this.evid.buscar(this.id_ev).subscribe((evidencia: Evidencia) => {
         this.evi = evidencia;
-         this.listar();
-         this.fechaminima();
+        this.listar();
+        this.fechaminima();
       });
     }
   }
@@ -180,8 +178,8 @@ export class ActividadesResponsableComponent implements OnInit {
     this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.nombreacti;
     this.noti.visto = false;
     this.noti.usuario = 0;
-    this.noti.url="/sup/detalle";
-    this.noti.idactividad=this.idevidencia;
+    this.noti.url = "/sup/detalle";
+    this.noti.idactividad = this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -199,8 +197,8 @@ export class ActividadesResponsableComponent implements OnInit {
     this.noti.mensaje = this.user.persona.primer_nombre + " " + this.user.persona.primer_apellido + " ha creado la actividad " + this.nombreacti;
     this.noti.visto = false;
     this.noti.usuario = 0;
-    this.noti.url="/adm/detalleAprobarRechazar";
-    this.noti.idactividad=this.idevidencia;
+    this.noti.url = "/adm/detalleAprobarRechazar";
+    this.noti.idactividad = this.idevidencia;
     this.notificationService.crear(this.noti).subscribe(
       (data: Notificacion) => {
         this.noti = data;
@@ -231,10 +229,10 @@ export class ActividadesResponsableComponent implements OnInit {
 
   guardar() {
     this.actividad = this.frmActividades.value;
-    console.log("Nombre actividad: "+this.actividad.nombre);
-    this.nombreacti=this.actividad.nombre;
-    this.actividad.evidencia =this.evi;
-    this.idevidencia=this.evi.id_evidencia;
+    console.log("Nombre actividad: " + this.actividad.nombre);
+    this.nombreacti = this.actividad.nombre;
+    this.actividad.evidencia = this.evi;
+    this.idevidencia = this.evi.id_evidencia;
     this.actividad.usuario = this.idusuario;
     this.actividad.estado = "pendiente"
     this.services.crear(this.actividad)
@@ -263,6 +261,7 @@ export class ActividadesResponsableComponent implements OnInit {
         }
       );
   }
+
   editDatos(acti: Actividades) {
     this.actividad = acti;
     this.frmActividades = new FormGroup({
@@ -274,36 +273,29 @@ export class ActividadesResponsableComponent implements OnInit {
   }
 
   listar(): void {
-    console.log("IDS: " + this.user.username + " id " + this.idevi + " idevidencia " + this.evi.id_evidencia);
-    
-    // Obtener las actividades relacionadas con this.user.username y this.idevi
-    this.services.getactivievid(this.user.username, this.idevi).subscribe((data: any[]) => {
-      const actidata: any[] = data;
+    console.log("IDS: " + this.user.username + " id " + this.id_ev + " idevidencia " + this.evi.id_evidencia);
+    this.services.getactivievid(this.user.username, this.id_ev).subscribe((data: any[]) => {
+      const actidata = data;
       this.Actividades = actidata;
-      // Iterar a través de las actividades
       actidata.forEach(activi => {
-        // Obtener las observaciones relacionadas con cada actividad
-        console.log("Id actividad en tabla "+activi.id_actividad)
         this.services.getObservaciones(activi.id_actividad).subscribe(
           (obser: Observacion2[]) => {
-            activi.observacion = obser.map((c) =>c.observacion);
+            activi.observacion = obser.map((c) => c.observacion);
           },
           (error) => {
             console.error("Error al obtener observaciones:", error);
-            // Manejar el error de forma adecuada, por ejemplo, mostrar un mensaje al usuario
+
           }
         );
       });
-  
-      // Actualizar el dataSource
+
       this.dataSource.data = this.Actividades;
       this.dataSource.paginator = this.paginator;
     }, (error) => {
       console.error("Error al obtener actividades:", error);
-      // Manejar el error de forma adecuada, por ejemplo, mostrar un mensaje al usuario
     });
   }
-  
+
 
 
   eliminar(act: any) {
@@ -363,10 +355,10 @@ export class ActividadesResponsableComponent implements OnInit {
 
   verDetalles(archivos: any) {
     archivos.evidencia.id_evidencia;
-    console.log("acti arc "+archivos.evidencia.id_evidencia);
+    console.log("acti arc " + archivos.evidencia.id_evidencia);
     this.router.navigate(['/res/evidenciaResponsable'], { state: { data: archivos } });
   }
-  
+
   calcularfecha() {
     this.services.geteviasig(this.user.username).subscribe(data => {
       this.Actividades = data;
@@ -410,21 +402,25 @@ export class ActividadesResponsableComponent implements OnInit {
   fechaMax: string = "";
 
   datasource: Modelo[] = [];
-  fechaminima() {
-    let fechaactual=new Date();
-    console.log("Evidencia "+this.id_ev+" modelo "+this.id_modelo);
-    this.asigna.getfechaAsignacion(this.id_ev,this.id_modelo).subscribe(data => {
-console.log("FEcha "+JSON.stringify(data));
-      const fechaInicio = new Date(data.fecha_inicio);
-      this.fechaMinima = fechaInicio.toISOString().split('T')[0];
 
-      const fechaactividad = new Date(data.fecha_fin);
-      this.fechaMax = fechaactividad.toISOString().split('T')[0];
-if(fechaactual>data.fecha_fin){
-this.crear=false;
-}
-    });
-  }
+  fechaminima() {
+    let fechaactual = new Date();
+    this.asigna.getfechaAsignacion(this.id_ev, this.id_modelo)
+      .pipe(
+        switchMap(data => {
+          console.log("Fecha " + JSON.stringify(data));
+          const fechaInicio = new Date(data.fecha_inicio);
+          this.fechaMinima = fechaInicio.toISOString().split('T')[0];
+  
+          const fechaactividad = new Date(data.fecha_fin);
+          this.fechaMax = fechaactividad.toISOString().split('T')[0];
+          this.crear = fechaactual <= fechaactividad;
+          return of(null);
+        })
+      )
+      .subscribe();
+      }  
+      
   filterPost = '';
 
   aplicarFiltro() {
@@ -434,10 +430,10 @@ this.crear=false;
         return JSON.stringify(item).toLowerCase().includes(lowerCaseFilter);
       });
     } else {
- 
+
       // Restaurar los datos originales si no hay filtro aplicado
       this.listar();
-      }
+    }
   }
-  
+
 }

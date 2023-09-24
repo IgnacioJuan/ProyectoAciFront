@@ -2,6 +2,11 @@
   z-index:2000;
 }
 
+.tabla-container {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
 .date-fields {
   display: flex;
   justify-content: space-between;

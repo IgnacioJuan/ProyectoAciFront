@@ -196,10 +196,11 @@ showTipo() {
           this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);
       
           this.barChartData = { ...this.barChartData };
+          if(this.valoresp.length==0){
+            this.valoresresp();
+          }
         });
-        if(this.valoresp.length==0){
-          this.valoresresp();
-        }
+        
       }
       valoresresp(){
         this.httpCriterios.getvaloresponsable(this.idmodel,this.id).subscribe((valores: ValoresProjection[]) => {
@@ -236,6 +237,7 @@ showTipo() {
       this.httpCriterios.getIndicadorad(this.idmodel,this.id).subscribe(
         (data: IndicadorProjection[]) => {
           this.listain=data;
+          this.verdash = true;
           this.listain.forEach((item)=>{
             this.coloresTarjetas.push(this.getRandomColor());
             this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
@@ -250,6 +252,7 @@ showTipo() {
       this.httpCriterios.getIndicadorresponsable(this.idmodel,this.id).subscribe(
         (data: IndicadorProjection[]) => {
           this.listain=data;
+          this.verdash = true;
           this.listain.forEach((item)=>{
             this.coloresTarjetas.push(this.getRandomColor());
             this.borderStyles.push(this.getBorderColor(item.faltante-item.total));

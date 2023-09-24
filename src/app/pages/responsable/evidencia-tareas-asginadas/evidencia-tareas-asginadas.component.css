@@ -1,4 +1,4 @@
-body {
+/*body {
     font: 1em/1.618 Inter, sans-serif;
   
     display: flex;
@@ -10,8 +10,11 @@ body {
     
     color: #224;
  
+  }*/
+  .tabla-container {
+    max-height: 750px;
+    overflow-y: auto;
   }
-  
   .carousel-container {
     display: flex;
     overflow: hidden;
