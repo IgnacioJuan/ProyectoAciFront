@@ -1,4 +1,8 @@
 <body>
+  <div *ngIf="isLoading" class="loading-overlay">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando...</p>
+  </div>
   <div class="container bg-light border border-start-0 rounded-4">
     <div class="container text-center">
       <div class="row" style="margin-top: 10%; margin-bottom: 10%">
@@ -27,6 +31,10 @@
                 {{ usuario.persona.primer_nombre }}
                 {{ usuario.persona.primer_apellido }}
               </mat-list-option>
+              <div *ngIf="isLoading" class="loading-overlay">
+                <mat-spinner diameter="40"></mat-spinner>
+                <p>Cargando...</p>
+              </div>
             </mat-selection-list>
           </div>
         </div>

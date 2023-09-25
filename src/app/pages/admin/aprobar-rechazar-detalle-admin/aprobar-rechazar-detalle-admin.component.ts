@@ -48,7 +48,7 @@ export class AprobarRechazarDetalleAdminComponent implements OnInit {
     'acciones',
   ];
 
-
+  isLoadingPage = true;
   aprobado: boolean=false;
   archivoSeleccionado: string = '';
   noRegistros: any;
@@ -138,6 +138,7 @@ compa!:number;
     }
 
   inicio(){
+    this.isLoadingPage = true;
     if (this.id_ev!=0) {
       
       console.log("evid "+this.id_ev);
@@ -145,6 +146,7 @@ compa!:number;
         this.correoEnviar = data.correo;
         this.toUser = this.correoEnviar;
         this.listar();
+        this.isLoadingPage = false;
       });
      
     }else{
