@@ -70,6 +70,7 @@ export class ActividadCriterioDetalle implements OnInit {
   displayedColumns4: string[] = ['indicadores', 'nindi', 'porcentaje'];
   dataSource: any;
   asignacion: any;
+  consul=false;
   tabla!: MatTableDataSource<any>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   verEvidencia=false;
@@ -267,6 +268,9 @@ public chartHovered({
             this.coloresTarjetas.push(this.getRandomColor());
             this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
           });
+          if(data.length!=0){
+            this.consul=true;
+          }
           console.log("lista in "+this.listain)
         });
     }else{

@@ -181,8 +181,6 @@ showTipo() {
      } else if(this.rol==="RESPONSABLE"){
       this.valoresresp();
       this.cali=false;
-     } else{
-      this.verdash = false;
      }
       }
 
@@ -199,9 +197,7 @@ showTipo() {
           this.barChartData = { ...this.barChartData };
           if(this.valoresp.length==0){
             this.valoresresp();
-          }
-            this.verdash=true;
-          
+          } 
         });
         
       }
@@ -231,8 +227,6 @@ showTipo() {
         this.indicadoresadmin();
        } else if(this.rol==="RESPONSABLE"){
         this.indicadoresresp();
-       } else{
-        this.verdash = false;
        }
     }
 
@@ -418,9 +412,7 @@ veradmin(){
   this.cali=true;
   this.service.getcriterioadmin(this.idmodel,this.id).subscribe((data: criteriosdesprojection[]) => {
     //console.log("data: "+data+" Datos sesion "+JSON.stringify(data))
-    if (data == null || data.length === 0) {
-      this.verdash = false;
-    } else {
+    if (data.length != 0) {
     this.verdash=true;
     this.cali=true;
     this.datacrite = data;
@@ -454,9 +446,7 @@ verresponsable(){
   this.cali=false;
   this.service.getcriterioresp(this.idmodel,this.id).subscribe((data: criteriosdesprojection[]) => {
     //console.log("data: "+data+" Datos sesion "+JSON.stringify(data))
-    if (data == null || data.length === 0) {
-      this.verdash = false;
-    } else {
+    if (data.length != 0) {
     this.verdash=true;
     this.datacrite = data;
     this.datacrite.forEach(item => {
