@@ -43,6 +43,7 @@ export class AprobarRechazarAdminComponent implements OnInit {
   noRegistros: any;
   mostrarBoton = false;
   idUsuario: number = 0;
+  isLoading: boolean = false;
   idevi!:number;
   usuarioResponsable: Usuario2[] = [];
   //idEvidencia: number = Number(localStorage.getItem('idUsuario'));
@@ -103,14 +104,15 @@ export class AprobarRechazarAdminComponent implements OnInit {
     this.dataSource.paginator = this.paginator || null;
   }
 
-  
   ngOnInit(): void {
+    
     this.listaResponsable();
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
     this.login.loginStatusSubjec.asObservable().subscribe((data) => {
       this.isLoggedIn = this.login.isLoggedIn();
       this.user = this.login.getUser();
+      
     });
     this.modeloMax();
     localStorage.removeItem("eviden");
@@ -324,6 +326,7 @@ this.noti.idactividad=0;
 }
 //
   onSelectionChange(event: MatSelectionListChange) {
+    this.isLoading = true;
     this.usuarioSeleccionado = event.options[0].value;
     localStorage.setItem('idUsuario', this.usuarioSeleccionado.id.toString());
     localStorage.setItem(
@@ -337,6 +340,7 @@ this.noti.idactividad=0;
       .subscribe((data) => {
         this.evidencias = data;
         this.dataSource.data = this.evidencias;
+        this.isLoading = false;
       });
 
     console.log(this.evidencias);
@@ -346,12 +350,14 @@ this.noti.idactividad=0;
   }
 
   listaResponsable() {
+    this.isLoading = true;
     this.evidenciaService.listarUsuario().subscribe((data) => {
       const usuariosFiltrados = data.filter(
         (usuario, index, self) =>
           index === self.findIndex((u) => u.id === usuario.id)
       );
       this.usuarioResponsable = usuariosFiltrados;
+      this.isLoading = false;
     });
   }
 

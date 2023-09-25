@@ -1,4 +1,8 @@
 <body  style=" font-size: 16px;">
+  <div *ngIf="isLoadingPage" class="loading-overlay">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando...</p>
+  </div>   
   <div class="container bg-light border border-start-0 rounded-4" >
     <div class="container text-center">
       <button
@@ -16,7 +20,7 @@
       >
         <blockquote class="blockquote text-dark">
           <h1><strong> ACTIVIDADES </strong></h1>
-        </blockquote>
+        </blockquote> 
       </figure>
 
       <div class="card" >
@@ -46,6 +50,7 @@
             class="table-responsive mat-elevation-z8"
             style="margin-bottom: 10%"
           >
+           
             <table mat-table [dataSource]="dataSource">
               <ng-container matColumnDef="idactividad">
                 <th mat-header-cell *matHeaderCellDef>ID</th>

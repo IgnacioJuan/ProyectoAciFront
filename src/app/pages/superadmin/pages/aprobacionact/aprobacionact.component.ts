@@ -37,6 +37,7 @@ export class AprobacionactComponent implements OnInit {
     'actions',
   ];
   aprobado: boolean=false;
+  isLoading: boolean = false;
   dataSource = new MatTableDataSource<Evidencia>();
   dataSource4 = new MatTableDataSource<detalleEvaluacion>();
   noRegistros: any;
@@ -105,6 +106,7 @@ verificar:boolean=false;
 
   
   ngOnInit(): void {
+    
     this.listaResponsable();
     this.isLoggedIn = this.login.isLoggedIn();
     this.user = this.login.getUser();
@@ -114,6 +116,7 @@ verificar:boolean=false;
     });
     localStorage.removeItem("eviden");
     this.modeloMax();
+    
   }
   
   modeloMax() {
@@ -290,6 +293,7 @@ notificaraprobadmin() {
 }
 //
   onSelectionChange(event: MatSelectionListChange) {
+    this.isLoading = true;
     this.usuarioSeleccionado = event.options[0].value;
     localStorage.setItem('idUsuario', this.usuarioSeleccionado.id.toString());
     localStorage.setItem(
@@ -303,6 +307,7 @@ notificaraprobadmin() {
       .subscribe((data) => {
         this.evidencias = data;
         this.dataSource.data = this.evidencias;
+        this.isLoading = false;
       });
 
     console.log(this.evidencias);
@@ -312,19 +317,23 @@ notificaraprobadmin() {
   }
 
   listaResponsable() {
+    this.isLoading = true;
     this.evidenciaService.listarUsuario().subscribe((data) => {
       const usuariosFiltrados = data.filter(
         (usuario, index, self) =>
           index === self.findIndex((u) => u.id === usuario.id)
       );
       this.usuarioResponsable = usuariosFiltrados;
+      this.isLoading = false;
     });
   }
   
   verDetalles(evidencia: any) {
+    this.isLoading = true;
     this.router.navigate(['/sup/detalle'], {
       state: { data: evidencia, usuarioEnviar: this.usuarioSeleccionado },
     });
+    this.isLoading = false;
     // if (evidencia.estado === 'pendiente') {
     //   this.disableVerDetalles = true;
     //   Swal.fire({
@@ -341,7 +350,9 @@ notificaraprobadmin() {
   }
 
   irDetalle() {
-    this.router.navigate(['/sup/detalle']);}
+    this.isLoading = true;
+    this.router.navigate(['/sup/detalle']);
+    this.isLoading = false;}
 
   seleccionarTarea(element: any) {
       this.evid = element;
@@ -613,7 +624,7 @@ this.detalleEvi.estado=true;
   }
   enviar() {
     this.enviado=true;
-    
+    this.isLoading = true;
     const startTime = new Date(); // Obtener hora actual antes de enviar el correo
     this.isSending = true;
     this.spinnerInterval = setInterval(() => {
@@ -659,6 +670,7 @@ this.detalleEvi.estado=true;
               toast.addEventListener('mouseleave', Swal.resumeTimer);
             },
           });
+          this.isLoading = false;
         },
         (error: any) => {
           clearInterval(this.spinnerInterval); // Detener el spinner si ocurre un error
@@ -680,7 +692,7 @@ this.detalleEvi.estado=true;
               toast.addEventListener('mouseleave', Swal.resumeTimer);
             },
           });
-
+          this.isLoading = false;
           console.error('Error sending email:', error);
         }
       );
