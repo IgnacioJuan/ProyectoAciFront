@@ -145,4 +145,8 @@ export class IndicadoresService {
   getIndicadorColProjection(id_modelo: number): Observable<IndiColProjection[]> {
     return this.http.get<IndiColProjection[]>(`${baserUrl}/api/indicadores/indicadorval/${id_modelo}`);
   }
+
+  getIndicAdmin(id_modelo: number,id:number): Observable<IndiColProjection[]> {
+    return this.http.get<IndiColProjection[]>(`${baserUrl}/api/indicadores/indicvaladmin/${id_modelo}/${id}`);
+  }
 }

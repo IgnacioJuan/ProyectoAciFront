@@ -56,7 +56,7 @@ borderStyles: string[] = [];
 id!:number;
   constructor(public login:LoginService,private service:ModeloService,private dialog: MatDialog,
     private router: Router,private httpCriterios: CriteriosService) { 
-    this.verdash = false;
+   
   }
   ngOnInit() {
     this.isLoggedIn = this.login.isLoggedIn();
@@ -180,6 +180,7 @@ showTipo() {
       this.valoresadmin();
      } else if(this.rol==="RESPONSABLE"){
       this.valoresresp();
+      this.cali=false;
      } else{
       this.verdash = false;
      }
@@ -199,6 +200,8 @@ showTipo() {
           if(this.valoresp.length==0){
             this.valoresresp();
           }
+            this.verdash=true;
+          
         });
         
       }
@@ -237,22 +240,20 @@ showTipo() {
       this.httpCriterios.getIndicadorad(this.idmodel,this.id).subscribe(
         (data: IndicadorProjection[]) => {
           this.listain=data;
-          this.verdash = true;
           this.listain.forEach((item)=>{
             this.coloresTarjetas.push(this.getRandomColor());
             this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
           });
+          
         });
-        if(this.listain.length==0){
-          this.indicadoresresp();
-        }
+        
     }
 
     indicadoresresp(){
       this.httpCriterios.getIndicadorresponsable(this.idmodel,this.id).subscribe(
         (data: IndicadorProjection[]) => {
           this.listain=data;
-          this.verdash = true;
+         
           this.listain.forEach((item)=>{
             this.coloresTarjetas.push(this.getRandomColor());
             this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
@@ -409,8 +410,8 @@ listardatos(){
   this.veradmin();
  } else if(this.rol==="RESPONSABLE"){
   this.verresponsable();
- } else{
-  this.verdash = false;
+ }else if(this.rol==="AUTORIDAD"){
+  this.verdash=false;
  }
 }
 veradmin(){
@@ -421,6 +422,7 @@ veradmin(){
       this.verdash = false;
     } else {
     this.verdash=true;
+    this.cali=true;
     this.datacrite = data;
     this.datacrite.forEach(item => {
       if (typeof this.seleccionados[item.criterionomj] === 'undefined') {

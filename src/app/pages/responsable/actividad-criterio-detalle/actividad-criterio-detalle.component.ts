@@ -18,6 +18,7 @@ import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 import { MatTableDataSource } from '@angular/material/table';
+import { LoginService } from 'src/app/services/login.service';
 
 type ColumnNames = {
   [key: string]: string;
@@ -102,7 +103,9 @@ export class ActividadCriterioDetalle implements OnInit {
   coloresAsignados: { [key: string]: string } = {}; 
   seleccionados: { [key: string]: boolean } = {};
   todosSeleccionados=false;
-
+  rol: string ='';
+  user: any = null;
+  isLoggedIn = false;
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
 public barChartOptions: ChartConfiguration['options'] = {
   responsive: true,
@@ -203,7 +206,7 @@ public chartHovered({
   console.log(event, active);
 }
   constructor(
-    private route: ActivatedRoute,private paginatorIntl: MatPaginatorIntl,
+    public login: LoginService,private paginatorIntl: MatPaginatorIntl,
     public modeloService: ModeloService,private indi:IndicadoresService,
     public criterioService: CriteriosService,
     public subcriterioService: SubcriteriosService,
@@ -211,16 +214,22 @@ public chartHovered({
     private asignacionIndicadorService: AsignacionIndicadorService,
     private sharedDataService: SharedDataService,
     private router: Router) {
-      this.paginatorIntl.nextPageLabel = this.nextPageLabel;
+    this.paginatorIntl.nextPageLabel = this.nextPageLabel;
     this.paginatorIntl.lastPageLabel = this.lastPageLabel;
     this.paginatorIntl.itemsPerPageLabel = this.itemsPerPageLabel;
     this.paginatorIntl.previousPageLabel=this.previousPageLabel;
     this.paginatorIntl.firstPageLabel=this.firstPageLabel;
     this.paginatorIntl.getRangeLabel=this.rango;
+    this.rol = this.login.getUserRole();
      }
 
   ngOnInit(): void {
-    
+    this.isLoggedIn = this.login.isLoggedIn();
+         this.user = this.login.getUser();
+        console.log(" el usuario es "+this.user.id+" rol"+this.rol);
+
+   
+   
     let id = localStorage.getItem("id");
     this.id_modelo=Number(id);
     this.recibeModelo();
@@ -250,6 +259,17 @@ public chartHovered({
   }
 
   listaind(){
+    if(this.rol=='ADMIN'){
+      this.criterioService.getIndicadorad(this.id_modelo,this.user.id).subscribe(
+        (data: IndicadorProjection[]) => {
+          this.listain=data;
+          this.listain.forEach((item) => {
+            this.coloresTarjetas.push(this.getRandomColor());
+            this.borderStyles.push(this.getBorderColor(item.faltante-item.total));
+          });
+          console.log("lista in "+this.listain)
+        });
+    }else{
     this.criterioService.getIndicador(this.id_modelo).subscribe(
       (data: IndicadorProjection[]) => {
         this.listain=data;
@@ -259,6 +279,7 @@ public chartHovered({
         });
         console.log("lista in "+this.listain)
       });
+    }
   }
 
   irPonderacionModelo(modelo: Modelo): void {
@@ -468,8 +489,50 @@ public chartHovered({
   }
 
   coloresPro(){
+    if(this.rol=='ADMIN'){
+      this.indi.getIndicAdmin(this.id_modelo,this.user.id).subscribe((data: IndiColProjection[]) => {
+        this.indicol = data; // Calcula los totales
+        this.pieChartData.datasets[0].data = this.indicol.map(val => val.porcentaje);
+        const estadoColores: { [key: string]: string } = {
+          'rojo': '>=0',
+          'naranja':'>25',
+          'amarillo':'>50',
+          'verde':'>75',
+        };
+  
+        const estadosIndicadores = data.map(indicador => indicador.color);
+        
+        // Asigna colores a los elementos del gráfico según los estados
+        this.pieChartData.labels = estadosIndicadores.map(estado=> estadoColores[estado]);
+  
+       // this.pieChartData.labels = data.map(indicador => indicador.color);
+  
+        if(this.pieChartOptions?.elements?.arc?.backgroundColor !=undefined){
+        this.pieChartOptions.elements.arc.backgroundColor = this.indicol.map(
+          indicador => colors[indicador.color]
+        );}
+        this.pieChartData = { ...this.pieChartData };
+        const totalIndicadores = this.indicol.reduce((total, element) => total + element.indica, 0);
+        const totalPorcentaje = this.indicol.reduce((total, element) => total + element.porcentaje, 0);
+        const total=Math.round(totalPorcentaje);
+  
+        // Agrega la fila de totales al final del arreglo
+        this.indicol.push({
+          color: 'Total',
+          indica: totalIndicadores,
+          porcentaje: total,
+        });
+        
+        this.indicol.sort((a, b) => {
+          const orden = ['verde', 'amarillo', 'naranja', 'rojo','Total'];
+          return orden.indexOf(a.color) - orden.indexOf(b.color);
+        });
+        // Asigna el arreglo de datos actualizado al dataSource
+        this.tabla = new MatTableDataSource(this.indicol);
+      });
+    }else{
     this.indi.getIndicadorColProjection(this.id_modelo).subscribe((data: IndiColProjection[]) => {
-      this.indicol = data; // Calcula los totales
+      this.indicol = data;
       this.pieChartData.datasets[0].data = this.indicol.map(val => val.porcentaje);
       const estadoColores: { [key: string]: string } = {
         'rojo': '>=0',
@@ -479,11 +542,7 @@ public chartHovered({
       };
 
       const estadosIndicadores = data.map(indicador => indicador.color);
-      
-      // Asigna colores a los elementos del gráfico según los estados
       this.pieChartData.labels = estadosIndicadores.map(estado=> estadoColores[estado]);
-
-     // this.pieChartData.labels = data.map(indicador => indicador.color);
 
       if(this.pieChartOptions?.elements?.arc?.backgroundColor !=undefined){
       this.pieChartOptions.elements.arc.backgroundColor = this.indicol.map(
@@ -494,7 +553,6 @@ public chartHovered({
       const totalPorcentaje = this.indicol.reduce((total, element) => total + element.porcentaje, 0);
       const total=Math.round(totalPorcentaje);
 
-      // Agrega la fila de totales al final del arreglo
       this.indicol.push({
         color: 'Total',
         indica: totalIndicadores,
@@ -505,15 +563,15 @@ public chartHovered({
         const orden = ['verde', 'amarillo', 'naranja', 'rojo','Total'];
         return orden.indexOf(a.color) - orden.indexOf(b.color);
       });
-      // Asigna el arreglo de datos actualizado al dataSource
+
       this.tabla = new MatTableDataSource(this.indicol);
     });
+   }
   }
 
   valorespr(){
-    this.criterioService.getvalores(this.id_modelo).subscribe((valores: ValoresProjection[]) => {
+    this.criterioService.getvalorad(this.id_modelo,this.user.id).subscribe((valores: ValoresProjection[]) => {
       this.valoresp = valores;
-      console.log("Valores de tabla"+JSON.stringify(this.valoresp))
       this.barChartData.labels = this.valoresp.map(val => val.nomcriterio);
       this.barChartData.datasets[0].data = this.valoresp.map(val => val.vlObtenido);
       this.barChartData.datasets[1].data = this.valoresp.map(val => val.vlobtener);

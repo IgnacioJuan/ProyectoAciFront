@@ -41,6 +41,13 @@ export class SidebarService {
       ]
     },
     {
+      icono: 'nav-icon fas fa-file-alt',
+      titulo: "Reportes",
+      submenu: [
+        { titulo: 'Ver reportes', url: '/res/actividadCriterio', icono: 'fas fa-cubes' }
+      ]
+    },
+    {
       icono: 'nav-icon fas fa-exclamation-circle',
       titulo: "Revisión  ",
       submenu: [
