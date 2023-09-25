@@ -7,6 +7,7 @@ import { LoginComponent } from './login/login.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @NgModule({
@@ -19,7 +20,11 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
   imports: [
     CommonModule,
     UserRoutingModule,
+    MatDialogModule,
     SharedModule
+  ],
+  exports: [
+    MatDialogModule
   ]
 })
 export class UserModule { }

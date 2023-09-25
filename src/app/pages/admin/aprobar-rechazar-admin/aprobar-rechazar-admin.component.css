@@ -1,64 +1,35 @@
-.card-observaciones {
-    height: 150%;
-  }
-  input:disabled,mat-label {
+input:disabled,mat-label {
     color: #000000; 
     background-color: #ffffff; 
   }
+
   .btn-close {
     background-color: #f00;
   }
-  .mat-cell {
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .matCellDef {
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .mat-elevation-z8 {
-    width: 100%;
-    height: 100%; 
-    overflow: auto; 
-  }
+ 
+
   .mat-form-field {
     width: 100%;
     height: 50px;
   }
- .buttonnnncomen{
-    
-      background-color: #152b59ee;
-      border: none;
-      border-radius: 3px;
-      color: white;
-      padding: .3rem 1rem;
-      letter-spacing: 1px;
-    
-  }
+
+
 .message{
   resize: vertical;
   height: 100px;
 }
+
 .card-textarea {
   max-height: 200px;
   overflow-y: auto;
 }
-.modal-superior {
-  z-index: 2000; 
-}
 
-.user-info {
-  margin-right: 10px; 
-}
 .selection-list-container {
   background-color: #f2f2f2;
   max-height: 200px;
   overflow-y: auto;
 }
+
 .custom-button {
   position: relative;
 }
@@ -66,9 +37,9 @@
 .custom-button::after {
   content: "Calificar";
   position: absolute;
-  top: -30px; /* Cambia el valor para ajustar la posición vertical */
-  left: 50%; /* Centra horizontalmente el elemento */
-  transform: translateX(-50%); /* Centra horizontalmente el elemento */
+  top: -30px;
+  left: 50%; 
+  transform: translateX(-50%);
   padding: 5px 10px;
   background-color: rgba(34, 32, 32, 0.8);
   color: #fff;
@@ -82,7 +53,6 @@
   opacity: 1;
 }
 
-/**/
 .custom-button2 {
   position: relative;
 }
@@ -90,9 +60,9 @@
 .custom-button2::after {
   content: "Ver actividad";
   position: absolute;
-  top: -30px; /* Cambia el valor para ajustar la posición vertical */
-  left: 50%; /* Centra horizontalmente el elemento */
-  transform: translateX(-50%); /* Centra horizontalmente el elemento */
+  top: -30px; 
+  left: 50%; 
+  transform: translateX(-50%); 
   padding: 5px 10px;
   background-color: rgba(34, 32, 32, 0.8);
   color: #fff;
@@ -105,6 +75,7 @@
 .custom-button2:hover::after {
   opacity: 1;
 }
+
 .pendiente {
   background-color: rgb(241, 201, 174);
 }
@@ -116,7 +87,6 @@
 .rechazada {
   background-color: red;
 }
-
 
 .custom-buttonEvaluar {
   position: relative;
@@ -182,9 +152,11 @@
 .custom-buttonEvaluar[disabled]:not(.tooltipstered) + .tooltip .tooltip-inner {
   display: none;
 }
+
 .modal-table {
   max-height: calc(100vh - 100px);
 }
+
 .modal-dialog {
   max-width: 50%;
 }
@@ -216,14 +188,13 @@
   opacity: 1;
 }
 
-
 .mat-form-field {
   width: 100%;
   margin-bottom: 100px; 
 }
 
 .mat-input-element {
-  padding: 8px 12px; /* Ajusta el relleno según sea necesario */
+  padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 14px;
@@ -235,25 +206,19 @@
   border-color: #007bff;
 }
 
-/* Opcional: Agrega una sombra cuando el campo de entrada está enfocado */
 .mat-form-field.mat-focused .mat-input-element {
   box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
 }
+
 body {
   font: 1em/1.618 Inter, sans-serif;
-
   display: flex;
   align-items: center;
   justify-content: center;
-  
   min-height: 100vh;
   padding: 30px;
-  
   color: #224;
-
 }
-
-
 
 .loading-overlay {
   position: fixed;
@@ -261,11 +226,11 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Fondo oscuro semitransparente */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Asegura que esté por encima de otros elementos */
-  color: white; /* Color del texto */
+  z-index: 9999;
+  color: white;
 }

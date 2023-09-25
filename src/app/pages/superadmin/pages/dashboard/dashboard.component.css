@@ -30,12 +30,10 @@
 }
 
 .grafico {
-  /* Estilos para el gráfico, si es necesario */
-  margin-bottom: 1px; /* Agrega margen inferior para separar el gráfico de la tabla */
+  margin-bottom: 1px;
 }
 
 .tabla {
-  /* Estilos para la tabla, si es necesario */
   margin-bottom: 180px;
 }
 
@@ -57,35 +55,6 @@
 }
 
 
-
-.config-button {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.custom-dropdown {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  display: none;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  min-width: 100px;
-  z-index: 1;
-}
-
-.show-dropdown .custom-dropdown {
-  display: block;
-}
-
-.show-dropdown .config-button {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
 .men {
   margin-bottom: 6%;
 }
@@ -97,9 +66,11 @@
 .tab-rech {
   background-color: rgba(255, 0, 0, 0.158);
 }
+
 .tab-pend{
   background-color: rgba(215, 224, 84, 0.158);
 }
+
 .tab-apr {
   background-color: rgba(0, 255, 64, 0.158);
 }
@@ -107,6 +78,7 @@
 .cent{
   flex-basis: 30%; margin-top: 2%;align-items: center;display: flex; flex-direction: column;justify-content: center;
 }
+
 .barra {
   display: flex;
   justify-content: center;
@@ -134,14 +106,6 @@ table {
   display: flex;
 }
 
-.image-container {
-  margin-left: 20px;
-}
-
-.image-container img {
-  width: 100px;
-  height: 100px;
-}
 
 .calendar-container {
   width: 80%;
@@ -150,39 +114,21 @@ table {
 
 .fc .fc-daygrid-day {
   font-size: auto;
-  /* Cambiar el valor de fuente*/
   padding: 0.2rem;
-  /* Ajustar el relleno de las celdas*/
   height: auto;
-  /* Ajustar la altura de las celdas*/
   width: auto;
-  /* Ajustar el ancho de las celdas */
 }
 
 .fc-day-today {
   background-color: rgb(5, 84, 110);
 }
 
-/* Ajustar el tamaño del título del evento */
 .fc .fc-title {
   font-size: 12px;
-
 }
 
-/* Ajustar el tamaño del botón de cambiar de vista del calendario (mes/semana/día) */
 .fc-button {
   font-size: 12px;
-}
-
-.icon-box {
-  display: flex;
-  align-items: center;
-  margin-right: 10px;
-}
-
-.percentage {
-  margin-left: 5px;
-  font-weight: bold;
 }
 
 .bar-container {
@@ -200,54 +146,33 @@ table {
   border-radius: 5px;
 }
 
-
-.floating-card {
-  position: fixed;
-  top: 50%;
-  right: 100px;
-  transform: translateY(-99%);
-  width: 500px;
-  height: 250px;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  bottom: 50%;
-}
-
-
 .rojo {
   background-color: red;
   color: white;
   text-align: center;
 }
+
 .centrar {
   background-color: rgb(252, 250, 250);
   color: rgb(2, 2, 2);
   text-align: center;
 }
+
 .naranja {
   background-color: orange;
   color: white;
   text-align: center;
 }
 
-
 .amarillo {
   background-color: yellow;
   text-align: center;
 }
 
-
 .verde {
   background-color: green;
   color: white;
   text-align: center;
-}
-
-.scrollable-cell {
-  height: 10px;
-  max-height: 50px; /* Establece la altura máxima que deseas antes de que aparezca la barra de desplazamiento */
-  overflow-y: auto; /* Agrega una barra de desplazamiento vertical cuando el contenido excede la altura máxima */
 }
 
 .textTitulo {
@@ -256,22 +181,6 @@ table {
   display: flex;
   padding: 20px 0;
   font-size: 20px;
-
-}
-
-.floating-card2 {
-  position: fixed;
-  top: 50%;
-  right: 100px;
-  transform: translateY(10%);
-  width: 500px;
-  height: 200px;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  bottom: 50%;
-  background-color: rgb(224, 222, 222);
-  /*z-index: 1; /* Asegura que la tarjeta está encima del contenido */
 }
 
 .cards {
@@ -292,12 +201,6 @@ table {
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
 }
 
-.number {
-  font-size: 35px;
-  font-weight: 500;
-  color: #299B63;
-}
-
 .card-name {
   color: #888;
   font-weight: 600;
@@ -313,7 +216,6 @@ table {
   overflow-y: auto;
 }
 
-/* charts */
 .btntext{
   display: flex;
   align-items: center; 
@@ -328,6 +230,7 @@ table {
   margin: 0 auto;
   opacity: 0.5;   
 }
+
 .charts {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -352,22 +255,9 @@ table {
   text-align: center
 }
 
-@media (max-width:1115px) {
-  .sidebar {
-    width: 60px;
-  }
-
-  .main {
-    width: calc(100% - 60px);
-    left: 60px;
-  }
-}
 
 @media (max-width:880px) {
 
-  /* .topbar {
-      grid-template-columns: 1.6fr 6fr 0.4fr 1fr;
-  } */
   .fa-bell {
     justify-self: left;
   }
@@ -384,13 +274,6 @@ table {
     grid-template-columns: 1fr;
   }
 
-  .doughnut-chart {
-    padding: 50px;
-  }
-
-  #doughnut {
-    padding: 50px;
-  }
 }
 
 @media (max-width:500px) {
@@ -418,24 +301,8 @@ table {
     grid-template-columns: 1fr;
   }
 
-  .doughnut-chart {
-    padding: 10px;
-  }
-
-  #doughnut {
-    padding: 0px;
-  }
 }
 
-body {
-  font: 1em/1.618 Inter, sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 30px;
-  color: #224; 
-}
 .mat-table th, .mat-table td {
   border: 10px solid #0c0c0c;
   padding: 8px;

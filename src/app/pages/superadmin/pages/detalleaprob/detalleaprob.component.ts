@@ -34,7 +34,6 @@ export class DetalleaprobComponent implements OnInit {
     'actions',
   ];
   columnasArchi: string[] = [
-    'idArchivo',
     'nombreArchi',
     'descripcionArchi',
     'enlace',

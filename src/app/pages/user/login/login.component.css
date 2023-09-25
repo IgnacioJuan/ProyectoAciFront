@@ -2,6 +2,7 @@
   width: 100%;;
   padding: 6%;
 }
+
 .contenedor{
   display: flex;
   height: 500px;
@@ -10,11 +11,12 @@
   background-color: inherit;
   padding-top: 20px;
 }
+
 .centrar {
   display: flex;
-  justify-content: center; /* Centra horizontalmente */
-  align-items: center; /* Centra verticalmente */
-  height: 100vh; /* Ajusta la altura según la ventana gráfica (viewport) */
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .btn-tab {
@@ -33,13 +35,14 @@
   background-color: #044d9b8c;
   color: white;
 }
+
 .background-container {
   position: absolute;
   margin-top: -41%;
   background-color: rgba(255, 255, 255, 0.8);
   z-index: 9999;
-  background-size: cover; /* Ajusta el tamaño de la imagen para cubrir todo el contenedor */
-  background-repeat: no-repeat; /* Evita la repetición de la imagen */
+  background-size: cover;
+  background-repeat: no-repeat;
   background-position: center center;
   border: 10px solid;
   border-top-color: rgb(27,67,116,1);
@@ -47,6 +50,7 @@
   border-bottom-color: rgba(27,67,116,1);
   border-left-color:  rgba(220,165,0, 1);
 }
+
 .misi{
   position: absolute;
   background-color:rgba(250, 250, 250, 0.7);
@@ -69,30 +73,17 @@
   border-bottom-color:rgba(220,165,0, 1);
   border-left-color:  rgb(27,67,116,1);
 }
-/* Pseudo-elemento ::before para la imagen de fondo */
+
 .background-container::before {
   content: '';
   display: block;
   position: absolute;
   top: 0;
   left: 0;
- 
   background-image: url("https://eduv.tecazuay.edu.ec/pluginfile.php/1/theme_academi/logo/1686171984/LOGO%20CUADRADO_SIN%20FONDO.png");
-  opacity: 0.5; /* Opacidad solo para la imagen de fondo */
+  opacity: 0.5;
 }
 
-
-
-.panel {
-  width: 800px;
-  display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
-  align-items: center;
-  border: none;
-  background-color: inherit;
-
-}
 .panelform {
   display: flex; 
   justify-content: center; 
@@ -101,6 +92,7 @@
   box-shadow: 0 1.5rem 2rem rgba(23, 28, 36, 0.788);
   border-radius: 10px; /* Valor de redondez deseado */
 }
+
 .mat-form-field {
   border-radius: 20px;
 }
@@ -114,55 +106,25 @@ button[type="submit"] {
 }
 
 
-
-
 .div{
   border: none;
 }
 
-/* body {
-  font: 1em/1.618 Inter, sans-serif;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  min-height: 100vh;
-  padding: 30px;
-  
-  color: #224;
-  background:
-    url(
-      https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80      
-      
-      )
-    center / cover no-repeat fixed;
-          /* https://images.unsplash.com/photo-1508615039623-a25605d2b022?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80 */
-          /* https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80 */
-    /* https://images.unsplash.com/photo-1541388810897-3964fe779a8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80 */
-
-
 body { 
   font: 1em/1.618 Inter, sans-serif;
-
   display: flex;
   align-items: center;
   justify-content: center;
-  
   min-height: 100vh;
   padding: 30px;
-  
   color: #224;
   background:
     url(
-      
     https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1032&q=80
-
     )
     center / cover no-repeat fixed;
-  
-  /* Agrega efecto de difuminación */
 }
+
 body::before {
   content: "";
   position: absolute;
@@ -171,6 +133,6 @@ body::before {
   width: 100%;
   height: 100%;
   background: inherit;
-  backdrop-filter: blur(10px); /* Valor de desenfoque ajustable */
+  backdrop-filter: blur(10px);
 }
 

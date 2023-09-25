@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { RoleguardGuard } from 'src/app/services/Guards/roleguard.guard';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { PageNotFoundComponent } from 'src/app/shared/page-not-found/page-not-found.component';
+import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
