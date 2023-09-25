@@ -48,7 +48,7 @@ export class DetalleaprobComponent implements OnInit {
     'usuario',
     'acciones',
   ];
-
+  isLoadingPage = true;
   id_ev!:number;
   verificar:boolean=false;
   archivoSeleccionado: string = '';
@@ -134,6 +134,7 @@ modeloMax() {
   }
   
   inicio(){
+    this.isLoadingPage = true;
     if (this.id_ev!=0) {
       
       console.log("evid "+this.id_ev);
@@ -141,6 +142,7 @@ modeloMax() {
         this.correoEnviar = data.correo;
         this.toUser = this.correoEnviar;
         this.listar();
+        this.isLoadingPage = false;
       });
      
     }else{

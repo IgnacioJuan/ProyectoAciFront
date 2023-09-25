@@ -1,4 +1,8 @@
 <body  style=" font-size: 16px;">
+  <div *ngIf="isLoadingPage" class="loading-overlay">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando...</p>
+  </div>   
   <div class="container bg-light border border-start-0 rounded-4" >
     <div class="container text-center">
       <button
