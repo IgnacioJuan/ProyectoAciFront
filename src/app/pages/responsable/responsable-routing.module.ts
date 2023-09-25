@@ -37,15 +37,16 @@ const routes: Routes = [
   {
     path: 'actividadCriterio',
     component: ActividadCriterioModelo,
-    pathMatch: 'full',
-    canActivate: [NormalGuard]
+    canActivate: [RoleguardGuard],
+    data: { allowedRoles: ['RESPONSABLE','ADMIN'] }
   },
 
   {
     path: 'detalleC',
     component: ActividadCriterioDetalle,
     pathMatch: 'full',
-    canActivate: [NormalGuard]
+    canActivate: [RoleguardGuard],
+    data: { allowedRoles: ['RESPONSABLE','ADMIN'] }
   },
   {
     path: 'criterio-subcriterio',
