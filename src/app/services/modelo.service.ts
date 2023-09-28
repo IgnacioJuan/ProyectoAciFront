@@ -13,7 +13,7 @@ import { criteriosdesprojection } from "../interface/criteriosdesprojection";
 export class ModeloService {
   constructor(private http: HttpClient) { }
 
-  //private url: string = 'http://localhost:5000/api/modelo';
+  //private url: string = 'http://146.190.137.83:5001/api/modelo';
 
   //metodo para crear un modelo
   public createModelo(modelo: Modelo): Observable<any> {

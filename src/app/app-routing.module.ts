@@ -8,11 +8,11 @@ const routes: Routes = [
 
   
   
-  { path: '', redirectTo: 'use/login', pathMatch: 'full' },
+  { path: 'app2', redirectTo: 'use/login', pathMatch: 'full' },
 
   //PATHS DE ADMINISTRADOR
   {
-    path: 'adm',
+    path: 'app2/adm',
     loadChildren: () => import("./pages/admin/admin.module").then(m => m.AdminModule)
   },
   
@@ -20,7 +20,7 @@ const routes: Routes = [
   //PATHS DE SUPERADMIN
 
   {
-    path: 'sup',
+    path: 'app2/sup',
     loadChildren: () => import("./pages/superadmin/superadmin.module").then(m => m.SuperadminModule)
   },
   
@@ -29,7 +29,7 @@ const routes: Routes = [
   
   //PATHS DE RESPONSABLE
   {
-    path: 'res',
+    path: 'app2/res',
     loadChildren: () => import("./pages/responsable/responsable.module").then(m => m.ResponsableModule)
   },
   
@@ -38,17 +38,17 @@ const routes: Routes = [
 
   //PATHS DE AUTORIDAD
   {
-    path: 'aut',
+    path: 'app2/aut',
     loadChildren: () => import("./pages/autoridad/autoridad.module").then(m => m.AutoridadModule)
   },
   
   //Otros Paths
   {
-    path: 'use',
+    path: 'app2/use',
     loadChildren: () => import("./pages/user/user.module").then(m => m.UserModule)
   },
   {
-    path: 'pagenotfoud',
+    path: 'app2/pagenotfoud',
     component: PageNotFoundComponent
   },
   
