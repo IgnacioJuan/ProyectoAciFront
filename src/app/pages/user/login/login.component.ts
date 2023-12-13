@@ -15,12 +15,12 @@ export class LoginComponent implements OnInit {
     "username": '',
     "password": '',
   }
-mision=false;
-vision=false;
-prin=false;
-sobre=false;
-sobre2=false;
-sobre3=false;
+  mision = false;
+  vision = false;
+  prin = false;
+  sobre = false;
+  sobre2 = false;
+  sobre3 = false;
   constructor(private _snack: MatSnackBar, private loginService: LoginService, private router: Router) { }
 
   ngOnInit(): void {
@@ -29,33 +29,33 @@ sobre3=false;
       location.replace('/use/user-dashboard');
     }
   }
-  abrir(){
-    this.sobre= true
-    this.mision=true;
+  abrir() {
+    this.sobre = true
+    this.mision = true;
   }
-cerrar(){
-  this.sobre= false;
-  this.mision=false;
-}
-abrir2(){
-  this.sobre2= true;
-  this.vision=true;
-}
-cerrar2(){
-  this.sobre2= false;
-this.vision=false;
-}
-abrir3(){
-  this.sobre3= true;
-  this.prin=true;
-}
-cerrar3(){
-  this.sobre3= false;
-this.prin=false;
-}
+  cerrar() {
+    this.sobre = false;
+    this.mision = false;
+  }
+  abrir2() {
+    this.sobre2 = true;
+    this.vision = true;
+  }
+  cerrar2() {
+    this.sobre2 = false;
+    this.vision = false;
+  }
+  abrir3() {
+    this.sobre3 = true;
+    this.prin = true;
+  }
+  cerrar3() {
+    this.sobre3 = false;
+    this.prin = false;
+  }
   formSubmit() {
     if (this.loginData.username.trim() == '' || this.loginData.username.trim() == null) {
-      // this._snack.open('El username de usuario es requerido !!', 'Aceptar')
+
       Swal.fire(
         'Error',
         'El username de usuario es requerido !!',
@@ -65,7 +65,7 @@ this.prin=false;
     }
 
     else if (this.loginData.password.trim() == '' || this.loginData.password.trim() == null) {
-      // this._snack.open('La password es requerida !!', 'Aceptar')
+
       Swal.fire(
         'Error',
         'La password es requerida !!',
@@ -83,29 +83,25 @@ this.prin=false;
             console.log(user);
 
             if (this.loginService.getUserRole() == 'ADMIN') {
-              //dashboard admin
-              //window.location.href = '/adm/admin';
+
               this.router.navigate(['user-dashboard']);
               location.replace('/use/user-dashboard');
               this.loginService.loginStatusSubjec.next(true);
             }
             else if (this.loginService.getUserRole() == 'RESPONSABLE') {
-              //user dashboard
-              //window.location.href = '/use/user-dashboard';
+
               this.router.navigate(['user-dashboard']);
               location.replace('/use/user-dashboard');
               this.loginService.loginStatusSubjec.next(true);
             }
             else if (this.loginService.getUserRole() == 'SUPERADMIN') {
-              //user dashboard
-              //window.location.href = '/use/user-dashboard';
+
               this.router.navigate(['dashboard']);
               location.replace('/sup/dashboard');
               this.loginService.loginStatusSubjec.next(true);
             }
             else if (this.loginService.getUserRole() == 'AUTORIDAD') {
-              //user dashboard
-              //window.location.href = '/use/user-dashboard';
+
               this.router.navigate(['user-dashboard']);
               location.replace('/use/user-dashboard');
               this.loginService.loginStatusSubjec.next(true);
@@ -121,7 +117,6 @@ this.prin=false;
             'Detalles inválidos , vuelva a intentar !!',
             'warning'
           )
-          // this.open_snackBar('Detalles inválidos , vuelva a intentar !!', 'Aceptar')
         }
       )
     )

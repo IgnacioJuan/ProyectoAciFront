@@ -9,6 +9,7 @@ import { Archivo } from '../models/Archivo';
 
 import { IndicadorEvidenciasProjectionFull } from '../interface/IndicadorEvidenciasProjectionFull';
 import { IndiColProjection } from '../interface/IndiColProjection';
+import { IndicadorResp } from '../interface/IndicadorResp';
 
 @Injectable({
   providedIn: 'root'
@@ -104,8 +105,8 @@ export class IndicadoresService {
     return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/listar`);
   }
 
-  getSubcrindica(id_subcriterio:number,id_modelo:number): Observable<Indicador[]> {
-    return this.http.get<Indicador[]>(`${baserUrl}/api/indicadores/subcritindicador/${id_subcriterio}/${id_modelo}`);
+  getSubcrindica(id_subcriterio:number,id_modelo:number): Observable<IndicadorResp[]> {
+    return this.http.get<IndicadorResp[]>(`${baserUrl}/api/indicadores/subcritindicador/${id_subcriterio}/${id_modelo}`);
   }
   getIndicadorById(id_indicador: number): Observable<Indicador> {
     return this.http.get<Indicador>(`${baserUrl}/api/indicadores/buscar/id_indicador/${id_indicador}`);

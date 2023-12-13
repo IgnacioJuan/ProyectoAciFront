@@ -50,7 +50,7 @@ export class DetalleIndicadorComponent implements OnInit {
   subcrite: Subcriterio = new Subcriterio();
   sub: any;
   dataSource = new MatTableDataSource<any>();
-  columnasUsuario: string[] = ['id_indicador', 'nombre', 'descripcion', 'peso', 'valor_obtenido', 'porc_obtenido', 'estandar', 'tipo'];
+  columnasUsuario: string[] = ['id_indicador', 'nombre', 'descripcion', 'peso', 'valor_obtenido', 'porc_obtenido', 'estandar', 'tipo','resp'];
   asignacion: any;
 
   @ViewChild('datosModalRef') datosModalRef: any;
